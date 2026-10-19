@@ -31,50 +31,28 @@ npm run build
 npm start
 ```
 
-The app listens on `PORT` (default `3000`) and binds to `0.0.0.0` in Docker.
+Listens on `PORT` (default `3000`).
 
-## Deploy on DigitalOcean
+## Deploy on DigitalOcean (no Docker)
 
-This repo is ready for **App Platform** (Dockerfile) or a **Droplet** running the same image.
+Use **App Platform** with the Node buildpack.
 
-### What is already prepared
+1. Push this repo to **GitHub** or **GitLab** on branch `main`.
+2. DigitalOcean → **Apps** → **Create App** → connect that repo → select `main`.
+3. Resource settings:
+   - Type: **Web Service**
+   - Environment: **Node.js** (not Docker — if Autodetect picks Docker, switch to Node)
+   - Build command: `npm ci && npm run build`
+   - Run command: `npm start`
+   - HTTP port: `3000`
+4. (Optional) Health check path: `/api/health`
+5. Instance size: `basic-xxs` is enough to start.
+6. **Create Resources** / **Deploy**. Wait for the build to finish.
+7. Open the `*.ondigitalocean.app` URL and confirm the site loads.
+8. **Settings → Domains** → add `slow.ninja` (and `www` if you use it).
+9. At your DNS provider, add the records DigitalOcean shows.
+10. After SSL is active, smoke-test `/`, `/games`, catalog views, and `/journal`.
 
-- `output: "standalone"` in `next.config.ts`
-- `Dockerfile` (multi-stage Node 22 Alpine)
-- `.dockerignore`
-- `.do/app.yaml` — optional App Spec template
-- `GET /api/health` for health checks
+No environment secrets are required. App Platform sets `PORT` for you.
 
-No env secrets are required for the current site.
-
-### Your steps (DigitalOcean)
-
-1. **Push this repo** to GitHub or GitLab (permanent remote).
-2. In DigitalOcean → **Apps** → **Create App** → choose that repo + `main`.
-3. Resource type: **Dockerfile** (Autodetect should find `/Dockerfile`).
-4. HTTP port: **3000** (or leave default if DO detects `EXPOSE`).
-5. Health check path: **`/api/health`** (optional but recommended).
-6. Size: `basic-xxs` is enough to start; scale later.
-7. **Deploy**. Confirm the `*.ondigitalocean.app` URL loads.
-8. **Domains** → add `slow.ninja` (and `www` if you use it).
-9. At your DNS provider, add the records DigitalOcean shows (usually CNAME or ALIAS to the app).
-10. Wait for SSL; smoke-test `/`, `/games`, catalog views, `/journal`.
-
-Optional CLI (after editing `.do/app.yaml` with your real `github.repo`):
-
-```bash
-doctl apps create --spec .do/app.yaml
-```
-
-### Droplet alternative
-
-```bash
-docker build -t slow-ninja .
-docker run -d -p 80:3000 --name slow-ninja --restart unless-stopped slow-ninja
-```
-
-Put Caddy or nginx in front for HTTPS if you are not using App Platform’s managed TLS.
-
-## License
-
-Private studio site unless otherwise noted.
+A `Dockerfile` may exist in the repo for optional container deploys — ignore it for this path.
