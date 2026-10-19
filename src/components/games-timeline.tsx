@@ -1,45 +1,58 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
+/** Display labels matching the Figma frames (node 1:3 / 1:21). */
+const labels: Record<string, string> = {
+  schemaverse: "schemaverse",
+  coindroids: "Coindroids",
+  structs: "Structs",
+};
+
 /**
- * In-place horizontal timeline — selection never changes the URL,
- * so the page does not jump to the top.
+ * Figma timeline: hollow circles on a starlane.
+ * Click a neighbor → it grows to ~304px and the track slides to center it.
+ * Selection is local state only (no URL) so the page never jumps.
  */
 export function GamesTimeline() {
-  const [active, setActive] = useState(games.length - 1);
+  // Default matches Figma frame 1:3 (Coindroids focused)
+  const [active, setActive] = useState(1);
   const trackRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const current = games[active];
 
   useEffect(() => {
     const track = trackRef.current;
     const item = itemRefs.current[active];
     if (!track || !item) return;
 
-    const center = () => {
+    const centerTrack = () => {
       const left =
         item.offsetLeft - track.clientWidth / 2 + item.offsetWidth / 2;
       track.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
     };
 
-    // Wait a frame so size transitions apply, then center the track only
-    // (never window.scrollTo / scrollIntoView on the page).
-    const id = window.requestAnimationFrame(center);
-    const t = window.setTimeout(center, 320);
+    // Center after layout + mid-transition (sizes animate ~500ms)
+    const frame = window.requestAnimationFrame(centerTrack);
+    const mid = window.setTimeout(centerTrack, 280);
+    const end = window.setTimeout(centerTrack, 520);
     return () => {
-      window.cancelAnimationFrame(id);
-      window.clearTimeout(t);
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(mid);
+      window.clearTimeout(end);
     };
   }, [active]);
+
+  const select = (index: number) => {
+    if (index === active) return;
+    setActive(index);
+  };
 
   return (
     <section
       id="games"
-      className="scroll-mt-28 bg-[#070d16] py-16 md:py-28"
+      className="scroll-mt-28 bg-[#070c16] py-16 md:py-24"
     >
       <div className="mx-auto max-w-6xl px-4 md:px-6">
         <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
@@ -49,24 +62,30 @@ export function GamesTimeline() {
           Browse the catalog
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
-          Click a circle—the lane slides to focus it and opens the dossier
-          below. Your place on the page stays put.
+          Tap a circle to bring it into focus—the lane slides, nothing else
+          moves.
         </p>
       </div>
 
-      {/* Horizontal starlane */}
-      <div className="relative mt-10 md:mt-14">
+      <div className="relative mt-12 md:mt-16">
+        {/* Starlane through circle centers */}
         <div
           aria-hidden
-          className="pointer-events-none absolute top-[calc(50%-0.5rem)] right-0 left-0 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+          className="pointer-events-none absolute top-1/2 right-0 left-0 h-px -translate-y-1/2 bg-white/50"
         />
 
         <div
           ref={trackRef}
-          className="flex min-h-[340px] items-center gap-8 overflow-x-auto scroll-smooth px-[calc(50%-8rem)] py-8 md:min-h-[420px] md:gap-10 md:px-[calc(50%-10rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex items-center overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{
+            // Pad so the first/last slot can sit at viewport center
+            paddingInline: "max(1rem, calc(50% - 10rem))",
+          }}
         >
           {games.map((game, index) => {
             const selected = index === active;
+            const label = labels[game.slug] ?? game.name;
+
             return (
               <button
                 key={game.slug}
@@ -74,20 +93,23 @@ export function GamesTimeline() {
                   itemRefs.current[index] = el;
                 }}
                 type="button"
-                onClick={() => setActive(index)}
+                // preventDefault on mousedown stops browser focus-scroll
+                // (the usual cause of jumping back to the top of the page)
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => select(index)}
                 aria-pressed={selected}
+                aria-label={`${label}, ${game.era}`}
                 className={cn(
-                  // Column width >= circle diameter so neighbors stay clickable
-                  "relative flex shrink-0 flex-col items-center gap-3 border-0 bg-transparent p-0 transition-all duration-500 ease-out",
-                  selected
-                    ? "z-10 w-60 md:w-72"
-                    : "z-20 w-36 opacity-55 hover:opacity-100 md:w-40",
+                  // Fixed slot width ≈ Figma center-to-center spacing (~494px)
+                  // so neighbors stay evenly placed while the active circle grows
+                  "relative flex shrink-0 flex-col items-center justify-center border-0 bg-transparent p-0 outline-none",
+                  "w-[min(72vw,28rem)] py-8 md:w-[30.875rem] md:py-10",
                 )}
               >
                 <span
                   className={cn(
-                    "font-mono-label text-[8px] tracking-widest uppercase md:text-[9px]",
-                    selected ? "text-white" : "text-white/40",
+                    "font-body text-xl font-normal text-white transition-all duration-500 md:text-2xl",
+                    selected ? "mb-4 opacity-100" : "mb-3 opacity-90",
                   )}
                 >
                   {game.era}
@@ -95,42 +117,20 @@ export function GamesTimeline() {
 
                 <span
                   className={cn(
-                    "relative block overflow-hidden rounded-full border-4 transition-all duration-500",
+                    "block rounded-full border border-white bg-[#070c16] transition-all duration-500 ease-out",
                     selected
-                      ? "h-56 w-56 md:h-64 md:w-64"
-                      : "h-28 w-28 md:h-32 md:w-32",
+                      ? "size-[min(56vw,16rem)] md:size-[304px]"
+                      : "size-14 md:size-[68px]",
                   )}
-                  style={{
-                    borderColor: selected
-                      ? game.accent
-                      : "rgba(255,255,255,0.2)",
-                    boxShadow: selected
-                      ? `0 0 48px ${game.accent}66`
-                      : "none",
-                  }}
-                >
-                  <Image
-                    src={game.artwork}
-                    alt={game.name}
-                    fill
-                    sizes={selected ? "256px" : "128px"}
-                    className={cn(
-                      "pointer-events-none object-cover transition-all duration-500",
-                      selected ? "grayscale-0" : "grayscale-[40%]",
-                    )}
-                    draggable={false}
-                  />
-                </span>
+                />
 
                 <span
                   className={cn(
-                    "font-display text-center font-bold transition-all duration-500",
-                    selected
-                      ? "text-xl text-white md:text-2xl"
-                      : "text-sm text-white/50",
+                    "font-body text-xl font-normal text-white transition-all duration-500 md:text-2xl",
+                    selected ? "mt-5 opacity-100" : "mt-3 opacity-90",
                   )}
                 >
-                  {game.name}
+                  {label}
                 </span>
               </button>
             );
@@ -138,75 +138,19 @@ export function GamesTimeline() {
         </div>
       </div>
 
-      <div className="mx-auto mt-2 flex max-w-6xl items-center justify-between px-4 md:px-6">
-        <button
-          type="button"
-          onClick={() => setActive((i) => Math.max(0, i - 1))}
-          disabled={active === 0}
-          className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:border-[var(--cyan)] disabled:opacity-30"
+      {/* Active game dossier — in-place, no navigation */}
+      <div className="mx-auto mt-8 max-w-xl px-4 text-center md:mt-10 md:px-6">
+        <p className="text-sm leading-relaxed text-white/55 md:text-base">
+          {games[active].summary}
+        </p>
+        <a
+          href={games[active].href}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-6 inline-flex text-sm font-semibold text-white underline-offset-4 hover:underline"
         >
-          ← Earlier
-        </button>
-        <span className="font-mono-label text-[8px] text-white/40 uppercase">
-          {active + 1} / {games.length}
-        </span>
-        <button
-          type="button"
-          onClick={() => setActive((i) => Math.min(games.length - 1, i + 1))}
-          disabled={active === games.length - 1}
-          className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:border-[var(--lime)] disabled:opacity-30"
-        >
-          Later →
-        </button>
-      </div>
-
-      {/* Expanded dossier — updates in place */}
-      <div
-        key={current.slug}
-        className="pop-in mx-auto mt-10 grid max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a1220] md:mt-14 md:grid-cols-[1.2fr_0.8fr]"
-        style={{ boxShadow: `0 0 0 1px ${current.accent}44` }}
-      >
-        <div className="relative min-h-[280px] md:min-h-[440px]">
-          <Image
-            src={current.artwork}
-            alt={current.name}
-            fill
-            className="pointer-events-none object-cover"
-            sizes="(max-width:768px) 100vw, 60vw"
-            priority
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-[#0a1220]/75" />
-          <div className="absolute top-4 left-4 rounded-full border border-white/10 bg-black/50 px-3 py-1.5 font-mono-label text-[8px] tracking-widest text-white uppercase">
-            {current.years}
-          </div>
-        </div>
-        <div className="flex flex-col justify-center p-6 md:p-10">
-          <p
-            className="font-mono-label text-[8px] tracking-widest uppercase"
-            style={{ color: current.accent }}
-          >
-            {current.mechanic}
-          </p>
-          <h3 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
-            {current.name}
-          </h3>
-          <p className="mt-2 text-lg text-white/75">{current.tagline}</p>
-          <p className="mt-4 text-sm leading-relaxed text-white/60 md:text-base">
-            {current.summary}
-          </p>
-          <p className="mt-4 text-xs font-semibold tracking-wide text-white/40 uppercase">
-            {current.status}
-          </p>
-          <a
-            href={current.href}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-8 inline-flex w-fit rounded-full px-6 py-3.5 text-sm font-bold text-[var(--ink)]"
-            style={{ background: current.accent }}
-          >
-            Explore more →
-          </a>
-        </div>
+          Explore {labels[games[active].slug] ?? games[active].name} →
+        </a>
       </div>
     </section>
   );
