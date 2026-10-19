@@ -17,13 +17,13 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 px-4 pt-4 md:px-6">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border border-[var(--ink)]/10 bg-white/80 px-4 py-3 shadow-[0_8px_30px_rgba(20,24,22,0.08)] backdrop-blur-xl md:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border border-[var(--ink)]/15 bg-white/85 px-4 py-3 shadow-[0_8px_30px_rgba(11,18,32,0.12)] backdrop-blur-xl md:px-6">
         <Link
           href="/"
           className="font-display text-xl font-bold tracking-tight text-[var(--ink)]"
         >
           Slow Ninja
-          <span className="ml-1 inline-block h-2 w-2 rounded-full bg-[var(--lime)]" />
+          <span className="ml-1 inline-block h-2 w-2 rounded-full bg-[var(--cyan)] shadow-[0_0_8px_var(--cyan)]" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -49,9 +49,9 @@ export function SiteHeader() {
             href="https://www.playstructs.com/"
             target="_blank"
             rel="noreferrer"
-            className="btn-bounce ml-2 rounded-full bg-[var(--lime)] px-4 py-2 text-sm font-bold text-[var(--ink)] shadow-[3px_3px_0_var(--ink)]"
+            className="btn-bounce ml-2 rounded-full bg-[var(--ink)] px-4 py-2 text-sm font-bold text-[var(--lime)] shadow-[3px_3px_0_var(--cyan)]"
           >
-            Play Structs
+            Launch Structs
           </a>
         </nav>
 

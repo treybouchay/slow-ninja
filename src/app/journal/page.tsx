@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Technical notes from Slow Ninja — fun systems, serious craft.",
 };
 
-const accents = ["bg-[var(--lime)]", "bg-white", "bg-[var(--sun)]", "bg-[var(--blush)]"];
+const accents = ["bg-[var(--lime)]", "bg-white", "bg-[var(--cyan)]", "bg-[var(--sun)]"];
 
 export default function JournalPage() {
   return (

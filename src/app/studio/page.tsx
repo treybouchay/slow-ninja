@@ -35,7 +35,7 @@ export default function StudioPage() {
           {
             title: "Worlds that last",
             body: "Structs stays online as long as players keep the chain alive.",
-            bg: "bg-[var(--blush)]",
+            bg: "bg-[var(--cyan)]",
           },
         ].map((p) => (
           <div

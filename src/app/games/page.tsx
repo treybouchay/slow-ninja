@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Structs, Coindroids, and Schemaverse from Slow Ninja.",
 };
 
-const accents = ["bg-[var(--lime)]", "bg-[var(--sun)]", "bg-[var(--blush)]"];
+const accents = ["bg-[var(--lime)]", "bg-[var(--cyan)]", "bg-[var(--sun)]"];
 
 export default function GamesPage() {
   return (
