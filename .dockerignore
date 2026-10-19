@@ -1,0 +1,17 @@
+Dockerfile
+.dockerignore
+.git
+.gitignore
+.next
+node_modules
+npm-debug.log*
+README.md
+src/components/catalog/VERSIONS.md
+**/*.md
+.cursor
+.vscode
+*.tsbuildinfo
+.next/cache
+coverage
+.env*
+!.env.example
