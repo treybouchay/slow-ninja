@@ -1,32 +1,40 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 export function GamesTimeline() {
-  const [active, setActive] = useState(0);
+  const params = useSearchParams();
   const trackRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  const activeSlug = params.get("game") ?? games[games.length - 1]?.slug;
+  const active = useMemo(() => {
+    const idx = games.findIndex((g) => g.slug === activeSlug);
+    return idx >= 0 ? idx : games.length - 1;
+  }, [activeSlug]);
+
+  const current = games[active];
 
   useEffect(() => {
     const track = trackRef.current;
     const item = itemRefs.current[active];
     if (!track || !item) return;
 
-    const scroll = () => {
-      const target =
+    const center = () => {
+      const left =
         item.offsetLeft - track.clientWidth / 2 + item.offsetWidth / 2;
-      track.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+      track.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
     };
 
-    scroll();
-    const t = window.setTimeout(scroll, 300);
+    center();
+    const t = window.setTimeout(center, 320);
     return () => window.clearTimeout(t);
   }, [active]);
-
-  const current = games[active];
 
   return (
     <section
@@ -41,54 +49,51 @@ export function GamesTimeline() {
           Browse the catalog
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
-          Click a circle to focus it—the timeline slides over and the others
-          shrink.
+          Click a circle to focus it—the timeline slides to that project.
         </p>
       </div>
 
-      {/* Controls always work even if circles misbehave */}
-      <div className="mx-auto mt-8 flex max-w-6xl items-center justify-center gap-3 px-4 md:px-6">
-        {games.map((game, index) => (
-          <button
-            key={`tab-${game.slug}`}
-            type="button"
-            onClick={() => setActive(index)}
-            className={cn(
-              "rounded-full px-4 py-2 text-sm font-bold transition",
-              active === index
-                ? "bg-[var(--lime)] text-[var(--ink)]"
-                : "border border-white/20 bg-white/5 text-white/70 hover:border-white/40 hover:text-white",
-            )}
-          >
-            {game.name}
-          </button>
-        ))}
+      {/* Plain links — always clickable */}
+      <div className="mx-auto mt-8 flex max-w-6xl flex-wrap items-center justify-center gap-3 px-4 md:px-6">
+        {games.map((game) => {
+          const selected = game.slug === current.slug;
+          return (
+            <Link
+              key={`tab-${game.slug}`}
+              href={`/?game=${game.slug}#games`}
+              scroll={false}
+              className={cn(
+                "rounded-full px-4 py-2 text-sm font-bold transition",
+                selected
+                  ? "bg-[var(--lime)] text-[var(--ink)]"
+                  : "border border-white/20 bg-white/5 text-white/70 hover:border-white/40 hover:text-white",
+              )}
+            >
+              {game.name}
+            </Link>
+          );
+        })}
       </div>
 
       <div
         ref={trackRef}
-        className="mt-8 flex min-h-[280px] items-center gap-10 overflow-x-auto scroll-smooth px-[calc(50%-5rem)] py-8 md:min-h-[340px] md:gap-14 md:px-[calc(50%-7rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="mt-8 flex min-h-[300px] items-center gap-12 overflow-x-auto scroll-smooth px-[calc(50%-5rem)] py-10 md:min-h-[380px] md:gap-16 md:px-[calc(50%-7rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {games.map((game, index) => {
-          const selected = active === index;
+          const selected = index === active;
           return (
-            <div
+            <Link
               key={game.slug}
               ref={(el) => {
                 itemRefs.current[index] = el;
               }}
-              role="button"
-              tabIndex={0}
-              onClick={() => setActive(index)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setActive(index);
-                }
-              }}
+              href={`/?game=${game.slug}#games`}
+              scroll={false}
               className={cn(
-                "flex shrink-0 cursor-pointer flex-col items-center gap-3 outline-none transition-all duration-500 select-none",
-                selected ? "w-48 scale-100 md:w-60" : "w-28 scale-90 opacity-60 md:w-32",
+                "flex shrink-0 flex-col items-center gap-3 transition-all duration-500",
+                selected
+                  ? "w-48 scale-100 md:w-60"
+                  : "w-28 scale-90 opacity-55 hover:opacity-90 md:w-32",
               )}
             >
               <span
@@ -100,9 +105,9 @@ export function GamesTimeline() {
                 {game.era}
               </span>
 
-              <div
+              <span
                 className={cn(
-                  "relative overflow-hidden rounded-full border-4 transition-all duration-500",
+                  "relative block overflow-hidden rounded-full border-4 transition-all duration-500",
                   selected
                     ? "h-44 w-44 md:h-56 md:w-56"
                     : "h-24 w-24 md:h-28 md:w-28",
@@ -116,14 +121,13 @@ export function GamesTimeline() {
                   src={game.artwork}
                   alt={game.name}
                   fill
-                  draggable={false}
                   className={cn(
                     "object-cover transition-all duration-500",
                     selected ? "grayscale-0" : "grayscale-[40%]",
                   )}
                   sizes={selected ? "224px" : "112px"}
                 />
-              </div>
+              </span>
 
               <span
                 className={cn(
@@ -135,31 +139,41 @@ export function GamesTimeline() {
               >
                 {game.name}
               </span>
-            </div>
+            </Link>
           );
         })}
       </div>
 
       <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between px-4 md:px-6">
-        <button
-          type="button"
-          onClick={() => setActive((i) => Math.max(0, i - 1))}
-          disabled={active === 0}
-          className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white disabled:opacity-30"
-        >
-          ← Earlier
-        </button>
+        {active > 0 ? (
+          <Link
+            href={`/?game=${games[active - 1].slug}#games`}
+            scroll={false}
+            className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:border-[var(--cyan)]"
+          >
+            ← Earlier
+          </Link>
+        ) : (
+          <span className="rounded-full border border-white/10 px-4 py-2 text-sm text-white/30">
+            ← Earlier
+          </span>
+        )}
         <span className="font-mono-label text-[8px] text-white/40 uppercase">
           {active + 1} / {games.length}
         </span>
-        <button
-          type="button"
-          onClick={() => setActive((i) => Math.min(games.length - 1, i + 1))}
-          disabled={active === games.length - 1}
-          className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white disabled:opacity-30"
-        >
-          Later →
-        </button>
+        {active < games.length - 1 ? (
+          <Link
+            href={`/?game=${games[active + 1].slug}#games`}
+            scroll={false}
+            className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:border-[var(--lime)]"
+          >
+            Later →
+          </Link>
+        ) : (
+          <span className="rounded-full border border-white/10 px-4 py-2 text-sm text-white/30">
+            Later →
+          </span>
+        )}
       </div>
 
       <div

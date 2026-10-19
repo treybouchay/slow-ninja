@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { GamesTimeline } from "@/components/games-timeline";
 
 export const metadata: Metadata = {
@@ -9,7 +10,15 @@ export const metadata: Metadata = {
 export default function GamesPage() {
   return (
     <div className="bg-[#070d16] pb-8">
-      <GamesTimeline />
+      <Suspense
+        fallback={
+          <section className="py-24 text-center text-white/50">
+            Loading catalog…
+          </section>
+        }
+      >
+        <GamesTimeline />
+      </Suspense>
     </div>
   );
 }
