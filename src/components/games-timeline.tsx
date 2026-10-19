@@ -1,11 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-/** Tighter center-to-center spacing (was ~494). */
+/**
+ * Working timeline version — pan + grow/shrink animation verified.
+ * Circles wake when the section enters view; dossier sits beside the
+ * expanded focus (not a separate card). Starlane segments stop at
+ * each circle edge and never run past the last bubble.
+ */
+
+/** Tighter center-to-center spacing. */
 const SLOT_DESKTOP = 236;
 const SLOT_MOBILE = 152;
 /** Active grows; neighbors stay small. */
@@ -26,10 +39,16 @@ function useIsMobile() {
   return mobile;
 }
 
-/**
- * Circles stay minimized until the timeline scrolls into view, then the
- * focused game expands and the lane pans. Click another bubble to refocus.
- */
+function circleSize(
+  index: number,
+  active: number,
+  expanded: boolean,
+  activeSize: number,
+  inactiveSize: number,
+) {
+  return expanded && index === active ? activeSize : inactiveSize;
+}
+
 export function GamesTimeline() {
   const [active, setActive] = useState(games.length - 1);
   const [offset, setOffset] = useState(0);
@@ -50,9 +69,11 @@ export function GamesTimeline() {
     if (!viewport) return;
     const vw = viewport.clientWidth;
     if (vw <= 0) return;
-    setOffset(vw / 2 - (active + 0.5) * slot);
+    // Nudge focus left when the side dossier is visible so circle + copy balance
+    const dossierShift = expanded && !mobile ? Math.min(160, vw * 0.12) : 0;
+    setOffset(vw / 2 - (active + 0.5) * slot - dossierShift);
     setReady(true);
-  }, [active, slot]);
+  }, [active, slot, expanded, mobile]);
 
   useEffect(() => {
     recenter();
@@ -112,9 +133,12 @@ export function GamesTimeline() {
         ref={viewportRef}
         className="relative z-10 mt-10 w-full overflow-hidden md:mt-14"
         style={{
-          minHeight: activeSize + 140,
+          minHeight: mobile
+            ? activeSize + (expanded ? 360 : 140)
+            : activeSize + 160,
         }}
       >
+        {/* Sliding starlane */}
         <div
           className={cn(
             "relative flex items-center will-change-transform",
@@ -127,11 +151,38 @@ export function GamesTimeline() {
             minHeight: activeSize + 140,
           }}
         >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute top-1/2 left-0 z-0 h-px -translate-y-1/2 bg-white/40"
-            style={{ width: trackWidth }}
-          />
+          {/*
+            Line segments between circle edges only — never through a bubble,
+            never past the last circle.
+          */}
+          {games.slice(0, -1).map((_, index) => {
+            const leftSize = circleSize(
+              index,
+              active,
+              expanded,
+              activeSize,
+              inactiveSize,
+            );
+            const rightSize = circleSize(
+              index + 1,
+              active,
+              expanded,
+              activeSize,
+              inactiveSize,
+            );
+            const leftEdge = (index + 0.5) * slot + leftSize / 2;
+            const rightEdge = (index + 1.5) * slot - rightSize / 2;
+            const width = Math.max(0, rightEdge - leftEdge);
+
+            return (
+              <div
+                key={`lane-${index}`}
+                aria-hidden
+                className="pointer-events-none absolute top-1/2 z-0 h-px -translate-y-1/2 bg-white/40 transition-all duration-500"
+                style={{ left: leftEdge, width }}
+              />
+            );
+          })}
 
           {games.map((game, index) => {
             const selected = expanded && index === active;
@@ -160,7 +211,7 @@ export function GamesTimeline() {
                 </span>
 
                 <span
-                  className="relative z-20 block overflow-hidden rounded-full border-4 transition-[width,height,box-shadow,border-color,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  className="relative z-20 block overflow-hidden rounded-full border-4 bg-[#070d16] transition-[width,height,box-shadow,border-color,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                   style={{
                     width: size,
                     height: size,
@@ -200,9 +251,55 @@ export function GamesTimeline() {
             );
           })}
         </div>
+
+        {/* Dossier beside the expanded focus — not a separate card */}
+        <aside
+          className={cn(
+            "z-30 px-4 transition-all duration-500 md:absolute md:top-1/2 md:left-[calc(50%+0.5rem)] md:max-w-md md:-translate-y-1/2 md:px-0 md:pl-[calc(var(--focus)/2+1.25rem)]",
+            expanded
+              ? "pointer-events-auto translate-y-0 opacity-100"
+              : "pointer-events-none translate-y-2 opacity-0 md:translate-y-[-40%]",
+          )}
+          style={
+            {
+              ["--focus" as string]: `${activeSize}px`,
+            } as CSSProperties
+          }
+          aria-hidden={!expanded}
+        >
+          <div className="mt-6 md:mt-0">
+            <p
+              className="font-mono-label text-[8px] tracking-widest uppercase md:text-[9px]"
+              style={{ color: current.accent }}
+            >
+              {current.mechanic}
+            </p>
+            <h3 className="font-display mt-3 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
+              {current.name}
+            </h3>
+            <p className="mt-2 text-base text-white/75 md:text-lg">
+              {current.tagline}
+            </p>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-white/55 md:text-base">
+              {current.summary}
+            </p>
+            <p className="mt-4 text-xs font-semibold tracking-wide text-white/40 uppercase">
+              {current.status}
+            </p>
+            <a
+              href={current.href}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-6 inline-flex w-fit rounded-full px-6 py-3.5 text-sm font-bold text-[var(--ink)]"
+              style={{ background: current.accent }}
+            >
+              Explore more →
+            </a>
+          </div>
+        </aside>
       </div>
 
-      <div className="mx-auto mt-2 flex max-w-6xl items-center justify-between px-4 md:px-6">
+      <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between px-4 md:mt-6 md:px-6">
         <button
           type="button"
           onMouseDown={(e) => e.preventDefault()}
@@ -230,57 +327,6 @@ export function GamesTimeline() {
         >
           Later →
         </button>
-      </div>
-
-      <div
-        key={current.slug}
-        className={cn(
-          "pop-in mx-auto mt-10 grid max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a1220] transition-opacity duration-500 md:mt-14 md:grid-cols-[1.2fr_0.8fr]",
-          expanded ? "opacity-100" : "opacity-40",
-        )}
-        style={{ boxShadow: `0 0 0 1px ${current.accent}44` }}
-      >
-        <div className="relative min-h-[280px] md:min-h-[440px]">
-          <Image
-            src={current.artwork}
-            alt={current.name}
-            fill
-            className="pointer-events-none object-cover"
-            sizes="(max-width:768px) 100vw, 60vw"
-            priority
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-[#0a1220]/75" />
-          <div className="absolute top-4 left-4 rounded-full border border-white/10 bg-black/50 px-3 py-1.5 font-mono-label text-[8px] tracking-widest text-white uppercase">
-            {current.years}
-          </div>
-        </div>
-        <div className="flex flex-col justify-center p-6 md:p-10">
-          <p
-            className="font-mono-label text-[8px] tracking-widest uppercase"
-            style={{ color: current.accent }}
-          >
-            {current.mechanic}
-          </p>
-          <h3 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
-            {current.name}
-          </h3>
-          <p className="mt-2 text-lg text-white/75">{current.tagline}</p>
-          <p className="mt-4 text-sm leading-relaxed text-white/60 md:text-base">
-            {current.summary}
-          </p>
-          <p className="mt-4 text-xs font-semibold tracking-wide text-white/40 uppercase">
-            {current.status}
-          </p>
-          <a
-            href={current.href}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-8 inline-flex w-fit rounded-full px-6 py-3.5 text-sm font-bold text-[var(--ink)]"
-            style={{ background: current.accent }}
-          >
-            Explore more →
-          </a>
-        </div>
       </div>
     </section>
   );
