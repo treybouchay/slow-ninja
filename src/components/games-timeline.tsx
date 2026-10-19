@@ -26,7 +26,10 @@ export function GamesTimeline() {
   const current = games[active];
 
   return (
-    <section id="games" className="scroll-mt-28 py-16 md:py-24">
+    <section
+      id="games"
+      className="scroll-mt-28 bg-[#070d16] py-16 md:py-24"
+    >
       <div className="mx-auto max-w-6xl px-4 md:px-6">
         <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
           Project timeline
