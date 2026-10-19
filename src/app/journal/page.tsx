@@ -4,53 +4,41 @@ import { journalPosts } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Journal",
-  description:
-    "Technical notes on building readable, skill-based games at Slow Ninja.",
+  description: "Technical notes from Slow Ninja — fun systems, serious craft.",
 };
+
+const accents = ["bg-[var(--lime)]", "bg-white", "bg-[var(--sun)]", "bg-[var(--blush)]"];
 
 export default function JournalPage() {
   return (
-    <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-      <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.22em] text-[var(--copper)]">
+    <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+      <p className="font-mono-label text-xs font-bold tracking-[0.22em] text-[var(--coral)] uppercase">
         Journal
       </p>
-      <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-display)] text-4xl font-bold tracking-tight text-[var(--paper)] md:text-6xl">
-        Field notes from the machine room
+      <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold text-[var(--ink)] md:text-6xl">
+        Field notes with personality
       </h1>
-      <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[var(--mist)]">
+      <p className="mt-5 max-w-2xl text-lg text-[var(--mist)]">
         Design rationale, postmortems, and implementation detail—written for
-        players and builders who want the why behind the systems.
+        players and builders who want the why.
       </p>
 
-      <ul className="mt-16 divide-y divide-[var(--line)] border-y border-[var(--line)]">
-        {journalPosts.map((post) => (
+      <ul className="mt-14 grid gap-5 md:grid-cols-2">
+        {journalPosts.map((post, i) => (
           <li key={post.slug}>
             <Link
               href={`/journal/${post.slug}`}
-              className="group grid gap-3 py-8 md:grid-cols-[180px_1fr] md:gap-10"
+              className={`tilt-hover block h-full rounded-[1.75rem] border-2 border-[var(--ink)] p-6 shadow-[6px_6px_0_var(--ink)] md:p-8 ${accents[i % accents.length]}`}
             >
-              <div className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.16em] text-[var(--mist)]">
-                <p>{post.date}</p>
-                <p className="mt-2 text-[var(--copper)]">{post.readingTime}</p>
-              </div>
-              <div>
-                <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--paper)] transition-colors group-hover:text-[var(--signal)] md:text-3xl">
-                  {post.title}
-                </h2>
-                <p className="mt-3 max-w-2xl leading-relaxed text-[var(--mist)]">
-                  {post.excerpt}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--signal)]"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              <p className="font-mono-label text-[10px] font-bold tracking-wide uppercase opacity-70">
+                {post.date} · {post.readingTime}
+              </p>
+              <h2 className="font-display mt-3 text-2xl font-bold text-[var(--ink)]">
+                {post.title}
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ink)]/70">
+                {post.excerpt}
+              </p>
             </Link>
           </li>
         ))}

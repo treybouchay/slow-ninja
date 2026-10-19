@@ -1,55 +1,13 @@
-# Slow Ninja — brand concepts
+# Slow Ninja — brand direction
 
-Four directions that make the studio stand out. The live site ships **Readable Machines**.
+## Shipped: Deliberately Fun (Sophun-inspired)
 
-## 1. Readable Machines (shipped)
+Playful game-studio energy in the spirit of [Sophun Games](https://sophun-games.webflow.io/), remixed with Slow Ninja identity.
 
-**Promise:** Games as systems you can inspect—SQL as controller, transactions as moves, on-chain state as truth.
+**Structure:** Big brand hero → marquee chips → featured game (Structs) → colorful game tiles → studio split → journal cards.
 
-**Why it fits:** Schemaverse, Coindroids, and Structs all reward players who look under the hood. Technical blogs become product surface, not side content.
+**Palette:** Paper `#f6f8f3`, ink `#141816`, lime `#c8f542`, coral `#ff5e4d`, sun `#ffe566`, mint `#d8f5e2`, blush `#ffd6cf`.
 
-**Voice:** Precise, dryly confident, anti-hype. “Slow” = deliberate mastery.
+**Type:** Fredoka (display) + Manrope (body) + Space Mono (labels).
 
-**Site moves:** Ops-room atmosphere, mono labels, journal as peer to games, mechanics named beside titles.
-
----
-
-## 2. Slow is the skill
-
-**Promise:** Patience and comprehension beat dopamine loops. The ninja who waits wins.
-
-**Why it fits:** Contrasts casino-web3 and hyper-casual. Matches a decade of DEF CON contests and deep strategy.
-
-**Voice:** Calm, martial, slightly contrarian.
-
-**Site moves:** Measured motion, longform journal prominence, “deliberate haste” as motif.
-
----
-
-## 3. Protocol worlds
-
-**Promise:** Living galaxies that outlast the studio—community-operated, chain-backed continuity.
-
-**Why it fits:** Structs’ “online as long as players play” thesis. Decentralization as reliability, not marketing.
-
-**Voice:** Infrastructure-minded, civic, game-first.
-
-**Site moves:** Emphasize guild governance, uptime, and player stewardship over studio mythology.
-
----
-
-## 4. Hacker-conference DNA
-
-**Promise:** Built for people who reverse-engineer systems for fun—DEF CON contests, SQL fleets, transaction puzzles.
-
-**Why it fits:** Real history with Coindroids at DEF CON and Schemaverse as teaching/AI arena.
-
-**Voice:** Insider, playful, technical without crypto bro energy.
-
-**Site moves:** Contest lore, “break our stuff” CTAs, terminal aesthetics (use carefully so it does not become generic cyberpunk).
-
----
-
-## Recommended pairing
-
-Primary: **Readable Machines**. Secondary accent from **Slow is the skill** in motion and copy. Keep Protocol worlds for Structs marketing; keep Hacker DNA for community/recruiting pages.
+**Motion:** Floating blobs, pop-in hero, bounce buttons, marquee strip, soft card tilts.

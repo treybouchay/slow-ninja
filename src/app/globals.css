@@ -49,47 +49,49 @@
 }
 
 :root {
-  --ink: #0d1311;
-  --ink-deep: #080c0a;
-  --paper: #e7ece6;
-  --mist: #8b968c;
-  --signal: #c8f542;
-  --copper: #d08a62;
-  --line: color-mix(in oklab, var(--paper) 12%, transparent);
-  --panel: color-mix(in oklab, var(--paper) 4%, var(--ink));
+  /* Slow Ninja fun palette — Sophun energy, ninja twist */
+  --ink: #141816;
+  --paper: #f6f8f3;
+  --mist: #5c6b62;
+  --lime: #c8f542;
+  --coral: #ff5e4d;
+  --sun: #ffe566;
+  --mint: #d8f5e2;
+  --blush: #ffd6cf;
+  --night: #1a221e;
 
-  --background: var(--ink);
-  --foreground: var(--paper);
-  --card: var(--panel);
-  --card-foreground: var(--paper);
-  --popover: var(--ink-deep);
-  --popover-foreground: var(--paper);
-  --primary: var(--signal);
-  --primary-foreground: var(--ink);
-  --secondary: color-mix(in oklab, var(--paper) 8%, var(--ink));
-  --secondary-foreground: var(--paper);
-  --muted: color-mix(in oklab, var(--paper) 7%, var(--ink));
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--mint);
+  --secondary-foreground: var(--ink);
+  --muted: #e8ede6;
   --muted-foreground: var(--mist);
-  --accent: color-mix(in oklab, var(--signal) 14%, var(--ink));
-  --accent-foreground: var(--paper);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: var(--line);
-  --input: var(--line);
-  --ring: var(--signal);
-  --chart-1: var(--signal);
-  --chart-2: var(--copper);
-  --chart-3: #4f8f86;
-  --chart-4: #8b968c;
-  --chart-5: #e7ece6;
-  --radius: 0.35rem;
-  --sidebar: var(--ink-deep);
-  --sidebar-foreground: var(--paper);
-  --sidebar-primary: var(--signal);
-  --sidebar-primary-foreground: var(--ink);
-  --sidebar-accent: var(--panel);
-  --sidebar-accent-foreground: var(--paper);
-  --sidebar-border: var(--line);
-  --sidebar-ring: var(--signal);
+  --accent: var(--lime);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: color-mix(in oklab, var(--ink) 10%, transparent);
+  --input: color-mix(in oklab, var(--ink) 10%, transparent);
+  --ring: var(--lime);
+  --chart-1: var(--lime);
+  --chart-2: var(--coral);
+  --chart-3: var(--sun);
+  --chart-4: #4f8f86;
+  --chart-5: var(--ink);
+  --radius: 1.25rem;
+  --sidebar: var(--paper);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--paper);
+  --sidebar-accent: var(--mint);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--lime);
 }
 
 @layer base {
@@ -98,109 +100,172 @@
   }
 
   html {
-    @apply font-sans scroll-smooth;
+    @apply scroll-smooth;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     background-image:
-      radial-gradient(
-        ellipse at top left,
-        color-mix(in oklab, var(--signal) 8%, transparent),
-        transparent 36%
-      ),
-      linear-gradient(180deg, var(--ink), var(--ink-deep));
+      radial-gradient(ellipse 80% 50% at 10% -10%, color-mix(in oklab, var(--lime) 35%, transparent), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, color-mix(in oklab, var(--coral) 22%, transparent), transparent),
+      radial-gradient(ellipse 50% 30% at 50% 100%, color-mix(in oklab, var(--sun) 18%, transparent), transparent);
+    background-attachment: fixed;
     min-height: 100vh;
   }
 
   ::selection {
-    background: color-mix(in oklab, var(--signal) 55%, transparent);
+    background: var(--lime);
     color: var(--ink);
   }
 }
 
 @layer utilities {
-  .hero-grid {
-    background-image:
-      linear-gradient(var(--line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size: 64px 64px;
-    mask-image: radial-gradient(ellipse at 70% 35%, black 10%, transparent 70%);
-    animation: grid-drift 28s linear infinite;
+  .font-display {
+    font-family: var(--font-display), system-ui, sans-serif;
   }
 
-  .hero-orbit {
-    animation: orbit-pulse 9s ease-in-out infinite;
+  .font-body {
+    font-family: var(--font-body), system-ui, sans-serif;
   }
 
-  .hero-orbit-delayed {
-    animation: orbit-pulse 11s ease-in-out 1.2s infinite;
+  .font-mono-label {
+    font-family: var(--font-mono), ui-monospace, monospace;
   }
 
-  .reveal-up {
-    animation: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  .blob {
+    border-radius: 42% 58% 55% 45% / 48% 42% 58% 52%;
   }
 
-  .reveal-up-delay {
-    animation: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+  .float-a {
+    animation: float-a 7s ease-in-out infinite;
   }
 
-  .reveal-up-late {
-    animation: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+  .float-b {
+    animation: float-b 9s ease-in-out infinite;
   }
 
-  .signal-underline {
-    background-image: linear-gradient(var(--signal), var(--signal));
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-    background-size: 0% 2px;
-    transition: background-size 0.35s ease;
+  .float-c {
+    animation: float-c 8s ease-in-out infinite;
   }
 
-  .signal-underline:hover {
-    background-size: 100% 2px;
+  .wiggle-in {
+    animation: wiggle-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .pop-in {
+    animation: pop-in 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  }
+
+  .pop-in-delay {
+    animation: pop-in 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 0.12s both;
+  }
+
+  .pop-in-late {
+    animation: pop-in 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 0.24s both;
+  }
+
+  .marquee {
+    animation: marquee 28s linear infinite;
+  }
+
+  .btn-bounce {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn-bounce:hover {
+    transform: translateY(-3px) rotate(-1deg);
+    box-shadow: 4px 6px 0 var(--ink);
+  }
+
+  .btn-bounce:active {
+    transform: translateY(1px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+
+  .tilt-hover {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .tilt-hover:hover {
+    transform: rotate(-1.5deg) scale(1.01);
   }
 }
 
-@keyframes grid-drift {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-64px, 32px, 0);
-  }
-}
-
-@keyframes orbit-pulse {
+@keyframes float-a {
   0%,
   100% {
-    opacity: 0.35;
-    transform: scale(1);
+    transform: translateY(0) rotate(0deg);
   }
   50% {
-    opacity: 0.7;
-    transform: scale(1.03);
+    transform: translateY(-18px) rotate(4deg);
   }
 }
 
-@keyframes reveal-up {
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(14px) rotate(-6deg);
+  }
+}
+
+@keyframes float-c {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(10px, -12px) scale(1.05);
+  }
+}
+
+@keyframes wiggle-in {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(24px) rotate(-2deg);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) rotate(0);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-grid,
-  .hero-orbit,
-  .hero-orbit-delayed,
-  .reveal-up,
-  .reveal-up-delay,
-  .reveal-up-late {
+  .float-a,
+  .float-b,
+  .float-c,
+  .wiggle-in,
+  .pop-in,
+  .pop-in-delay,
+  .pop-in-late,
+  .marquee {
     animation: none !important;
+  }
+
+  .btn-bounce:hover,
+  .tilt-hover:hover {
+    transform: none;
   }
 }

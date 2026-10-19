@@ -4,65 +4,60 @@ import { games } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Games",
-  description:
-    "Structs, Coindroids, and Schemaverse—skill-based worlds from Slow Ninja.",
+  description: "Structs, Coindroids, and Schemaverse from Slow Ninja.",
 };
+
+const accents = ["bg-[var(--lime)]", "bg-[var(--sun)]", "bg-[var(--blush)]"];
 
 export default function GamesPage() {
   return (
-    <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-      <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.22em] text-[var(--signal)]">
+    <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+      <p className="font-mono-label text-xs font-bold tracking-[0.22em] text-[var(--coral)] uppercase">
         Games
       </p>
-      <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-display)] text-4xl font-bold tracking-tight text-[var(--paper)] md:text-6xl">
-        Three experiments in legible play
+      <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">
+        Three experiments in deliberately fun play
       </h1>
-      <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[var(--mist)]">
-        Each title pushes the same question further: what happens when the
-        rules of a game are systems players can actually inspect?
+      <p className="mt-5 max-w-2xl text-lg text-[var(--mist)]">
+        From SQL space fleets to on-chain galaxies—each title is a playground
+        with real rules under the hood.
       </p>
 
-      <div className="mt-16 space-y-16">
-        {games.map((game, index) => (
+      <div className="mt-14 space-y-6">
+        {games.map((game, i) => (
           <article
             key={game.slug}
-            className="grid gap-8 border-t border-[var(--line)] pt-12 md:grid-cols-[120px_1fr]"
+            className={`rounded-[2rem] border-2 border-[var(--ink)] p-8 shadow-[8px_8px_0_var(--ink)] md:p-10 ${accents[i % accents.length]}`}
           >
-            <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-[var(--copper)]">
-              0{index + 1}
+            <div className="flex flex-wrap items-baseline gap-3">
+              <h2 className="font-display text-3xl font-bold text-[var(--ink)] md:text-4xl">
+                {game.name}
+              </h2>
+              <span className="font-mono-label text-xs font-bold uppercase opacity-70">
+                {game.years}
+              </span>
+            </div>
+            <p className="mt-2 text-lg font-semibold text-[var(--ink)]/80">
+              {game.tagline}
             </p>
-            <div>
-              <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-                <h2 className="font-[family-name:var(--font-display)] text-3xl font-bold text-[var(--paper)] md:text-4xl">
-                  {game.name}
-                </h2>
-                <span className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.16em] text-[var(--mist)]">
-                  {game.years}
-                </span>
-              </div>
-              <p className="mt-2 text-[var(--signal)]">{game.tagline}</p>
-              <p className="mt-5 max-w-3xl text-base leading-relaxed text-[var(--mist)] md:text-lg">
-                {game.summary}
-              </p>
-              <p className="mt-4 font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.16em] text-[var(--copper)]">
-                {game.mechanic} · {game.status}
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <a
-                  href={game.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-sm bg-[var(--signal)] px-4 py-2.5 font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.14em] text-[var(--ink)] transition-transform hover:scale-[1.02]"
-                >
-                  Open {game.name}
-                </a>
-                <Link
-                  href="/journal"
-                  className="rounded-sm border border-[var(--line)] px-4 py-2.5 font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.14em] text-[var(--paper)] hover:border-[var(--signal)]"
-                >
-                  Related writing
-                </Link>
-              </div>
+            <p className="mt-4 max-w-3xl leading-relaxed text-[var(--ink)]/75">
+              {game.summary}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a
+                href={game.href}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-bounce rounded-full bg-[var(--ink)] px-5 py-3 text-sm font-bold text-[var(--lime)] shadow-[3px_3px_0_var(--coral)]"
+              >
+                Open {game.name}
+              </a>
+              <Link
+                href="/journal"
+                className="rounded-full border-2 border-[var(--ink)] bg-white/70 px-5 py-3 text-sm font-bold text-[var(--ink)]"
+              >
+                Related writing
+              </Link>
             </div>
           </article>
         ))}

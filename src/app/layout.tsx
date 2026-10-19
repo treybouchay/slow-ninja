@@ -1,34 +1,34 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Source_Sans_3, Syne } from "next/font/google";
+import { Fredoka, Manrope, Space_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
-const display = Syne({
+const display = Fredoka({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  weight: ["500", "600", "700"],
 });
 
-const body = Source_Sans_3({
+const body = Manrope({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const mono = IBM_Plex_Mono({
+const mono = Space_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Slow Ninja — Skill-based systems since 2014",
+    default: "Slow Ninja — Deliberately Fun",
     template: "%s · Slow Ninja",
   },
   description:
-    "Slow Ninja is a game studio building readable, skill-based worlds—Structs, Coindroids, and Schemaverse—with technical writing from the craft of making them.",
+    "Slow Ninja makes skill-based games with serious systems and a playful streak—Structs, Coindroids, Schemaverse, and a technical journal.",
   metadataBase: new URL("https://slow.ninja"),
 };
 
@@ -38,7 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${display.variable} ${body.variable} ${mono.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col font-[family-name:var(--font-body)]">
+      <body className="font-body flex min-h-full flex-col">
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
