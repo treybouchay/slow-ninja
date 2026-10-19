@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Suspense } from "react";
 import { BrandLogo } from "@/components/brand-logo";
 import { GamesTimeline } from "@/components/games-timeline";
 import { HeroField } from "@/components/hero-field";
@@ -37,7 +36,7 @@ export default function HomePage() {
               Launch Structs
             </a>
             <a
-              href="/?game=structs"
+              href="#games"
               className="btn-bounce rounded-full border-2 border-white/40 bg-white/10 px-6 py-3.5 text-sm font-bold text-white backdrop-blur hover:bg-white/20"
             >
               Scan catalog
@@ -46,15 +45,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Suspense
-        fallback={
-          <section className="bg-[#070d16] py-24 text-center text-white/50">
-            Loading catalog…
-          </section>
-        }
-      >
-        <GamesTimeline />
-      </Suspense>
+      <GamesTimeline />
 
       <section id="studio" className="scroll-mt-28 px-4 py-20 md:px-6 md:py-28">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border-2 border-[var(--ink)] bg-[var(--hull)] text-white shadow-[10px_10px_0_var(--lime)]">
