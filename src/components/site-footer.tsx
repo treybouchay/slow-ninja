@@ -10,7 +10,7 @@ export function SiteFooter() {
           <div>
             <BrandLogo size="footer" />
             <p className="mt-4 max-w-md text-white/65">
-              Deliberately fun sci-fi systems since 2014. Skill first, galaxies
+              Building games for the sentient since 2014. Skill first, galaxies
               you can peek into, vibes included.
             </p>
           </div>

@@ -20,7 +20,7 @@ export default function HomePage() {
             <h1 className="sr-only">Slow Ninja</h1>
           </div>
           <p className="pop-in-late mt-6 font-display text-[clamp(1.5rem,4.2vw,2.75rem)] font-extrabold tracking-tight text-[var(--lime)]">
-            Deliberately Fun
+            Building games for the sentient
           </p>
           <p className="pop-in-late mx-auto mt-6 max-w-xl text-lg leading-relaxed text-white/75 md:text-xl">
             Sci-fi playgrounds with serious systems—skill-based battles, SQL

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Studio",
-  description: "Slow Ninja — deliberately fun skill-based games since 2014.",
+  description: "Slow Ninja — building games for the sentient since 2014.",
 };
 
 export default function StudioPage() {
@@ -13,7 +13,7 @@ export default function StudioPage() {
         Studio
       </p>
       <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold text-[var(--ink)] md:text-6xl">
-        Deliberately fun since 2014
+        Building games for the sentient
       </h1>
       <p className="mt-5 max-w-2xl text-lg text-[var(--mist)]">
         We build skill-based worlds with inspectable systems—and we refuse to

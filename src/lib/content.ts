@@ -26,7 +26,7 @@ export const studio = {
   name: "Slow Ninja",
   url: "https://slow.ninja/",
   founded: "2014",
-  tagline: "Defining skill-based blockchain gaming since 2014",
+  tagline: "Building games for the sentient",
   pitch:
     "We build games as systems you can read—transactions as moves, SQL as a controller, on-chain state as truth.",
 };

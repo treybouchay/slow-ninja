@@ -25,7 +25,7 @@ const pixel = Press_Start_2P({
 
 export const metadata: Metadata = {
   title: {
-    default: "Slow Ninja — Deliberately Fun",
+    default: "Slow Ninja — Building games for the sentient",
     template: "%s · Slow Ninja",
   },
   description:
