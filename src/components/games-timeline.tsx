@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +14,18 @@ const INACTIVE_DESKTOP = 68;
 const ACTIVE_MOBILE = 180;
 const INACTIVE_MOBILE = 52;
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const apply = () => setMobile(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+  return mobile;
+}
+
 /**
  * Screenshot timeline that pans like the Figma frames:
  * click a neighbor → whole lane translateX-centers it while it grows
@@ -21,44 +33,38 @@ const INACTIVE_MOBILE = 52;
  */
 export function GamesTimeline() {
   const [active, setActive] = useState(games.length - 1);
-  const [slot, setSlot] = useState(SLOT_DESKTOP);
-  const [activeSize, setActiveSize] = useState(ACTIVE_DESKTOP);
-  const [inactiveSize, setInactiveSize] = useState(INACTIVE_DESKTOP);
   const [offset, setOffset] = useState(0);
+  const [ready, setReady] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const mobile = useIsMobile();
+  const slot = mobile ? SLOT_MOBILE : SLOT_DESKTOP;
+  const activeSize = mobile ? ACTIVE_MOBILE : ACTIVE_DESKTOP;
+  const inactiveSize = mobile ? INACTIVE_MOBILE : INACTIVE_DESKTOP;
   const current = games[active];
 
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const apply = () => {
-      const mobile = mq.matches;
-      setSlot(mobile ? SLOT_MOBILE : SLOT_DESKTOP);
-      setActiveSize(mobile ? ACTIVE_MOBILE : ACTIVE_DESKTOP);
-      setInactiveSize(mobile ? INACTIVE_MOBILE : INACTIVE_DESKTOP);
-    };
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
-
-  useLayoutEffect(() => {
+  const recenter = useCallback(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
-
-    const recenter = () => {
-      const vw = viewport.clientWidth;
-      // Center of active slot lands at viewport midpoint (Figma pan)
-      setOffset(vw / 2 - (active + 0.5) * slot);
-    };
-
-    recenter();
-    const ro = new ResizeObserver(recenter);
-    ro.observe(viewport);
-    return () => ro.disconnect();
+    const vw = viewport.clientWidth;
+    if (vw <= 0) return;
+    setOffset(vw / 2 - (active + 0.5) * slot);
+    setReady(true);
   }, [active, slot]);
 
+  useEffect(() => {
+    recenter();
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const ro = new ResizeObserver(() => recenter());
+    ro.observe(viewport);
+    window.addEventListener("resize", recenter);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", recenter);
+    };
+  }, [recenter]);
+
   const select = (index: number) => {
-    if (index === active) return;
     setActive(index);
   };
 
@@ -85,23 +91,27 @@ export function GamesTimeline() {
       {/* Sliding starlane — overflow clips off-screen neighbors like Figma */}
       <div
         ref={viewportRef}
-        className="relative mt-10 overflow-hidden md:mt-14"
+        className="relative z-10 mt-10 w-full overflow-hidden md:mt-14"
         style={{
-          minHeight: activeSize + 120,
+          minHeight: activeSize + 140,
         }}
       >
         <div
-          className="relative flex items-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+          className={cn(
+            "relative flex items-center will-change-transform",
+            ready &&
+              "transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          )}
           style={{
             width: trackWidth,
             transform: `translate3d(${offset}px, 0, 0)`,
-            minHeight: activeSize + 120,
+            minHeight: activeSize + 140,
           }}
         >
           {/* Line rides with the track */}
           <div
             aria-hidden
-            className="pointer-events-none absolute top-1/2 left-0 h-px -translate-y-1/2 bg-white/40"
+            className="pointer-events-none absolute top-1/2 left-0 z-0 h-px -translate-y-1/2 bg-white/40"
             style={{ width: trackWidth }}
           />
 
@@ -116,8 +126,9 @@ export function GamesTimeline() {
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => select(index)}
                 aria-pressed={selected}
-                className="relative z-10 flex shrink-0 flex-col items-center justify-center border-0 bg-transparent p-0 outline-none"
-                style={{ width: slot }}
+                aria-label={`Select ${game.name}`}
+                className="relative z-20 flex shrink-0 cursor-pointer flex-col items-center justify-center border-0 bg-transparent p-0 outline-none"
+                style={{ width: slot, minHeight: activeSize + 100 }}
               >
                 <span
                   className={cn(
@@ -131,7 +142,7 @@ export function GamesTimeline() {
                 </span>
 
                 <span
-                  className="relative block overflow-hidden rounded-full border-4 transition-[width,height,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  className="relative z-20 block overflow-hidden rounded-full border-4 transition-[width,height,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                   style={{
                     width: size,
                     height: size,
@@ -145,9 +156,9 @@ export function GamesTimeline() {
                 >
                   <Image
                     src={game.artwork}
-                    alt={game.name}
+                    alt=""
                     fill
-                    sizes={`${size}px`}
+                    sizes={`${Math.ceil(size)}px`}
                     className={cn(
                       "pointer-events-none object-cover transition-all duration-500",
                       selected ? "grayscale-0" : "grayscale-[45%]",
