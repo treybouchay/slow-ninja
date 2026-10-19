@@ -9,7 +9,7 @@ services:
   - name: web
     dockerfile_path: Dockerfile
     github:
-      repo: YOUR_GITHUB_ORG/slow-ninja
+      repo: treybouchay/slow-ninja
       branch: main
       deploy_on_push: true
     http_port: 3000
