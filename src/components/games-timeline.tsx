@@ -1,47 +1,68 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
+/** Center-to-center spacing from Figma (~494px). */
+const SLOT_DESKTOP = 494;
+const SLOT_MOBILE = 280;
+/** Active / inactive diameters from Figma (304 / 68). */
+const ACTIVE_DESKTOP = 304;
+const INACTIVE_DESKTOP = 68;
+const ACTIVE_MOBILE = 180;
+const INACTIVE_MOBILE = 52;
+
 /**
- * Horizontal timeline with circular game art.
- * Click grows the focus circle and slides the track — selection is local
- * state only, so the page never jumps to the top.
+ * Screenshot timeline that pans like the Figma frames:
+ * click a neighbor → whole lane translateX-centers it while it grows
+ * and the previous focus shrinks. No URL changes, no page jump.
  */
 export function GamesTimeline() {
   const [active, setActive] = useState(games.length - 1);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [slot, setSlot] = useState(SLOT_DESKTOP);
+  const [activeSize, setActiveSize] = useState(ACTIVE_DESKTOP);
+  const [inactiveSize, setInactiveSize] = useState(INACTIVE_DESKTOP);
+  const [offset, setOffset] = useState(0);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const current = games[active];
 
   useEffect(() => {
-    const track = trackRef.current;
-    const item = itemRefs.current[active];
-    if (!track || !item) return;
+    const mq = window.matchMedia("(max-width: 767px)");
+    const apply = () => {
+      const mobile = mq.matches;
+      setSlot(mobile ? SLOT_MOBILE : SLOT_DESKTOP);
+      setActiveSize(mobile ? ACTIVE_MOBILE : ACTIVE_DESKTOP);
+      setInactiveSize(mobile ? INACTIVE_MOBILE : INACTIVE_DESKTOP);
+    };
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
-    const center = () => {
-      const left =
-        item.offsetLeft - track.clientWidth / 2 + item.offsetWidth / 2;
-      track.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const recenter = () => {
+      const vw = viewport.clientWidth;
+      // Center of active slot lands at viewport midpoint (Figma pan)
+      setOffset(vw / 2 - (active + 0.5) * slot);
     };
 
-    // Track-only scroll after size transition — never window.scrollTo.
-    const id = window.requestAnimationFrame(center);
-    const mid = window.setTimeout(center, 280);
-    const end = window.setTimeout(center, 520);
-    return () => {
-      window.cancelAnimationFrame(id);
-      window.clearTimeout(mid);
-      window.clearTimeout(end);
-    };
-  }, [active]);
+    recenter();
+    const ro = new ResizeObserver(recenter);
+    ro.observe(viewport);
+    return () => ro.disconnect();
+  }, [active, slot]);
 
   const select = (index: number) => {
     if (index === active) return;
     setActive(index);
   };
+
+  const trackWidth = games.length * slot;
 
   return (
     <section
@@ -61,58 +82,62 @@ export function GamesTimeline() {
         </p>
       </div>
 
-      {/* Horizontal starlane */}
-      <div className="relative mt-10 md:mt-14">
+      {/* Sliding starlane — overflow clips off-screen neighbors like Figma */}
+      <div
+        ref={viewportRef}
+        className="relative mt-10 overflow-hidden md:mt-14"
+        style={{
+          minHeight: activeSize + 120,
+        }}
+      >
         <div
-          aria-hidden
-          className="pointer-events-none absolute top-[calc(50%-0.5rem)] right-0 left-0 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent"
-        />
-
-        <div
-          ref={trackRef}
-          className="flex min-h-[340px] items-center gap-8 overflow-x-auto scroll-smooth px-[calc(50%-8rem)] py-8 md:min-h-[420px] md:gap-10 md:px-[calc(50%-10rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="relative flex items-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+          style={{
+            width: trackWidth,
+            transform: `translate3d(${offset}px, 0, 0)`,
+            minHeight: activeSize + 120,
+          }}
         >
+          {/* Line rides with the track */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-1/2 left-0 h-px -translate-y-1/2 bg-white/40"
+            style={{ width: trackWidth }}
+          />
+
           {games.map((game, index) => {
             const selected = index === active;
+            const size = selected ? activeSize : inactiveSize;
+
             return (
               <button
                 key={game.slug}
-                ref={(el) => {
-                  itemRefs.current[index] = el;
-                }}
                 type="button"
-                // Block focus-scroll so resizing circles don't yank the page up
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => select(index)}
                 aria-pressed={selected}
-                className={cn(
-                  // Column width >= circle diameter so neighbors stay clickable
-                  "relative flex shrink-0 flex-col items-center gap-3 border-0 bg-transparent p-0 transition-all duration-500 ease-out",
-                  selected
-                    ? "z-10 w-60 md:w-72"
-                    : "z-20 w-36 opacity-55 hover:opacity-100 md:w-40",
-                )}
+                className="relative z-10 flex shrink-0 flex-col items-center justify-center border-0 bg-transparent p-0 outline-none"
+                style={{ width: slot }}
               >
                 <span
                   className={cn(
-                    "font-mono-label text-[8px] tracking-widest uppercase md:text-[9px]",
-                    selected ? "text-white" : "text-white/40",
+                    "font-mono-label tracking-widest uppercase transition-all duration-500",
+                    selected
+                      ? "mb-3 text-[9px] text-white md:text-[10px]"
+                      : "mb-2 text-[8px] text-white/45",
                   )}
                 >
                   {game.era}
                 </span>
 
                 <span
-                  className={cn(
-                    "relative block overflow-hidden rounded-full border-4 transition-all duration-500",
-                    selected
-                      ? "h-56 w-56 md:h-64 md:w-64"
-                      : "h-28 w-28 md:h-32 md:w-32",
-                  )}
+                  className="relative block overflow-hidden rounded-full border-4 transition-[width,height,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                   style={{
+                    width: size,
+                    height: size,
                     borderColor: selected
                       ? game.accent
-                      : "rgba(255,255,255,0.2)",
+                      : "rgba(255,255,255,0.25)",
                     boxShadow: selected
                       ? `0 0 48px ${game.accent}66`
                       : "none",
@@ -122,10 +147,10 @@ export function GamesTimeline() {
                     src={game.artwork}
                     alt={game.name}
                     fill
-                    sizes={selected ? "256px" : "128px"}
+                    sizes={`${size}px`}
                     className={cn(
                       "pointer-events-none object-cover transition-all duration-500",
-                      selected ? "grayscale-0" : "grayscale-[40%]",
+                      selected ? "grayscale-0" : "grayscale-[45%]",
                     )}
                     draggable={false}
                   />
@@ -135,8 +160,8 @@ export function GamesTimeline() {
                   className={cn(
                     "font-display text-center font-bold transition-all duration-500",
                     selected
-                      ? "text-xl text-white md:text-2xl"
-                      : "text-sm text-white/50",
+                      ? "mt-4 text-xl text-white md:text-2xl"
+                      : "mt-2 text-sm text-white/50",
                   )}
                 >
                   {game.name}
@@ -171,7 +196,6 @@ export function GamesTimeline() {
         </button>
       </div>
 
-      {/* Expanded dossier — updates in place */}
       <div
         key={current.slug}
         className="pop-in mx-auto mt-10 grid max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a1220] md:mt-14 md:grid-cols-[1.2fr_0.8fr]"
