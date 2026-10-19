@@ -12,7 +12,7 @@ const accents = ["bg-[var(--lime)]", "bg-white", "bg-[var(--cyan)]", "bg-[var(--
 export default function JournalPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-      <p className="font-mono-label text-xs font-bold tracking-[0.22em] text-[var(--coral)] uppercase">
+      <p className="font-mono-label text-[8px] tracking-widest md:text-[9px] text-[var(--coral)] uppercase">
         Journal
       </p>
       <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold text-[var(--ink)] md:text-6xl">
@@ -30,7 +30,7 @@ export default function JournalPage() {
               href={`/journal/${post.slug}`}
               className={`tilt-hover block h-full rounded-[1.75rem] border-2 border-[var(--ink)] p-6 shadow-[6px_6px_0_var(--ink)] md:p-8 ${accents[i % accents.length]}`}
             >
-              <p className="font-mono-label text-[10px] font-bold tracking-wide uppercase opacity-70">
+              <p className="font-mono-label text-[8px] tracking-wide uppercase opacity-70">
                 {post.date} · {post.readingTime}
               </p>
               <h2 className="font-display mt-3 text-2xl font-bold text-[var(--ink)]">

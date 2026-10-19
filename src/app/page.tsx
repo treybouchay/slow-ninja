@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
 import { HeroField } from "@/components/hero-field";
 import { games, journalPosts } from "@/lib/content";
 
@@ -21,13 +22,14 @@ export default function HomePage() {
       <section className="relative isolate min-h-[min(90vh,900px)] overflow-hidden px-4 pb-16 pt-10 md:px-6 md:pb-24 md:pt-14">
         <HeroField />
         <div className="relative mx-auto flex min-h-[min(74vh,740px)] max-w-6xl flex-col items-center justify-center text-center">
-          <p className="pop-in font-mono-label mb-5 rounded-full border border-[var(--cyan)]/40 bg-[var(--night)]/70 px-4 py-1.5 text-xs font-bold tracking-[0.22em] text-[var(--cyan)] uppercase backdrop-blur">
+          <p className="pop-in font-mono-label mb-6 rounded-full border border-[var(--cyan)]/40 bg-[var(--night)]/70 px-4 py-2 text-[8px] leading-none tracking-widest text-[var(--cyan)] uppercase backdrop-blur md:text-[9px]">
             Sector 2014 · Toronto uplink
           </p>
-          <h1 className="pop-in-delay font-display max-w-5xl text-[clamp(3.2rem,11vw,7.5rem)] leading-[0.92] font-bold tracking-tight text-white drop-shadow-[0_0_28px_rgba(77,226,232,0.25)]">
-            Slow Ninja
-          </h1>
-          <p className="pop-in-late mt-4 font-display text-[clamp(1.5rem,4.2vw,2.75rem)] font-semibold text-[var(--lime)]">
+          <div className="pop-in-delay drop-shadow-[0_0_40px_rgba(77,226,232,0.35)]">
+            <BrandLogo size="hero" href={null} priority />
+            <h1 className="sr-only">Slow Ninja</h1>
+          </div>
+          <p className="pop-in-late mt-6 font-display text-[clamp(1.5rem,4.2vw,2.75rem)] font-extrabold tracking-tight text-[var(--lime)]">
             Deliberately Fun
           </p>
           <p className="pop-in-late mx-auto mt-6 max-w-xl text-lg leading-relaxed text-white/75 md:text-xl">
@@ -69,7 +71,7 @@ export default function HomePage() {
 
       <section id="games" className="scroll-mt-28 px-4 py-20 md:px-6 md:py-28">
         <div className="mx-auto max-w-6xl">
-          <p className="font-mono-label text-xs font-bold tracking-[0.22em] text-[var(--cyan)] uppercase">
+          <p className="font-mono-label text-[8px] font-normal tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
             Active transmission
           </p>
           <div className="mt-6 grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
@@ -83,7 +85,7 @@ export default function HomePage() {
               <p className="mt-5 max-w-xl text-base leading-relaxed text-[var(--mist)] md:text-lg">
                 {featured.summary}
               </p>
-              <p className="mt-4 font-mono-label text-xs font-bold tracking-wide text-[var(--ink)] uppercase">
+              <p className="mt-4 font-mono-label text-[8px] leading-relaxed tracking-wide text-[var(--ink)] uppercase md:text-[9px]">
                 {featured.mechanic} · {featured.status}
               </p>
               <a
@@ -104,7 +106,7 @@ export default function HomePage() {
               <div className="float-a absolute top-[18%] left-[16%] h-16 w-16 rounded-full bg-[var(--lime)]" />
               <div className="float-b absolute right-[18%] bottom-[28%] h-12 w-12 rotate-12 rounded-xl bg-[var(--coral)]" />
               <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-                <p className="font-mono-label text-xs tracking-[0.3em] text-[var(--cyan)] uppercase">
+                <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase">
                   Protocol
                 </p>
                 <p className="font-display mt-2 text-5xl font-bold text-white md:text-6xl">
@@ -131,7 +133,7 @@ export default function HomePage() {
                 i === 0 ? "bg-[var(--cyan)]" : "bg-[var(--sun)]"
               }`}
             >
-              <p className="font-mono-label text-xs font-bold tracking-[0.18em] uppercase opacity-70">
+              <p className="font-mono-label text-[8px] tracking-widest uppercase opacity-70">
                 Archive // {game.years}
               </p>
               <h3 className="font-display mt-3 text-3xl font-bold text-[var(--ink)]">
@@ -152,7 +154,7 @@ export default function HomePage() {
             <div className="relative overflow-hidden p-8 md:p-12">
               <div className="space-grid absolute inset-0 opacity-30" />
               <div className="relative">
-                <p className="font-mono-label text-xs font-bold tracking-[0.22em] text-[var(--cyan)] uppercase">
+                <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
                   Studio / HQ
                 </p>
                 <h2 className="font-display mt-4 text-3xl font-bold md:text-5xl">
@@ -206,7 +208,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="font-mono-label text-xs font-bold tracking-[0.22em] text-[var(--cyan)] uppercase">
+              <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
                 Mission log
               </p>
               <h2 className="font-display mt-3 text-3xl font-bold text-[var(--ink)] md:text-5xl">
@@ -233,7 +235,7 @@ export default function HomePage() {
                       : "bg-[var(--cyan)]"
                 }`}
               >
-                <p className="font-mono-label text-[10px] font-bold tracking-wide uppercase opacity-70">
+                <p className="font-mono-label text-[7px] leading-relaxed tracking-wide uppercase opacity-70 md:text-[8px]">
                   {post.date} · {post.readingTime}
                 </p>
                 <h3 className="font-display mt-3 text-xl font-bold text-[var(--ink)]">

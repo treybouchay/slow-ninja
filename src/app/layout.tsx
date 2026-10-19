@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
-import { Fredoka, Manrope, Space_Mono } from "next/font/google";
+import { Inter, Inter_Tight, Press_Start_2P } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
-const display = Fredoka({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-});
-
-const body = Manrope({
+/* Match playstructs.com font stack: Inter, Inter Tight, Press Start 2P */
+const body = Inter({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const mono = Space_Mono({
+const display = Inter_Tight({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
+
+const pixel = Press_Start_2P({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -36,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable} h-full`}
+      className={`${display.variable} ${body.variable} ${pixel.variable} h-full`}
     >
       <body className="font-body flex min-h-full flex-col">
         <SiteHeader />

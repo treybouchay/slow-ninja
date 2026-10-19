@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function SiteFooter() {
   return (
@@ -7,11 +8,8 @@ export function SiteFooter() {
         <div className="space-grid pointer-events-none absolute inset-0 opacity-25" />
         <div className="relative grid gap-10 md:grid-cols-[1.4fr_1fr]">
           <div>
-            <p className="font-display text-3xl font-bold">
-              Slow Ninja
-              <span className="ml-2 inline-block h-3 w-3 rounded-full bg-[var(--cyan)] shadow-[0_0_12px_var(--cyan)]" />
-            </p>
-            <p className="mt-3 max-w-md text-white/65">
+            <BrandLogo size="footer" />
+            <p className="mt-4 max-w-md text-white/65">
               Deliberately fun sci-fi systems since 2014. Skill first, galaxies
               you can peek into, vibes included.
             </p>
@@ -56,7 +54,7 @@ export function SiteFooter() {
             </div>
           </div>
         </div>
-        <p className="font-mono-label mt-10 text-xs tracking-wide text-white/40">
+        <p className="font-mono-label relative mt-10 text-[8px] leading-relaxed tracking-wide text-white/40 md:text-[9px]">
           © 2026 Slow Ninja Inc. · Built with deliberate haste
         </p>
       </div>

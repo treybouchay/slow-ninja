@@ -12,7 +12,7 @@ const accents = ["bg-[var(--lime)]", "bg-[var(--cyan)]", "bg-[var(--sun)]"];
 export default function GamesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-      <p className="font-mono-label text-xs font-bold tracking-[0.22em] text-[var(--coral)] uppercase">
+      <p className="font-mono-label text-[8px] tracking-widest md:text-[9px] text-[var(--coral)] uppercase">
         Games
       </p>
       <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">
@@ -33,7 +33,7 @@ export default function GamesPage() {
               <h2 className="font-display text-3xl font-bold text-[var(--ink)] md:text-4xl">
                 {game.name}
               </h2>
-              <span className="font-mono-label text-xs font-bold uppercase opacity-70">
+              <span className="font-mono-label text-[8px] uppercase md:text-[9px] opacity-70">
                 {game.years}
               </span>
             </div>

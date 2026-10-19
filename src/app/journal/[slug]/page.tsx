@@ -34,7 +34,7 @@ export default async function JournalPostPage({ params }: Props) {
         ← Journal
       </Link>
       <div className="mt-8 rounded-[2rem] border-2 border-[var(--ink)] bg-[var(--lime)] p-8 shadow-[8px_8px_0_var(--ink)] md:p-10">
-        <p className="font-mono-label text-xs font-bold tracking-wide uppercase opacity-70">
+        <p className="font-mono-label text-[8px] tracking-wide uppercase md:text-[9px] opacity-70">
           {post.date} · {post.readingTime}
         </p>
         <h1 className="font-display mt-3 text-3xl font-bold text-[var(--ink)] md:text-5xl">

@@ -133,7 +133,8 @@
   }
 
   .font-mono-label {
-    font-family: var(--font-mono), ui-monospace, monospace;
+    font-family: var(--font-mono), "Press Start 2P", ui-monospace, monospace;
+    line-height: 1.6;
   }
 
   .space-grid {

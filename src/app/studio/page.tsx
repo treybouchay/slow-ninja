@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function StudioPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-      <p className="font-mono-label text-xs font-bold tracking-[0.22em] text-[var(--coral)] uppercase">
+      <p className="font-mono-label text-[8px] tracking-widest md:text-[9px] text-[var(--coral)] uppercase">
         Studio
       </p>
       <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold text-[var(--ink)] md:text-6xl">
@@ -52,7 +52,7 @@ export default function StudioPage() {
 
       <ol className="mt-16 space-y-6 border-l-4 border-[var(--ink)] pl-6">
         <li>
-          <p className="font-mono-label text-xs font-bold uppercase text-[var(--coral)]">
+          <p className="font-mono-label text-[8px] uppercase md:text-[9px] text-[var(--coral)]">
             2010
           </p>
           <p className="mt-1 font-semibold text-[var(--ink)]">
@@ -60,7 +60,7 @@ export default function StudioPage() {
           </p>
         </li>
         <li>
-          <p className="font-mono-label text-xs font-bold uppercase text-[var(--coral)]">
+          <p className="font-mono-label text-[8px] uppercase md:text-[9px] text-[var(--coral)]">
             2014
           </p>
           <p className="mt-1 font-semibold text-[var(--ink)]">
@@ -69,7 +69,7 @@ export default function StudioPage() {
           </p>
         </li>
         <li>
-          <p className="font-mono-label text-xs font-bold uppercase text-[var(--coral)]">
+          <p className="font-mono-label text-[8px] uppercase md:text-[9px] text-[var(--coral)]">
             Now
           </p>
           <p className="mt-1 font-semibold text-[var(--ink)]">
