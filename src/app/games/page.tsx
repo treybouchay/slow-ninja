@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function GamesPage() {
   return (
-    <div className="pb-8">
+    <div className="bg-[#070d16] pb-8">
       <GamesTimeline />
     </div>
   );

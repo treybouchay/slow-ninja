@@ -118,7 +118,7 @@ function TimelineCard({
         active
           ? {
               borderColor: game.accent,
-              boxShadow: `8px 8px 0 ${game.accent}`,
+              boxShadow: `0 0 0 1px ${game.accent}, 0 12px 40px rgba(0,0,0,0.55)`,
             }
           : undefined
       }
@@ -126,7 +126,7 @@ function TimelineCard({
     >
       <div
         className={cn(
-          "relative overflow-hidden bg-[var(--hull)] transition-all duration-500",
+          "relative overflow-hidden bg-[#0a1220] transition-all duration-500",
           active ? "aspect-[16/10]" : "aspect-[4/5]",
         )}
       >
@@ -175,13 +175,12 @@ function TimelineCard({
 function ExpandedProject({ game }: { game: Game }) {
   return (
     <div
-      className="grid overflow-hidden rounded-[1.75rem] border-2 bg-[var(--hull)] md:grid-cols-[1.15fr_0.85fr]"
+      className="grid overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a1220] md:grid-cols-[1.15fr_0.85fr]"
       style={{
-        borderColor: game.accent,
-        boxShadow: `10px 10px 0 ${game.accent}`,
+        boxShadow: `inset 0 0 0 1px ${game.accent}33, 0 20px 60px rgba(0,0,0,0.45)`,
       }}
     >
-      <div className="relative min-h-[240px] md:min-h-[360px]">
+      <div className="relative min-h-[240px] border-b border-white/10 md:min-h-[360px] md:border-r md:border-b-0">
         <Image
           src={game.artwork}
           alt={`${game.name} artwork`}
@@ -190,13 +189,13 @@ function ExpandedProject({ game }: { game: Game }) {
           sizes="(max-width: 768px) 100vw, 60vw"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30" />
-        <div className="absolute bottom-4 left-4 rounded-full bg-black/55 px-3 py-1.5 font-mono-label text-[8px] tracking-widest text-white uppercase backdrop-blur">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#070d16]/80 via-transparent to-[#070d16]/40" />
+        <div className="absolute bottom-4 left-4 rounded-full border border-white/10 bg-[#070d16]/80 px-3 py-1.5 font-mono-label text-[8px] tracking-widest text-white uppercase backdrop-blur">
           {game.years}
         </div>
       </div>
 
-      <div className="flex flex-col justify-center p-6 md:p-10">
+      <div className="flex flex-col justify-center bg-[#0a1220] p-6 md:p-10">
         <p
           className="font-mono-label text-[8px] tracking-widest uppercase md:text-[9px]"
           style={{ color: game.accent }}
@@ -217,10 +216,10 @@ function ExpandedProject({ game }: { game: Game }) {
           href={game.href}
           target="_blank"
           rel="noreferrer"
-          className="btn-bounce mt-8 inline-flex w-fit rounded-full px-6 py-3.5 text-sm font-bold text-[var(--ink)]"
+          className="btn-bounce mt-8 inline-flex w-fit rounded-full border border-white/10 px-6 py-3.5 text-sm font-bold text-[var(--ink)]"
           style={{
             background: game.accent,
-            boxShadow: "4px 4px 0 rgba(255,255,255,0.25)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
           }}
         >
           Explore more →
