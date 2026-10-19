@@ -3,15 +3,6 @@ import { BrandLogo } from "@/components/brand-logo";
 import { HeroField } from "@/components/hero-field";
 import { games, journalPosts } from "@/lib/content";
 
-const chips = [
-  "Skill-based systems",
-  "On-chain galaxies",
-  "SQL space wars",
-  "Alpha Matter ops",
-  "DEF CON DNA",
-  "Player-run fleets",
-];
-
 export default function HomePage() {
   const featured = games[0];
   const others = games.slice(1);
@@ -54,20 +45,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <div className="overflow-hidden border-y-2 border-[var(--ink)] bg-[var(--night)] py-3">
-        <div className="marquee flex w-max gap-8 whitespace-nowrap">
-          {[...chips, ...chips].map((chip, i) => (
-            <span
-              key={`${chip}-${i}`}
-              className="font-display text-lg font-bold text-[var(--lime)] md:text-xl"
-            >
-              {chip}
-              <span className="mx-8 text-[var(--cyan)]">◈</span>
-            </span>
-          ))}
-        </div>
-      </div>
 
       <section id="games" className="scroll-mt-28 px-4 py-20 md:px-6 md:py-28">
         <div className="mx-auto max-w-6xl">
@@ -211,13 +188,13 @@ export default function HomePage() {
               <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
                 Mission log
               </p>
-              <h2 className="font-display mt-3 text-3xl font-bold text-[var(--ink)] md:text-5xl">
+              <h2 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
                 Notes from the machine room
               </h2>
             </div>
             <Link
               href="/journal"
-              className="font-bold text-[var(--ink)] hover:text-[var(--cyan)]"
+              className="font-bold text-white/80 hover:text-[var(--cyan)]"
             >
               All logs →
             </Link>
