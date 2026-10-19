@@ -7,8 +7,13 @@ import { useSearchParams } from "next/navigation";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
+function gameHref(slug: string) {
+  return `/?game=${slug}`;
+}
+
 export function GamesTimeline() {
   const params = useSearchParams();
+  const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
@@ -32,12 +37,19 @@ export function GamesTimeline() {
     };
 
     center();
-    const t = window.setTimeout(center, 320);
+    const t = window.setTimeout(center, 350);
     return () => window.clearTimeout(t);
   }, [active]);
 
+  useEffect(() => {
+    // Keep the catalog in view when switching games via query param
+    if (!params.get("game")) return;
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [active, params]);
+
   return (
     <section
+      ref={sectionRef}
       id="games"
       className="scroll-mt-28 bg-[#070d16] py-16 md:py-28"
     >
@@ -53,14 +65,13 @@ export function GamesTimeline() {
         </p>
       </div>
 
-      {/* Plain links — always clickable */}
       <div className="mx-auto mt-8 flex max-w-6xl flex-wrap items-center justify-center gap-3 px-4 md:px-6">
         {games.map((game) => {
           const selected = game.slug === current.slug;
           return (
             <Link
               key={`tab-${game.slug}`}
-              href={`/?game=${game.slug}#games`}
+              href={gameHref(game.slug)}
               scroll={false}
               className={cn(
                 "rounded-full px-4 py-2 text-sm font-bold transition",
@@ -77,7 +88,7 @@ export function GamesTimeline() {
 
       <div
         ref={trackRef}
-        className="mt-8 flex min-h-[300px] items-center gap-12 overflow-x-auto scroll-smooth px-[calc(50%-5rem)] py-10 md:min-h-[380px] md:gap-16 md:px-[calc(50%-7rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="mt-8 flex min-h-[320px] items-center gap-8 overflow-x-auto scroll-smooth px-[calc(50%-7rem)] py-10 md:min-h-[400px] md:gap-10 md:px-[calc(50%-9rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {games.map((game, index) => {
           const selected = index === active;
@@ -87,13 +98,14 @@ export function GamesTimeline() {
               ref={(el) => {
                 itemRefs.current[index] = el;
               }}
-              href={`/?game=${game.slug}#games`}
+              href={gameHref(game.slug)}
               scroll={false}
               className={cn(
-                "flex shrink-0 flex-col items-center gap-3 transition-all duration-500",
+                // Column must be at least as wide as the circle so neighbors stay clickable
+                "relative z-10 flex shrink-0 flex-col items-center gap-3 transition-all duration-500",
                 selected
-                  ? "w-48 scale-100 md:w-60"
-                  : "w-28 scale-90 opacity-55 hover:opacity-90 md:w-32",
+                  ? "w-56 md:w-64"
+                  : "z-20 w-32 opacity-60 hover:opacity-100 md:w-36",
               )}
             >
               <span
@@ -109,8 +121,8 @@ export function GamesTimeline() {
                 className={cn(
                   "relative block overflow-hidden rounded-full border-4 transition-all duration-500",
                   selected
-                    ? "h-44 w-44 md:h-56 md:w-56"
-                    : "h-24 w-24 md:h-28 md:w-28",
+                    ? "h-52 w-52 md:h-60 md:w-60"
+                    : "h-28 w-28 md:h-32 md:w-32",
                 )}
                 style={{
                   borderColor: selected ? game.accent : "rgba(255,255,255,0.2)",
@@ -121,11 +133,11 @@ export function GamesTimeline() {
                   src={game.artwork}
                   alt={game.name}
                   fill
+                  sizes={selected ? "240px" : "128px"}
                   className={cn(
-                    "object-cover transition-all duration-500",
+                    "pointer-events-none object-cover transition-all duration-500",
                     selected ? "grayscale-0" : "grayscale-[40%]",
                   )}
-                  sizes={selected ? "224px" : "112px"}
                 />
               </span>
 
@@ -134,7 +146,7 @@ export function GamesTimeline() {
                   "font-display text-center font-bold",
                   selected
                     ? "text-xl text-white md:text-2xl"
-                    : "text-sm text-white/50",
+                    : "text-sm text-white/55",
                 )}
               >
                 {game.name}
@@ -147,7 +159,7 @@ export function GamesTimeline() {
       <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between px-4 md:px-6">
         {active > 0 ? (
           <Link
-            href={`/?game=${games[active - 1].slug}#games`}
+            href={gameHref(games[active - 1].slug)}
             scroll={false}
             className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:border-[var(--cyan)]"
           >
@@ -163,7 +175,7 @@ export function GamesTimeline() {
         </span>
         {active < games.length - 1 ? (
           <Link
-            href={`/?game=${games[active + 1].slug}#games`}
+            href={gameHref(games[active + 1].slug)}
             scroll={false}
             className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:border-[var(--lime)]"
           >
@@ -185,11 +197,11 @@ export function GamesTimeline() {
             src={current.artwork}
             alt={current.name}
             fill
-            className="object-cover"
+            className="pointer-events-none object-cover"
             sizes="(max-width:768px) 100vw, 60vw"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a1220]/70" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-[#0a1220]/70" />
         </div>
         <div className="flex flex-col justify-center p-6 md:p-10">
           <p

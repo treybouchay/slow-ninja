@@ -37,7 +37,7 @@ export default function HomePage() {
               Launch Structs
             </a>
             <a
-              href="/?game=structs#games"
+              href="/?game=structs"
               className="btn-bounce rounded-full border-2 border-white/40 bg-white/10 px-6 py-3.5 text-sm font-bold text-white backdrop-blur hover:bg-white/20"
             >
               Scan catalog
