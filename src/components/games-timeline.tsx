@@ -5,14 +5,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-/** Center-to-center spacing from Figma (~494px). */
-const SLOT_DESKTOP = 494;
-const SLOT_MOBILE = 280;
-/** Active / inactive diameters from Figma (304 / 68). */
-const ACTIVE_DESKTOP = 304;
-const INACTIVE_DESKTOP = 68;
-const ACTIVE_MOBILE = 180;
-const INACTIVE_MOBILE = 52;
+/** Tighter center-to-center spacing (was ~494). */
+const SLOT_DESKTOP = 236;
+const SLOT_MOBILE = 152;
+/** Active grows; neighbors stay small. */
+const ACTIVE_DESKTOP = 220;
+const INACTIVE_DESKTOP = 64;
+const ACTIVE_MOBILE = 148;
+const INACTIVE_MOBILE = 48;
 
 function useIsMobile() {
   const [mobile, setMobile] = useState(false);
@@ -27,20 +27,23 @@ function useIsMobile() {
 }
 
 /**
- * Screenshot timeline that pans like the Figma frames:
- * click a neighbor → whole lane translateX-centers it while it grows
- * and the previous focus shrinks. No URL changes, no page jump.
+ * Circles stay minimized until the timeline scrolls into view, then the
+ * focused game expands and the lane pans. Click another bubble to refocus.
  */
 export function GamesTimeline() {
   const [active, setActive] = useState(games.length - 1);
   const [offset, setOffset] = useState(0);
   const [ready, setReady] = useState(false);
+  /** True once the starlane is on screen — unlocks the expanded focus state. */
+  const [inView, setInView] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const mobile = useIsMobile();
   const slot = mobile ? SLOT_MOBILE : SLOT_DESKTOP;
   const activeSize = mobile ? ACTIVE_MOBILE : ACTIVE_DESKTOP;
   const inactiveSize = mobile ? INACTIVE_MOBILE : INACTIVE_DESKTOP;
   const current = games[active];
+  const expanded = inView;
 
   const recenter = useCallback(() => {
     const viewport = viewportRef.current;
@@ -64,14 +67,31 @@ export function GamesTimeline() {
     };
   }, [recenter]);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting && entry.intersectionRatio >= 0.28);
+      },
+      { threshold: [0, 0.28, 0.45, 0.7], rootMargin: "-8% 0px -12% 0px" },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   const select = (index: number) => {
     setActive(index);
+    if (!inView) setInView(true);
   };
 
   const trackWidth = games.length * slot;
 
   return (
     <section
+      ref={sectionRef}
       id="games"
       className="scroll-mt-28 bg-[#070d16] py-16 md:py-28"
     >
@@ -83,12 +103,11 @@ export function GamesTimeline() {
           Browse the catalog
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
-          Click a circle—the lane slides to focus it and opens the dossier
-          below. Your place on the page stays put.
+          Scroll to wake the lane—then click a circle to focus it. Your place
+          on the page stays put.
         </p>
       </div>
 
-      {/* Sliding starlane — overflow clips off-screen neighbors like Figma */}
       <div
         ref={viewportRef}
         className="relative z-10 mt-10 w-full overflow-hidden md:mt-14"
@@ -108,7 +127,6 @@ export function GamesTimeline() {
             minHeight: activeSize + 140,
           }}
         >
-          {/* Line rides with the track */}
           <div
             aria-hidden
             className="pointer-events-none absolute top-1/2 left-0 z-0 h-px -translate-y-1/2 bg-white/40"
@@ -116,7 +134,7 @@ export function GamesTimeline() {
           />
 
           {games.map((game, index) => {
-            const selected = index === active;
+            const selected = expanded && index === active;
             const size = selected ? activeSize : inactiveSize;
 
             return (
@@ -142,7 +160,7 @@ export function GamesTimeline() {
                 </span>
 
                 <span
-                  className="relative z-20 block overflow-hidden rounded-full border-4 transition-[width,height,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  className="relative z-20 block overflow-hidden rounded-full border-4 transition-[width,height,box-shadow,border-color,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                   style={{
                     width: size,
                     height: size,
@@ -152,13 +170,14 @@ export function GamesTimeline() {
                     boxShadow: selected
                       ? `0 0 48px ${game.accent}66`
                       : "none",
+                    opacity: expanded ? 1 : 0.72,
                   }}
                 >
                   <Image
                     src={game.artwork}
                     alt=""
                     fill
-                    sizes={`${Math.ceil(size)}px`}
+                    sizes={`${Math.ceil(activeSize)}px`}
                     className={cn(
                       "pointer-events-none object-cover transition-all duration-500",
                       selected ? "grayscale-0" : "grayscale-[45%]",
@@ -187,7 +206,10 @@ export function GamesTimeline() {
         <button
           type="button"
           onMouseDown={(e) => e.preventDefault()}
-          onClick={() => setActive((i) => Math.max(0, i - 1))}
+          onClick={() => {
+            setActive((i) => Math.max(0, i - 1));
+            if (!inView) setInView(true);
+          }}
           disabled={active === 0}
           className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:border-[var(--cyan)] disabled:opacity-30"
         >
@@ -199,7 +221,10 @@ export function GamesTimeline() {
         <button
           type="button"
           onMouseDown={(e) => e.preventDefault()}
-          onClick={() => setActive((i) => Math.min(games.length - 1, i + 1))}
+          onClick={() => {
+            setActive((i) => Math.min(games.length - 1, i + 1));
+            if (!inView) setInView(true);
+          }}
           disabled={active === games.length - 1}
           className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:border-[var(--lime)] disabled:opacity-30"
         >
@@ -209,7 +234,10 @@ export function GamesTimeline() {
 
       <div
         key={current.slug}
-        className="pop-in mx-auto mt-10 grid max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a1220] md:mt-14 md:grid-cols-[1.2fr_0.8fr]"
+        className={cn(
+          "pop-in mx-auto mt-10 grid max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a1220] transition-opacity duration-500 md:mt-14 md:grid-cols-[1.2fr_0.8fr]",
+          expanded ? "opacity-100" : "opacity-40",
+        )}
         style={{ boxShadow: `0 0 0 1px ${current.accent}44` }}
       >
         <div className="relative min-h-[280px] md:min-h-[440px]">
