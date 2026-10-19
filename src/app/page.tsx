@@ -19,10 +19,10 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative isolate min-h-[min(90vh,900px)] overflow-hidden px-4 pb-16 pt-10 md:px-6 md:pb-24 md:pt-14">
+      <section className="relative isolate min-h-[min(90vh,900px)] overflow-hidden bg-[#070d16] px-4 pb-16 pt-10 md:px-6 md:pb-24 md:pt-14">
         <HeroField />
         <div className="relative mx-auto flex min-h-[min(74vh,740px)] max-w-6xl flex-col items-center justify-center text-center">
-          <p className="pop-in font-mono-label mb-6 rounded-full border border-[var(--cyan)]/40 bg-[var(--night)]/70 px-4 py-2 text-[8px] leading-none tracking-widest text-[var(--cyan)] uppercase backdrop-blur md:text-[9px]">
+          <p className="pop-in font-mono-label mb-6 rounded-full border border-[var(--cyan)]/40 bg-black/40 px-4 py-2 text-[8px] leading-none tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
             Sector 2014 · Toronto uplink
           </p>
           <div className="pop-in-delay drop-shadow-[0_0_40px_rgba(77,226,232,0.35)]">
@@ -76,23 +76,23 @@ export default function HomePage() {
           </p>
           <div className="mt-6 grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             <div>
-              <h2 className="font-display text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">
+              <h2 className="font-display text-4xl font-bold tracking-tight text-white md:text-6xl">
                 {featured.name}
               </h2>
-              <p className="mt-3 text-xl font-semibold text-[var(--mist)]">
+              <p className="mt-3 text-xl font-semibold text-white/70">
                 {featured.tagline}
               </p>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-[var(--mist)] md:text-lg">
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/60 md:text-lg">
                 {featured.summary}
               </p>
-              <p className="mt-4 font-mono-label text-[8px] leading-relaxed tracking-wide text-[var(--ink)] uppercase md:text-[9px]">
+              <p className="mt-4 font-mono-label text-[8px] leading-relaxed tracking-wide text-[var(--lime)] uppercase md:text-[9px]">
                 {featured.mechanic} · {featured.status}
               </p>
               <a
                 href={featured.href}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-bounce mt-8 inline-flex rounded-full bg-[var(--ink)] px-6 py-3.5 text-sm font-bold text-[var(--cyan)] shadow-[4px_4px_0_var(--lime)]"
+                className="btn-bounce mt-8 inline-flex rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]"
               >
                 Enter the galaxy →
               </a>

@@ -62,8 +62,8 @@
   --night: #07101c;
   --hull: #121c2e;
 
-  --background: var(--paper);
-  --foreground: var(--ink);
+  --background: #0a1220;
+  --foreground: var(--paper);
   --card: #ffffff;
   --card-foreground: var(--ink);
   --popover: #ffffff;
@@ -107,14 +107,14 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    background-color: var(--paper);
+    background-color: #0a1220;
     background-image:
-      radial-gradient(ellipse 90% 55% at 8% -8%, color-mix(in oklab, var(--cyan) 28%, transparent), transparent),
-      radial-gradient(ellipse 70% 45% at 100% 0%, color-mix(in oklab, var(--lime) 22%, transparent), transparent),
-      radial-gradient(ellipse 50% 35% at 70% 100%, color-mix(in oklab, var(--coral) 14%, transparent), transparent),
-      linear-gradient(180deg, #eef3fb 0%, var(--paper) 40%, #e4ebf6 100%);
+      radial-gradient(ellipse 80% 50% at 10% 0%, color-mix(in oklab, var(--cyan) 12%, transparent), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 10%, color-mix(in oklab, var(--lime) 8%, transparent), transparent),
+      linear-gradient(180deg, #070d16 0%, #0a1220 35%, #101a2a 100%);
     background-attachment: fixed;
     min-height: 100vh;
+    color: var(--paper);
   }
 
   ::selection {
