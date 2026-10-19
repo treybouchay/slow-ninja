@@ -43,7 +43,7 @@ function circleSize(
   return expanded && index === active ? activeSize : inactiveSize;
 }
 
-export function GamesTimeline() {
+export function StarlaneView() {
   const [active, setActive] = useState(games.length - 1);
   const [offset, setOffset] = useState(0);
   const [ready, setReady] = useState(false);
