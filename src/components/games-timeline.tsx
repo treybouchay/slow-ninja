@@ -1,106 +1,161 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { games } from "@/lib/content";
+import { useEffect, useRef, useState } from "react";
+import { games, type Game } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 /**
- * Working timeline version — pan + grow/shrink animation verified.
- * Circles wake when the section enters view. Starlane segments stop at
- * each circle edge and never run past the last bubble. Dossier card
- * below updates in place with the focused game.
+ * Catalog experiment: three titles as physical game boxes on a shelf.
+ * Click a box to pull it out like a cartridge; the others stay seated.
+ * Starlane snapshot archived at catalog/games-timeline.starlane.tsx
+ * (tag: timeline-starlane-v1).
  */
 
-/** Tighter center-to-center spacing. */
-const SLOT_DESKTOP = 236;
-const SLOT_MOBILE = 152;
-/** Active grows; neighbors stay small. */
-const ACTIVE_DESKTOP = 220;
-const INACTIVE_DESKTOP = 64;
-const ACTIVE_MOBILE = 148;
-const INACTIVE_MOBILE = 48;
+const CART_W = {
+  idle: "w-[7.5rem] md:w-40",
+  pulled: "w-[9.5rem] md:w-52",
+};
 
-function useIsMobile() {
-  const [mobile, setMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const apply = () => setMobile(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
-  return mobile;
-}
+function Cartridge({
+  game,
+  pulled,
+  seated,
+  onSelect,
+}: {
+  game: Game;
+  pulled: boolean;
+  seated: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={onSelect}
+      aria-pressed={pulled}
+      aria-label={`${pulled ? "Reseat" : "Pull out"} ${game.name}`}
+      className={cn(
+        "group relative flex shrink-0 flex-col items-center border-0 bg-transparent p-0 outline-none transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        pulled
+          ? "-translate-y-10 scale-105 md:-translate-y-14 md:scale-110"
+          : seated
+            ? "translate-y-3 opacity-70 hover:translate-y-1 hover:opacity-100"
+            : "translate-y-0",
+      )}
+    >
+      {/* Slot shadow on the shelf */}
+      <span
+        aria-hidden
+        className={cn(
+          "absolute -bottom-3 h-3 w-[85%] rounded-[100%] bg-black/50 blur-md transition-all duration-500",
+          pulled ? "scale-75 opacity-40" : "scale-100 opacity-80",
+        )}
+      />
 
-function circleSize(
-  index: number,
-  active: number,
-  expanded: boolean,
-  activeSize: number,
-  inactiveSize: number,
-) {
-  return expanded && index === active ? activeSize : inactiveSize;
+      {/* Cartridge body */}
+      <span
+        className={cn(
+          "relative block overflow-hidden rounded-sm border-2 bg-[#0a1220] shadow-[6px_10px_0_rgba(0,0,0,0.45)] transition-all duration-500",
+          pulled ? CART_W.pulled : CART_W.idle,
+          pulled ? "h-56 md:h-72" : "h-48 md:h-60",
+        )}
+        style={{
+          borderColor: pulled ? game.accent : "rgba(255,255,255,0.18)",
+          boxShadow: pulled
+            ? `6px 14px 0 rgba(0,0,0,0.5), 0 0 36px ${game.accent}55`
+            : undefined,
+        }}
+      >
+        {/* Left plastic spine / ridge */}
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 z-20 flex w-4 flex-col justify-between border-r border-black/40 py-3 md:w-5"
+          style={{
+            background: `linear-gradient(90deg, color-mix(in oklab, ${game.accent} 55%, #0b1220), #152033)`,
+          }}
+        >
+          <span className="mx-auto h-8 w-1 rounded-full bg-black/35" />
+          <span
+            className="mx-auto origin-center -rotate-180 font-mono-label text-[6px] tracking-widest text-[var(--ink)] uppercase md:text-[7px]"
+            style={{ writingMode: "vertical-rl" }}
+          >
+            {game.era}
+          </span>
+          <span className="mx-auto h-8 w-1 rounded-full bg-black/35" />
+        </span>
+
+        {/* Cover art */}
+        <span className="absolute inset-0 left-4 md:left-5">
+          <Image
+            src={game.artwork}
+            alt=""
+            fill
+            sizes="220px"
+            className={cn(
+              "pointer-events-none object-cover transition-all duration-500",
+              pulled ? "grayscale-0" : "grayscale-[30%]",
+            )}
+            draggable={false}
+          />
+          <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+        </span>
+
+        {/* Label plate at bottom of cart */}
+        <span className="absolute right-2 bottom-2 left-6 z-10 rounded-sm border border-white/10 bg-black/70 px-2 py-1.5 backdrop-blur-sm md:left-7">
+          <span className="font-mono-label block text-[6px] tracking-widest text-white/50 uppercase md:text-[7px]">
+            Slow Ninja · {game.era}
+          </span>
+          <span className="font-display mt-0.5 block text-sm font-bold text-white md:text-base">
+            {game.name}
+          </span>
+        </span>
+
+        {/* Pull tab notch */}
+        <span
+          aria-hidden
+          className="absolute top-2 right-2 z-10 h-2 w-6 rounded-sm border border-white/20 bg-white/10"
+        />
+      </span>
+
+      <span
+        className={cn(
+          "font-mono-label mt-4 text-[8px] tracking-widest uppercase transition-colors duration-300",
+          pulled ? "text-white" : "text-white/35 group-hover:text-white/70",
+        )}
+        style={pulled ? { color: game.accent } : undefined}
+      >
+        {pulled ? "▲ seated / pull" : "▼ pull cart"}
+      </span>
+    </button>
+  );
 }
 
 export function GamesTimeline() {
-  const [active, setActive] = useState(games.length - 1);
-  const [offset, setOffset] = useState(0);
-  const [ready, setReady] = useState(false);
-  /** True once the starlane is on screen — unlocks the expanded focus state. */
-  const [inView, setInView] = useState(false);
+  const [active, setActive] = useState<number | null>(games.length - 1);
+  const [awake, setAwake] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const mobile = useIsMobile();
-  const slot = mobile ? SLOT_MOBILE : SLOT_DESKTOP;
-  const activeSize = mobile ? ACTIVE_MOBILE : ACTIVE_DESKTOP;
-  const inactiveSize = mobile ? INACTIVE_MOBILE : INACTIVE_DESKTOP;
-  const current = games[active];
-  const expanded = inView;
-
-  const recenter = useCallback(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    const vw = viewport.clientWidth;
-    if (vw <= 0) return;
-    setOffset(vw / 2 - (active + 0.5) * slot);
-    setReady(true);
-  }, [active, slot]);
-
-  useEffect(() => {
-    recenter();
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    const ro = new ResizeObserver(() => recenter());
-    ro.observe(viewport);
-    window.addEventListener("resize", recenter);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", recenter);
-    };
-  }, [recenter]);
+  const current = active !== null ? games[active] : null;
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setInView(entry.isIntersecting && entry.intersectionRatio >= 0.28);
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
+          setAwake(true);
+        }
       },
-      { threshold: [0, 0.28, 0.45, 0.7], rootMargin: "-8% 0px -12% 0px" },
+      { threshold: [0, 0.25, 0.5], rootMargin: "-6% 0px -10% 0px" },
     );
-
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
 
   const select = (index: number) => {
-    setActive(index);
-    if (!inView) setInView(true);
+    setAwake(true);
+    setActive((prev) => (prev === index ? null : index));
   };
-
-  const trackWidth = games.length * slot;
 
   return (
     <section
@@ -110,219 +165,107 @@ export function GamesTimeline() {
     >
       <div className="mx-auto max-w-6xl px-4 md:px-6">
         <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
-          Project timeline
+          Cartridge bay · catalog
         </p>
         <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
-          Browse the catalog
+          Pull a title
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
-          Scroll to wake the lane—then click a circle to focus it. Your place
-          on the page stays put.
+          Three boxes on the shelf. Click one to slide it out like a cart—the
+          rest stay docked.
         </p>
       </div>
 
-      <div
-        ref={viewportRef}
-        className="relative z-10 mt-10 w-full overflow-hidden md:mt-14"
-        style={{
-          minHeight: activeSize + 160,
-        }}
-      >
+      {/* Shelf / bay */}
+      <div className="relative mx-auto mt-12 max-w-5xl px-4 md:mt-16 md:px-6">
+        {/* Ambient bay glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-8 top-8 bottom-16 rounded-[2rem] bg-[radial-gradient(ellipse_at_center,rgba(77,226,232,0.08),transparent_65%)]"
+        />
+
         <div
           className={cn(
-            "relative flex items-center will-change-transform",
-            ready &&
-              "transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+            "relative flex items-end justify-center gap-4 pt-16 pb-10 transition-all duration-700 md:gap-8 md:pt-20 md:pb-14",
+            awake ? "opacity-100" : "opacity-60",
           )}
-          style={{
-            width: trackWidth,
-            transform: `translate3d(${offset}px, 0, 0)`,
-            minHeight: activeSize + 140,
-          }}
         >
-          {/*
-            Line segments between circle edges only — never through a bubble,
-            never past the last circle.
-          */}
-          {games.slice(0, -1).map((_, index) => {
-            const leftSize = circleSize(
-              index,
-              active,
-              expanded,
-              activeSize,
-              inactiveSize,
-            );
-            const rightSize = circleSize(
-              index + 1,
-              active,
-              expanded,
-              activeSize,
-              inactiveSize,
-            );
-            const leftEdge = (index + 0.5) * slot + leftSize / 2;
-            const rightEdge = (index + 1.5) * slot - rightSize / 2;
-            const width = Math.max(0, rightEdge - leftEdge);
-
-            return (
-              <div
-                key={`lane-${index}`}
-                aria-hidden
-                className="pointer-events-none absolute top-1/2 z-0 h-px -translate-y-1/2 bg-white/40 transition-all duration-500"
-                style={{ left: leftEdge, width }}
-              />
-            );
-          })}
-
-          {games.map((game, index) => {
-            const selected = expanded && index === active;
-            const size = selected ? activeSize : inactiveSize;
-
-            return (
-              <button
-                key={game.slug}
-                type="button"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => select(index)}
-                aria-pressed={selected}
-                aria-label={`Select ${game.name}`}
-                className="relative z-20 flex shrink-0 cursor-pointer flex-col items-center justify-center border-0 bg-transparent p-0 outline-none"
-                style={{ width: slot, minHeight: activeSize + 100 }}
-              >
-                <span
-                  className={cn(
-                    "font-mono-label tracking-widest uppercase transition-all duration-500",
-                    selected
-                      ? "mb-3 text-[9px] text-white md:text-[10px]"
-                      : "mb-2 text-[8px] text-white/45",
-                  )}
-                >
-                  {game.era}
-                </span>
-
-                <span
-                  className="relative z-20 block overflow-hidden rounded-full border-4 bg-[#070d16] transition-[width,height,box-shadow,border-color,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                  style={{
-                    width: size,
-                    height: size,
-                    borderColor: selected
-                      ? game.accent
-                      : "rgba(255,255,255,0.25)",
-                    boxShadow: selected
-                      ? `0 0 48px ${game.accent}66`
-                      : "none",
-                    opacity: expanded ? 1 : 0.72,
-                  }}
-                >
-                  <Image
-                    src={game.artwork}
-                    alt=""
-                    fill
-                    sizes={`${Math.ceil(activeSize)}px`}
-                    className={cn(
-                      "pointer-events-none object-cover transition-all duration-500",
-                      selected ? "grayscale-0" : "grayscale-[45%]",
-                    )}
-                    draggable={false}
-                  />
-                </span>
-
-                <span
-                  className={cn(
-                    "font-display text-center font-bold transition-all duration-500",
-                    selected
-                      ? "mt-4 text-xl text-white md:text-2xl"
-                      : "mt-2 text-sm text-white/50",
-                  )}
-                >
-                  {game.name}
-                </span>
-              </button>
-            );
-          })}
+          {games.map((game, index) => (
+            <Cartridge
+              key={game.slug}
+              game={game}
+              pulled={awake && active === index}
+              seated={awake && active !== null && active !== index}
+              onSelect={() => select(index)}
+            />
+          ))}
         </div>
+
+        {/* Physical shelf plank */}
+        <div className="relative mx-auto h-4 max-w-3xl">
+          <div className="absolute inset-x-0 top-0 h-3 rounded-sm border border-white/10 bg-gradient-to-b from-[#2a3a52] to-[#121c2e] shadow-[0_12px_24px_rgba(0,0,0,0.55)]" />
+          <div className="absolute inset-x-4 top-3 h-2 rounded-b-md bg-black/50 blur-sm" />
+        </div>
+        <div className="mx-auto mt-1 h-8 max-w-3xl rounded-b-xl border border-t-0 border-white/5 bg-[#0a1220]" />
       </div>
 
-      <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between px-4 md:mt-6 md:px-6">
-        <button
-          type="button"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {
-            setActive((i) => Math.max(0, i - 1));
-            if (!inView) setInView(true);
-          }}
-          disabled={active === 0}
-          className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:border-[var(--cyan)] disabled:opacity-30"
+      {/* Dossier for the pulled cartridge */}
+      {current ? (
+        <div
+          key={current.slug}
+          className={cn(
+            "pop-in mx-auto mt-10 grid max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a1220] px-0 transition-opacity duration-500 md:mt-14 md:grid-cols-[1.15fr_0.85fr]",
+            awake && active !== null ? "opacity-100" : "opacity-40",
+          )}
+          style={{ boxShadow: `0 0 0 1px ${current.accent}44` }}
         >
-          ← Earlier
-        </button>
-        <span className="font-mono-label text-[8px] text-white/40 uppercase">
-          {active + 1} / {games.length}
-        </span>
-        <button
-          type="button"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {
-            setActive((i) => Math.min(games.length - 1, i + 1));
-            if (!inView) setInView(true);
-          }}
-          disabled={active === games.length - 1}
-          className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:border-[var(--lime)] disabled:opacity-30"
-        >
-          Later →
-        </button>
-      </div>
-
-      {/* Dossier card — updates in place with focused game */}
-      <div
-        key={current.slug}
-        className={cn(
-          "pop-in mx-auto mt-10 grid max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a1220] transition-opacity duration-500 md:mt-14 md:grid-cols-[1.2fr_0.8fr]",
-          expanded ? "opacity-100" : "opacity-40",
-        )}
-        style={{ boxShadow: `0 0 0 1px ${current.accent}44` }}
-      >
-        <div className="relative min-h-[280px] md:min-h-[440px]">
-          <Image
-            src={current.artwork}
-            alt={current.name}
-            fill
-            className="pointer-events-none object-cover"
-            sizes="(max-width:768px) 100vw, 60vw"
-            priority
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-[#0a1220]/75" />
-          <div className="absolute top-4 left-4 rounded-full border border-white/10 bg-black/50 px-3 py-1.5 font-mono-label text-[8px] tracking-widest text-white uppercase">
-            {current.years}
+          <div className="relative min-h-[260px] md:min-h-[420px]">
+            <Image
+              src={current.artwork}
+              alt={current.name}
+              fill
+              className="pointer-events-none object-cover"
+              sizes="(max-width:768px) 100vw, 55vw"
+              priority
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-[#0a1220]/80" />
+            <div className="absolute top-4 left-4 rounded-sm border border-white/10 bg-black/55 px-3 py-1.5 font-mono-label text-[8px] tracking-widest text-white uppercase">
+              Cart {String(active! + 1).padStart(2, "0")} · {current.years}
+            </div>
+          </div>
+          <div className="flex flex-col justify-center p-6 md:p-10">
+            <p
+              className="font-mono-label text-[8px] tracking-widest uppercase"
+              style={{ color: current.accent }}
+            >
+              {current.mechanic}
+            </p>
+            <h3 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
+              {current.name}
+            </h3>
+            <p className="mt-2 text-lg text-white/75">{current.tagline}</p>
+            <p className="mt-4 text-sm leading-relaxed text-white/60 md:text-base">
+              {current.summary}
+            </p>
+            <p className="mt-4 text-xs font-semibold tracking-wide text-white/40 uppercase">
+              {current.status}
+            </p>
+            <a
+              href={current.href}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-8 inline-flex w-fit rounded-full px-6 py-3.5 text-sm font-bold text-[var(--ink)]"
+              style={{ background: current.accent }}
+            >
+              Explore more →
+            </a>
           </div>
         </div>
-        <div className="flex flex-col justify-center p-6 md:p-10">
-          <p
-            className="font-mono-label text-[8px] tracking-widest uppercase"
-            style={{ color: current.accent }}
-          >
-            {current.mechanic}
-          </p>
-          <h3 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
-            {current.name}
-          </h3>
-          <p className="mt-2 text-lg text-white/75">{current.tagline}</p>
-          <p className="mt-4 text-sm leading-relaxed text-white/60 md:text-base">
-            {current.summary}
-          </p>
-          <p className="mt-4 text-xs font-semibold tracking-wide text-white/40 uppercase">
-            {current.status}
-          </p>
-          <a
-            href={current.href}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-8 inline-flex w-fit rounded-full px-6 py-3.5 text-sm font-bold text-[var(--ink)]"
-            style={{ background: current.accent }}
-          >
-            Explore more →
-          </a>
-        </div>
-      </div>
+      ) : (
+        <p className="mx-auto mt-12 max-w-6xl px-4 text-center text-sm text-white/40 md:px-6">
+          Pull a cartridge from the bay to load its dossier.
+        </p>
+      )}
     </section>
   );
 }
