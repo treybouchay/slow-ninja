@@ -2,11 +2,14 @@ export type Game = {
   slug: string;
   name: string;
   years: string;
+  era: string;
   tagline: string;
   summary: string;
   status: string;
   href: string;
   mechanic: string;
+  artwork: string;
+  accent: string;
 };
 
 export type JournalPost = {
@@ -28,39 +31,49 @@ export const studio = {
     "We build games as systems you can read—transactions as moves, SQL as a controller, on-chain state as truth.",
 };
 
+/** Chronological studio timeline (oldest → newest) */
 export const games: Game[] = [
-  {
-    slug: "structs",
-    name: "Structs",
-    years: "2022–present",
-    tagline: "A 5X space strategy game",
-    summary:
-      "Command sentient machines racing for Alpha Matter across a decentralized Cosmos galaxy. Explore, extract, expand, exterminate, and exchange—then leave the world running for as long as players keep the chain alive.",
-    status: "Beta playtest live",
-    href: "https://www.playstructs.com/",
-    mechanic: "On-chain guild strategy · Cosmos SDK",
-  },
-  {
-    slug: "coindroids",
-    name: "Coindroids",
-    years: "2014–2021",
-    tagline: "Skill-based combat played with coins, for coins",
-    summary:
-      "The cult classic that helped kick off blockchain gaming. Your actions were transactions—choose carefully. Money was power, literally, in the ruins of 20X5.",
-    status: "Archived · lessons live on in Structs",
-    href: "https://blog.coindroids.com/",
-    mechanic: "Transaction-as-action · multi-chain",
-  },
   {
     slug: "schemaverse",
     name: "Schemaverse",
     years: "2010–present",
+    era: "2010",
     tagline: "A space war played in SQL",
     summary:
       "Every player is a PostgreSQL role. Buy ships with INSERT, steer with a function call, read the battle in a view. Write PL/pgSQL and the database flies your fleet—or click the map and watch the query it wrote.",
     status: "Ongoing · DEF CON favorite",
     href: "https://schemaverse.com/",
     mechanic: "PostgreSQL as game engine",
+    artwork: "/games/schemaverse.png",
+    accent: "var(--cyan)",
+  },
+  {
+    slug: "coindroids",
+    name: "Coindroids",
+    years: "2014–2021",
+    era: "2014",
+    tagline: "Skill-based combat played with coins, for coins",
+    summary:
+      "The cult classic that helped kick off blockchain gaming. Your actions were transactions—choose carefully. Money was power, literally, in the ruins of 20X5.",
+    status: "Archived · lessons live on in Structs",
+    href: "https://blog.coindroids.com/",
+    mechanic: "Transaction-as-action · multi-chain",
+    artwork: "/games/coindroids.jpg",
+    accent: "var(--coral)",
+  },
+  {
+    slug: "structs",
+    name: "Structs",
+    years: "2022–present",
+    era: "2022",
+    tagline: "A 5X space strategy game",
+    summary:
+      "Command sentient machines racing for Alpha Matter across a decentralized Cosmos galaxy. Explore, extract, expand, exterminate, and exchange—then leave the world running for as long as players keep the chain alive.",
+    status: "Beta playtest live",
+    href: "https://www.playstructs.com/",
+    mechanic: "On-chain guild strategy · Cosmos SDK",
+    artwork: "/games/structs.png",
+    accent: "var(--lime)",
   },
 ];
 

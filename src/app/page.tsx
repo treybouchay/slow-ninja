@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
+import { GamesTimeline } from "@/components/games-timeline";
 import { HeroField } from "@/components/hero-field";
-import { games, journalPosts } from "@/lib/content";
+import { journalPosts } from "@/lib/content";
 
 export default function HomePage() {
-  const featured = games[0];
-  const others = games.slice(1);
   const posts = journalPosts.slice(0, 3);
 
   return (
@@ -46,84 +45,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="games" className="scroll-mt-28 px-4 py-20 md:px-6 md:py-28">
-        <div className="mx-auto max-w-6xl">
-          <p className="font-mono-label text-[8px] font-normal tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
-            Active transmission
-          </p>
-          <div className="mt-6 grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-            <div>
-              <h2 className="font-display text-4xl font-bold tracking-tight text-white md:text-6xl">
-                {featured.name}
-              </h2>
-              <p className="mt-3 text-xl font-semibold text-white/70">
-                {featured.tagline}
-              </p>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/60 md:text-lg">
-                {featured.summary}
-              </p>
-              <p className="mt-4 font-mono-label text-[8px] leading-relaxed tracking-wide text-[var(--lime)] uppercase md:text-[9px]">
-                {featured.mechanic} · {featured.status}
-              </p>
-              <a
-                href={featured.href}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-bounce mt-8 inline-flex rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]"
-              >
-                Enter the galaxy →
-              </a>
-            </div>
-
-            <div className="tilt-hover relative aspect-square overflow-hidden rounded-[2rem] border-2 border-[var(--ink)] bg-[var(--night)] shadow-[10px_10px_0_var(--cyan)]">
-              <div className="starfield absolute inset-0 opacity-70" />
-              <div className="space-grid absolute inset-0 opacity-50" />
-              <div className="orbit-spin absolute inset-[12%] rounded-full border border-[var(--lime)]/40" />
-              <div className="orbit-spin-rev absolute inset-[22%] rounded-full border border-dashed border-[var(--cyan)]/50" />
-              <div className="float-a absolute top-[18%] left-[16%] h-16 w-16 rounded-full bg-[var(--lime)]" />
-              <div className="float-b absolute right-[18%] bottom-[28%] h-12 w-12 rotate-12 rounded-xl bg-[var(--coral)]" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-                <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase">
-                  Protocol
-                </p>
-                <p className="font-display mt-2 text-5xl font-bold text-white md:text-6xl">
-                  5X
-                </p>
-                <p className="mt-3 max-w-[14rem] text-sm font-semibold text-white/65">
-                  Explore · Extract · Expand · Exterminate · Exchange
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-4 pb-8 md:px-6">
-        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2">
-          {others.map((game, i) => (
-            <a
-              key={game.slug}
-              href={game.href}
-              target="_blank"
-              rel="noreferrer"
-              className={`tilt-hover block rounded-[1.75rem] border-2 border-[var(--ink)] p-8 shadow-[8px_8px_0_var(--ink)] ${
-                i === 0 ? "bg-[var(--cyan)]" : "bg-[var(--sun)]"
-              }`}
-            >
-              <p className="font-mono-label text-[8px] tracking-widest uppercase opacity-70">
-                Archive // {game.years}
-              </p>
-              <h3 className="font-display mt-3 text-3xl font-bold text-[var(--ink)]">
-                {game.name}
-              </h3>
-              <p className="mt-3 text-[var(--ink)]/75">{game.tagline}</p>
-              <p className="mt-6 text-sm font-bold text-[var(--ink)]">
-                Open channel →
-              </p>
-            </a>
-          ))}
-        </div>
-      </section>
+      <GamesTimeline />
 
       <section id="studio" className="scroll-mt-28 px-4 py-20 md:px-6 md:py-28">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border-2 border-[var(--ink)] bg-[var(--hull)] text-white shadow-[10px_10px_0_var(--lime)]">
@@ -212,7 +134,7 @@ export default function HomePage() {
                       : "bg-[var(--cyan)]"
                 }`}
               >
-                <p className="font-mono-label text-[7px] leading-relaxed tracking-wide uppercase opacity-70 md:text-[8px]">
+                <p className="font-mono-label text-[7px] leading-relaxed tracking-wide text-[var(--ink)] uppercase opacity-70 md:text-[8px]">
                   {post.date} · {post.readingTime}
                 </p>
                 <h3 className="font-display mt-3 text-xl font-bold text-[var(--ink)]">
