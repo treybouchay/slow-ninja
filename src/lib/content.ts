@@ -9,7 +9,11 @@ export type Game = {
   href: string;
   mechanic: string;
   artwork: string;
+  /** Extra art that drifts into the starlane backdrop when focused */
+  relics: string[];
   accent: string;
+  /** Short flavor line for the atmosphere layer */
+  atmosphere: string;
 };
 
 export type JournalPost = {
@@ -45,7 +49,9 @@ export const games: Game[] = [
     href: "https://schemaverse.com/",
     mechanic: "PostgreSQL as game engine",
     artwork: "/games/schemaverse.png",
+    relics: ["/games/schemaverse.png"],
     accent: "var(--cyan)",
+    atmosphere: "SELECT * FROM ships WHERE fleet = you",
   },
   {
     slug: "coindroids",
@@ -59,7 +65,9 @@ export const games: Game[] = [
     href: "https://blog.coindroids.com/",
     mechanic: "Transaction-as-action · multi-chain",
     artwork: "/games/coindroids.jpg",
+    relics: ["/games/coindroids.jpg"],
     accent: "var(--coral)",
+    atmosphere: "Ruins of 20X5 · every move a signed tx",
   },
   {
     slug: "structs",
@@ -73,7 +81,9 @@ export const games: Game[] = [
     href: "https://www.playstructs.com/",
     mechanic: "On-chain guild strategy · Cosmos SDK",
     artwork: "/games/structs.png",
+    relics: ["/games/structs-alt.png", "/games/structs-champion.png"],
     accent: "var(--lime)",
+    atmosphere: "Alpha Matter · guild fleets on-chain",
   },
 ];
 
