@@ -31,28 +31,25 @@ npm run build
 npm start
 ```
 
-Listens on `PORT` (default `3000`).
+`npm start` listens on `PORT` (DigitalOcean sets `3000`). Locally: `npm run dev` still uses `43127`.
 
 ## Deploy on DigitalOcean (no Docker)
 
 Use **App Platform** with the Node buildpack.
 
-1. Push this repo to **GitHub** or **GitLab** on branch `main`.
-2. DigitalOcean → **Apps** → **Create App** → connect that repo → select `main`.
+1. Push this repo to **GitHub** on branch `main`.
+2. DigitalOcean → **App Platform** → **Create App** → `treybouchay/slow-ninja` → `main`.
 3. Resource settings:
    - Type: **Web Service**
-   - Environment: **Node.js** (not Docker — if Autodetect picks Docker, switch to Node)
+   - Environment: **Node.js** (not Docker)
    - Build command: `npm ci && npm run build`
    - Run command: `npm start`
-   - HTTP port: `3000`
+   - HTTP port: **`3000`** (must match `PORT`; do not use 43127)
 4. (Optional) Health check path: `/api/health`
-5. Instance size: `basic-xxs` is enough to start.
-6. **Create Resources** / **Deploy**. Wait for the build to finish.
-7. Open the `*.ondigitalocean.app` URL and confirm the site loads.
-8. **Settings → Domains** → add `slow.ninja` (and `www` if you use it).
-9. At your DNS provider, add the records DigitalOcean shows.
-10. After SSL is active, smoke-test `/`, `/games`, catalog views, and `/journal`.
+5. Instance size: smallest / **1 container**
+6. Deploy, then open the `*.ondigitalocean.app` URL.
+7. **Domains** → add `slow.ninja` → update DNS as shown.
 
-No environment secrets are required. App Platform sets `PORT` for you.
+No env secrets required. App Platform sets `PORT=3000`.
 
-A `Dockerfile` may exist in the repo for optional container deploys — ignore it for this path.
+If deploy fails with “connection refused on :3000”, the run command was still binding another port — ensure GitHub has the latest `package.json` start script.

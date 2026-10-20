@@ -1,17 +1,17 @@
-# DigitalOcean App Platform spec (optional).
-# In the DO UI you can "App Spec" → paste/adjust, or:
+# DigitalOcean App Platform spec (Node buildpack — no Docker).
+# Paste under App Spec in the DO UI, or:
 #   doctl apps create --spec .do/app.yaml
-#
-# Replace github.repo with your permanent repo (owner/name) after you create it.
 name: slow-ninja
 region: nyc
 services:
   - name: web
-    dockerfile_path: Dockerfile
     github:
       repo: treybouchay/slow-ninja
       branch: main
       deploy_on_push: true
+    environment_slug: node-js
+    build_command: npm ci && npm run build
+    run_command: npm start
     http_port: 3000
     instance_count: 1
     instance_size_slug: basic-xxs
@@ -27,3 +27,5 @@ services:
     envs:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: "3000"
