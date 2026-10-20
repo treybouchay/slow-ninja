@@ -113,7 +113,7 @@ export function StarlaneView() {
           Project timeline
         </p>
         <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
-          Browse the catalog
+          Explore our universes
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
           Scroll to wake the lane—then click a circle to focus it. Your place
