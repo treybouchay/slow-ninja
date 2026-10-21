@@ -107,10 +107,12 @@ export function ConstellationView() {
       });
     } else {
       const focus = centers[active];
-      // Keep the planet optically centered under the floating dots.
+      // Bias planet left on desktop so the dossier has room on the right.
+      const biasX = mobile ? 0 : Math.min(160, w * 0.14);
+      const biasY = mobile ? 40 : 8;
       setCamera({
-        x: w / 2 - focus.x,
-        y: h / 2 - focus.y + (mobile ? 12 : 28),
+        x: w / 2 - focus.x - biasX,
+        y: h / 2 - focus.y + biasY,
         scale: 1,
       });
     }
@@ -167,23 +169,6 @@ export function ConstellationView() {
     setActive(index);
   };
 
-  const focus = centers[active];
-  const focusSize = sizeOf(active);
-  const cardWidth = mobile ? 280 : 340;
-
-  let cardLeft: number;
-  let cardTop: number;
-  if (active === games.length - 1) {
-    cardLeft = focus.x - cardWidth * 0.2;
-    cardTop = focus.y + focusSize / 2 + 36;
-  } else if (active === 0) {
-    cardLeft = focus.x + focusSize / 2 + 20;
-    cardTop = focus.y - 40;
-  } else {
-    cardLeft = focus.x + focusSize / 2 + 20;
-    cardTop = focus.y - 10;
-  }
-
   return (
     <section
       ref={sectionRef}
@@ -222,14 +207,20 @@ export function ConstellationView() {
       <div
         ref={viewportRef}
         className="relative z-10 mx-auto mt-6 w-full max-w-6xl overflow-hidden md:mt-8"
-        style={{ height: mobile ? 520 : 580 }}
+        style={{ height: mobile ? 560 : 640 }}
         onClick={(e) => {
           // Click empty stage while overview → zoom to first planet.
           if (!engaged && e.target === e.currentTarget) beginJourney();
         }}
       >
-        {/* Travel dots — float above the centered circle in the viewport */}
-        <div className="pointer-events-none absolute inset-x-0 top-5 z-50 flex flex-col items-center gap-2 md:top-7">
+        {/* Travel dots — float above the planet (biased left with the camera) */}
+        <div
+          className="pointer-events-none absolute top-5 z-50 flex flex-col items-center gap-2 md:top-7"
+          style={{
+            left: mobile ? "50%" : "calc(50% - 10%)",
+            transform: "translateX(-50%)",
+          }}
+        >
           <div
             role="tablist"
             aria-label="Travel between universes"
@@ -404,27 +395,34 @@ export function ConstellationView() {
               </button>
             );
           })}
+        </div>
 
-          <div
-            key={current.slug}
-            className={cn(
-              "pointer-events-none absolute z-40 rounded-[1.25rem] border border-white/10 bg-[#0a1220]/95 p-5 backdrop-blur-md transition-[left,top,opacity] duration-500 md:p-6",
-              engaged ? "pop-in opacity-100" : "invisible opacity-0",
-            )}
-            style={{
-              left: cardLeft,
-              top: cardTop,
-              width: cardWidth,
-              boxShadow: `0 0 0 1px ${current.accent}33, 0 24px 60px rgba(0,0,0,0.55)`,
-            }}
-          >
+        {/* Dossier lives in viewport space so overflow never clips it */}
+        <div
+          key={current.slug}
+          className={cn(
+            "pointer-events-none absolute z-40 rounded-[1.25rem] border border-white/10 bg-[#0a1220]/95 p-4 backdrop-blur-md transition-opacity duration-500 md:p-5",
+            engaged
+              ? "pop-in opacity-100"
+              : "invisible opacity-0",
+            // Mobile: under the planet. Desktop: right rail, vertically centered.
+            mobile
+              ? "inset-x-3 bottom-3"
+              : "top-1/2 right-4 w-[min(360px,34%)] -translate-y-1/2",
+          )}
+          style={{
+            maxHeight: mobile ? "42%" : "calc(100% - 2rem)",
+            boxShadow: `0 0 0 1px ${current.accent}33, 0 24px 60px rgba(0,0,0,0.55)`,
+          }}
+        >
+          <div className="max-h-full overflow-y-auto overscroll-contain pr-1">
             <p
               className="font-mono-label text-[8px] tracking-widest uppercase"
               style={{ color: current.accent }}
             >
               {current.mechanic}
             </p>
-            <h3 className="font-display mt-2 text-2xl font-bold text-white md:text-3xl">
+            <h3 className="font-display mt-2 text-xl font-bold text-white md:text-2xl">
               {current.name}
             </h3>
             <p className="mt-1 text-sm text-white/75">{current.tagline}</p>
@@ -438,7 +436,7 @@ export function ConstellationView() {
               href={current.href}
               target="_blank"
               rel="noreferrer"
-              className="pointer-events-auto mt-5 inline-flex w-fit rounded-full px-5 py-2.5 text-sm font-bold text-[var(--ink)]"
+              className="pointer-events-auto mt-4 inline-flex w-fit rounded-full px-5 py-2.5 text-sm font-bold text-[var(--ink)]"
               style={{ background: current.accent }}
             >
               Explore more →
