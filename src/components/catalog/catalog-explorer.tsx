@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { DiagonalCaseView } from "@/components/catalog/views/diagonal-case";
+import { DiagonalLaneView } from "@/components/catalog/views/diagonal-lane";
 import { FileCaseView } from "@/components/catalog/views/file-case";
 import { ShelfView } from "@/components/catalog/views/shelf";
 import { StarlaneView } from "@/components/catalog/views/starlane";
 
 export type CatalogViewId =
   | "starlane"
+  | "diagonal-lane"
   | "shelf"
   | "diagonal-case"
   | "file-case";
@@ -22,6 +24,11 @@ const VIEWS: {
     id: "starlane",
     label: "Starlane",
     blurb: "Circles on a lane — wake, grow, pan",
+  },
+  {
+    id: "diagonal-lane",
+    label: "Diagonal lane",
+    blurb: "Circles climb a / path — older low-left",
   },
   {
     id: "shelf",
@@ -41,7 +48,7 @@ const VIEWS: {
 ];
 
 const STORAGE_KEY = "slow-ninja-catalog-view";
-const DEFAULT_VIEW: CatalogViewId = "file-case";
+const DEFAULT_VIEW: CatalogViewId = "diagonal-lane";
 
 function isViewId(value: string | null): value is CatalogViewId {
   return VIEWS.some((v) => v.id === value);
@@ -114,6 +121,7 @@ export function CatalogExplorer() {
       </div>
 
       {view === "starlane" && <StarlaneView />}
+      {view === "diagonal-lane" && <DiagonalLaneView />}
       {view === "shelf" && <ShelfView />}
       {view === "diagonal-case" && <DiagonalCaseView />}
       {view === "file-case" && <FileCaseView />}
