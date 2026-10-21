@@ -106,7 +106,7 @@ export function FileCaseView() {
           Field case · pull a cart
         </p>
         <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
-          Open the box
+          Explore our universes
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
           Three titles stacked front-to-back. Pull one up—it lifts out and

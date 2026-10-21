@@ -153,7 +153,7 @@ export function DiagonalCaseView() {
           Cartridge case · top-down
         </p>
         <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
-          Open the case
+          Explore our universes
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
           Three carts docked in the box. Pull one toward you—it slides out and

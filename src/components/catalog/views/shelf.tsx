@@ -168,7 +168,7 @@ export function ShelfView() {
           Cartridge bay · catalog
         </p>
         <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
-          Pull a title
+          Explore our universes
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
           Three boxes on the shelf. Click one to slide it out like a cart—the

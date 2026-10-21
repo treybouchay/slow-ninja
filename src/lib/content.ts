@@ -82,7 +82,7 @@ export const games: Game[] = [
     mechanic: "On-chain guild strategy · Cosmos SDK",
     artwork: "/games/structs.png",
     relics: ["/games/structs-alt.png", "/games/structs-champion.png"],
-    accent: "var(--lime)",
+    accent: "var(--violet)",
     atmosphere: "Alpha Matter · guild fleets on-chain",
   },
 ];
