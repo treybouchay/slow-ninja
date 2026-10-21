@@ -64,6 +64,7 @@ export const games: Game[] = [
     href: "https://blog.coindroids.com/",
     mechanic: "Transaction-as-action · multi-chain",
     artwork: "/games/coindroids.jpg",
+    motionArt: "/games/coindroid-unit.png",
     accent: "var(--coral)",
     atmosphere: "Ruins of 20X5 · every move a signed tx",
   },
