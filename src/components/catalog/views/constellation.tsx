@@ -130,6 +130,25 @@ export function ConstellationView() {
     };
   }, [updateCamera]);
 
+  // Zoom back out to the map when the section leaves focus / view.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const focused =
+          entry.isIntersecting && entry.intersectionRatio >= 0.35;
+        if (!focused) {
+          setEngaged(false);
+          setActive(0);
+        }
+      },
+      { threshold: [0, 0.2, 0.35, 0.55], rootMargin: "-10% 0px -14% 0px" },
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   const engage = (index: number) => {
     setActive(index);
     setEngaged(true);
