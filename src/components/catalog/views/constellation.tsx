@@ -107,10 +107,11 @@ export function ConstellationView() {
       });
     } else {
       const focus = centers[active];
-      // Keep planet centered under the dots in the upper stage.
+      // Nudge planet up/left so the floating dossier fits below-right.
+      const biasX = mobile ? 0 : Math.min(120, w * 0.1);
       setCamera({
-        x: w / 2 - focus.x,
-        y: h / 2 - focus.y + (mobile ? 8 : 16),
+        x: w / 2 - focus.x - biasX,
+        y: h / 2 - focus.y - (mobile ? 24 : 40),
         scale: 1,
       });
     }
@@ -202,36 +203,22 @@ export function ConstellationView() {
         </p>
       </div>
 
-      <div className="relative z-10 mx-auto mt-6 flex w-full max-w-6xl flex-col md:mt-8">
-        {/* Planet stage — taller so the bottom dossier has its own reserved band */}
+      <div
+        ref={viewportRef}
+        className="relative z-10 mx-auto mt-6 w-full max-w-6xl overflow-hidden md:mt-8"
+        style={{ height: mobile ? 580 : 680 }}
+        onClick={(e) => {
+          if (!engaged && e.target === e.currentTarget) beginJourney();
+        }}
+      >
+        {/* Travel dots — float above the focused planet */}
         <div
-          ref={viewportRef}
-          className="relative w-full overflow-hidden"
-          style={{ height: mobile ? 420 : 520 }}
-          onClick={(e) => {
-            if (!engaged && e.target === e.currentTarget) beginJourney();
+          className="pointer-events-none absolute top-5 z-50 flex flex-col items-center gap-2 md:top-7"
+          style={{
+            left: mobile ? "50%" : "calc(50% - 8%)",
+            transform: "translateX(-50%)",
           }}
         >
-        {/* Soft planet relic in the stage bg when focused */}
-        {engaged && current.motionArt ? (
-          <div
-            className="pointer-events-none absolute inset-0 z-[1] opacity-40"
-            aria-hidden
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={current.motionArt}
-              alt=""
-              className="h-full w-full object-contain object-center opacity-90 mix-blend-multiply"
-              style={{ transform: "scale(1.2)" }}
-              draggable={false}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#070c16]/55 via-[#070c16]/15 to-[#070c16]" />
-          </div>
-        ) : null}
-
-        {/* Travel dots — float above the centered planet */}
-        <div className="pointer-events-none absolute inset-x-0 top-5 z-50 flex flex-col items-center gap-2 md:top-7">
           <div
             role="tablist"
             aria-label="Travel between universes"
@@ -407,56 +394,47 @@ export function ConstellationView() {
             );
           })}
         </div>
-        </div>
 
-        {/* Dossier dock — reserved below the stage so nothing clips */}
+        {/* Compact floating dossier — bottom-right of the stage, not full-bleed */}
         <div
+          key={current.slug}
           className={cn(
-            "mt-4 transition-[min-height,opacity] duration-500",
-            engaged ? "min-h-[220px] opacity-100" : "min-h-0 opacity-0",
+            "pointer-events-none absolute z-40 w-[min(340px,calc(100%-1.5rem))] rounded-[1.25rem] border border-white/10 bg-[#0a1220]/95 p-4 backdrop-blur-md transition-opacity duration-500 md:p-5",
+            engaged ? "pop-in opacity-100" : "invisible opacity-0",
+            mobile ? "right-3 bottom-3 left-3 w-auto" : "right-5 bottom-5",
           )}
+          style={{
+            maxHeight: "min(320px, 46%)",
+            boxShadow: `0 0 0 1px ${current.accent}33, 0 24px 60px rgba(0,0,0,0.55)`,
+          }}
         >
-          {engaged ? (
-            <div
-              key={current.slug}
-              className="pop-in rounded-[1.25rem] border border-white/10 bg-[#0a1220]/95 p-5 backdrop-blur-md md:p-6"
-              style={{
-                boxShadow: `0 0 0 1px ${current.accent}33, 0 24px 60px rgba(0,0,0,0.45)`,
-              }}
+          <div className="max-h-full overflow-y-auto overscroll-contain pr-1">
+            <p
+              className="font-mono-label text-[8px] tracking-widest uppercase"
+              style={{ color: current.accent }}
             >
-              <div className="md:flex md:items-start md:justify-between md:gap-8">
-                <div className="min-w-0 flex-1">
-                  <p
-                    className="font-mono-label text-[8px] tracking-widest uppercase"
-                    style={{ color: current.accent }}
-                  >
-                    {current.mechanic}
-                  </p>
-                  <h3 className="font-display mt-2 text-2xl font-bold text-white md:text-3xl">
-                    {current.name}
-                  </h3>
-                  <p className="mt-1 text-sm text-white/75 md:text-base">
-                    {current.tagline}
-                  </p>
-                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/55 md:text-base">
-                    {current.summary}
-                  </p>
-                  <p className="mt-3 text-[10px] font-semibold tracking-wide text-white/35 uppercase">
-                    {current.status}
-                  </p>
-                </div>
-                <a
-                  href={current.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-5 inline-flex shrink-0 rounded-full px-6 py-3 text-sm font-bold text-[var(--ink)] md:mt-0"
-                  style={{ background: current.accent }}
-                >
-                  Explore more →
-                </a>
-              </div>
-            </div>
-          ) : null}
+              {current.mechanic}
+            </p>
+            <h3 className="font-display mt-2 text-xl font-bold text-white md:text-2xl">
+              {current.name}
+            </h3>
+            <p className="mt-1 text-sm text-white/75">{current.tagline}</p>
+            <p className="mt-3 text-xs leading-relaxed text-white/55 md:text-sm">
+              {current.summary}
+            </p>
+            <p className="mt-3 text-[10px] font-semibold tracking-wide text-white/35 uppercase">
+              {current.status}
+            </p>
+            <a
+              href={current.href}
+              target="_blank"
+              rel="noreferrer"
+              className="pointer-events-auto mt-4 inline-flex w-fit rounded-full px-5 py-2.5 text-sm font-bold text-[var(--ink)]"
+              style={{ background: current.accent }}
+            >
+              Explore more →
+            </a>
+          </div>
         </div>
       </div>
     </section>
