@@ -151,9 +151,9 @@ export function StarlaneView() {
 
               {game.motionArt ? (
                 <div
-                  className="absolute top-1/2 right-[-4%] w-[min(52vw,420px)] -translate-y-[42%] md:right-[4%] md:w-[min(38vw,460px)]"
+                  className="absolute top-6 right-4 w-[min(20.8vw,168px)] md:top-8 md:right-8 md:w-[min(15.2vw,184px)]"
                   style={{
-                    filter: `drop-shadow(0 0 36px color-mix(in oklab, ${game.accent} 45%, transparent))`,
+                    filter: `drop-shadow(0 0 24px color-mix(in oklab, ${game.accent} 45%, transparent))`,
                   }}
                 >
                   {/* Native img keeps GIF animation; next/image can freeze frames */}
