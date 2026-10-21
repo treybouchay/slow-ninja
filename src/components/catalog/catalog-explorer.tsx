@@ -20,38 +20,13 @@ export type CatalogViewId =
 const VIEWS: {
   id: CatalogViewId;
   label: string;
-  blurb: string;
 }[] = [
-  {
-    id: "starlane",
-    label: "Starlane",
-    blurb: "Circles on a lane — wake, grow, pan",
-  },
-  {
-    id: "diagonal-lane",
-    label: "Diagonal lane",
-    blurb: "Circles climb a / path — older low-left",
-  },
-  {
-    id: "constellation",
-    label: "Constellation",
-    blurb: "Zoomed-out map — dots float above the focus",
-  },
-  {
-    id: "shelf",
-    label: "Shelf",
-    blurb: "Standing boxes that pull like carts",
-  },
-  {
-    id: "diagonal-case",
-    label: "Diagonal case",
-    blurb: "Top-down box, carts slide out & expand",
-  },
-  {
-    id: "file-case",
-    label: "File case",
-    blurb: "Icon-style stack, pull up to expand",
-  },
+  { id: "constellation", label: "Constellation" },
+  { id: "starlane", label: "Starlane" },
+  { id: "diagonal-lane", label: "Diagonal lane" },
+  { id: "shelf", label: "Shelf" },
+  { id: "diagonal-case", label: "Diagonal case" },
+  { id: "file-case", label: "File case" },
 ];
 
 const STORAGE_KEY = "slow-ninja-catalog-view";
@@ -64,6 +39,7 @@ function isViewId(value: string | null): value is CatalogViewId {
 export function CatalogExplorer() {
   const [view, setView] = useState<CatalogViewId>(DEFAULT_VIEW);
   const [ready, setReady] = useState(false);
+  const [labsOpen, setLabsOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -84,52 +60,54 @@ export function CatalogExplorer() {
     }
   }, [view, ready]);
 
-  const active = VIEWS.find((v) => v.id === view) ?? VIEWS[0];
-
   return (
     <div>
-      {/* View switcher */}
-      <div className="sticky top-[4.5rem] z-40 border-b border-white/10 bg-[#070d16]/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6">
-          <div>
-            <p className="font-mono-label text-[7px] tracking-widest text-[var(--cyan)] uppercase md:text-[8px]">
-              Catalog views · experiment switcher
-            </p>
-            <p className="mt-1 text-sm text-white/55">{active.blurb}</p>
-          </div>
-          <div
-            role="tablist"
-            aria-label="Catalog interaction views"
-            className="flex flex-wrap gap-2"
-          >
-            {VIEWS.map((option) => {
-              const selected = option.id === view;
-              return (
-                <button
-                  key={option.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => setView(option.id)}
-                  className={cn(
-                    "rounded-full border px-3 py-1.5 font-mono-label text-[8px] tracking-widest uppercase transition",
-                    selected
-                      ? "border-[var(--lime)] bg-[var(--lime)] text-[var(--ink)]"
-                      : "border-white/20 text-white/55 hover:border-white/40 hover:text-white",
-                  )}
-                >
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+      {/* Quiet labs toggle — no sticky chrome on the first scroll */}
+      <div className="mx-auto flex max-w-6xl items-center justify-end px-4 pt-2 md:px-6">
+        <button
+          type="button"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => setLabsOpen((v) => !v)}
+          className="font-mono-label text-[8px] tracking-widest text-white/35 uppercase transition hover:text-white/60"
+          aria-expanded={labsOpen}
+        >
+          {labsOpen ? "Hide labs ←" : "Labs →"}
+        </button>
       </div>
 
+      {labsOpen ? (
+        <div
+          role="tablist"
+          aria-label="Catalog interaction views"
+          className="mx-auto mt-2 flex max-w-6xl flex-wrap gap-2 px-4 pb-2 md:px-6"
+        >
+          {VIEWS.map((option) => {
+            const selected = option.id === view;
+            return (
+              <button
+                key={option.id}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => setView(option.id)}
+                className={cn(
+                  "rounded-full border px-3 py-1.5 font-mono-label text-[8px] tracking-widest uppercase transition",
+                  selected
+                    ? "border-white/40 bg-white/10 text-white"
+                    : "border-white/10 text-white/40 hover:border-white/25 hover:text-white/70",
+                )}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {view === "constellation" && <ConstellationView />}
       {view === "starlane" && <StarlaneView />}
       {view === "diagonal-lane" && <DiagonalLaneView />}
-      {view === "constellation" && <ConstellationView />}
       {view === "shelf" && <ShelfView />}
       {view === "diagonal-case" && <DiagonalCaseView />}
       {view === "file-case" && <FileCaseView />}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
 import { cn } from "@/lib/utils";
 
@@ -15,10 +15,25 @@ const links = [
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 px-4 pt-4 md:px-6">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border border-[var(--ink)]/15 bg-[var(--night)]/90 px-4 py-2.5 shadow-[0_8px_30px_rgba(11,18,32,0.25)] backdrop-blur-xl md:px-5">
+    <header className="sticky top-0 z-50 px-4 pt-3 md:px-6 md:pt-4">
+      <div
+        className={cn(
+          "mx-auto flex max-w-6xl items-center justify-between gap-4 px-2 py-2 transition-all duration-300 md:px-3",
+          scrolled
+            ? "rounded-full border border-white/10 bg-[#070d16]/55 shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-md"
+            : "border border-transparent bg-transparent",
+        )}
+      >
         <BrandLogo size="nav" priority />
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -30,10 +45,10 @@ export function SiteHeader() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                  "rounded-full px-3 py-2 text-sm font-semibold transition-colors",
                   active
-                    ? "bg-[var(--lime)] text-[var(--ink)]"
-                    : "text-white/70 hover:bg-white/10 hover:text-white",
+                    ? "text-[var(--lime)]"
+                    : "text-white/65 hover:text-white",
                 )}
               >
                 {link.label}
@@ -61,13 +76,13 @@ export function SiteHeader() {
       </div>
 
       {open ? (
-        <nav className="mx-auto mt-2 flex max-w-6xl flex-col gap-2 rounded-3xl border border-white/10 bg-[var(--night)] p-4 shadow-lg md:hidden">
+        <nav className="mx-auto mt-2 flex max-w-6xl flex-col gap-2 rounded-2xl border border-white/10 bg-[#070d16]/90 p-4 backdrop-blur-md md:hidden">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="rounded-2xl px-4 py-3 font-semibold text-white hover:bg-white/10"
+              className="rounded-xl px-4 py-3 font-semibold text-white hover:bg-white/10"
             >
               {link.label}
             </Link>
@@ -76,7 +91,7 @@ export function SiteHeader() {
             href="https://www.playstructs.com/"
             target="_blank"
             rel="noreferrer"
-            className="rounded-2xl bg-[var(--lime)] px-4 py-3 text-center font-bold text-[var(--ink)]"
+            className="rounded-xl bg-[var(--lime)] px-4 py-3 text-center font-bold text-[var(--ink)]"
           >
             Launch Structs
           </a>

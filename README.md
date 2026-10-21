@@ -21,7 +21,7 @@ Next.js 16 · TypeScript · Tailwind · shadcn/ui
 - `/games` · `/studio` · `/journal` · `/journal/[slug]`
 - `/api/health` — liveness probe for hosting
 
-Catalog views (Starlane, Diagonal lane, Constellation, Shelf, Diagonal case, File case) can be switched in the sticky bar above the games section.
+Constellation is the default catalog. Optional lab views (Starlane, Diagonal lane, Shelf, cases) are under a quiet **Labs** toggle.
 
 ## Production build
 

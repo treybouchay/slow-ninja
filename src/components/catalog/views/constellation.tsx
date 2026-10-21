@@ -58,6 +58,7 @@ export function ConstellationView() {
   const [engaged, setEngaged] = useState(false);
   const [camera, setCamera] = useState({ x: 0, y: 0, scale: 1 });
   const [ready, setReady] = useState(false);
+  const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const mobile = useIsMobile();
@@ -150,6 +151,27 @@ export function ConstellationView() {
     return () => observer.disconnect();
   }, []);
 
+  // Soft pointer parallax on the wash / stage (desktop).
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || mobile) return;
+    const section = sectionRef.current;
+    if (!section) return;
+    const onMove = (e: PointerEvent) => {
+      const rect = section.getBoundingClientRect();
+      const nx = (e.clientX - rect.left) / rect.width - 0.5;
+      const ny = (e.clientY - rect.top) / rect.height - 0.5;
+      setParallax({ x: nx * 18, y: ny * 12 });
+    };
+    const onLeave = () => setParallax({ x: 0, y: 0 });
+    section.addEventListener("pointermove", onMove);
+    section.addEventListener("pointerleave", onLeave);
+    return () => {
+      section.removeEventListener("pointermove", onMove);
+      section.removeEventListener("pointerleave", onLeave);
+    };
+  }, [mobile]);
+
   const engage = (index: number) => {
     setActive(index);
     setEngaged(true);
@@ -174,7 +196,11 @@ export function ConstellationView() {
       id="games"
       className="relative scroll-mt-28 overflow-hidden bg-[#070c16] py-16 md:py-28"
     >
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
+      <div
+        className="pointer-events-none absolute inset-0 transition-transform duration-300 ease-out"
+        style={{ transform: `translate3d(${parallax.x * 0.4}px, ${parallax.y * 0.4}px, 0)` }}
+        aria-hidden
+      >
         {games.map((game, index) => (
           <div
             key={`wash-${game.slug}`}
@@ -275,13 +301,12 @@ export function ConstellationView() {
         <div
           className={cn(
             "relative origin-top-left will-change-transform",
-            ready &&
-              "transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+            ready && "camera-glide",
           )}
           style={{
             width: worldWidth,
             height: worldHeight,
-            transform: `translate3d(${camera.x}px, ${camera.y}px, 0) scale(${camera.scale})`,
+            transform: `translate3d(${camera.x + parallax.x}px, ${camera.y + parallax.y}px, 0) scale(${camera.scale})`,
           }}
         >
           <svg
@@ -399,8 +424,8 @@ export function ConstellationView() {
         <div
           key={current.slug}
           className={cn(
-            "pointer-events-none absolute z-40 w-[min(340px,calc(100%-1.5rem))] rounded-[1.25rem] border border-white/10 bg-[#0a1220]/95 p-4 backdrop-blur-md transition-opacity duration-500 md:p-5",
-            engaged ? "pop-in opacity-100" : "invisible opacity-0",
+            "pointer-events-none absolute z-40 w-[min(340px,calc(100%-1.5rem))] rounded-[1.25rem] border border-white/10 bg-[#0a1220]/95 p-4 backdrop-blur-md md:p-5",
+            engaged ? "dossier-spring opacity-100" : "invisible opacity-0",
             mobile ? "right-3 bottom-3 left-3 w-auto" : "right-5 bottom-5",
           )}
           style={{
