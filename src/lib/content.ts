@@ -79,7 +79,6 @@ export const games: Game[] = [
     href: "https://www.playstructs.com/",
     mechanic: "On-chain guild strategy · Cosmos SDK",
     artwork: "/games/structs.png",
-    motionArt: "/games/structs-module.gif",
     accent: "var(--violet)",
     atmosphere: "Alpha Matter · guild fleets on-chain",
   },
