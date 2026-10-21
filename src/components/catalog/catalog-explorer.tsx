@@ -35,7 +35,7 @@ const VIEWS: {
   {
     id: "constellation",
     label: "Constellation",
-    blurb: "V-arch nodes — dossier floats beside focus",
+    blurb: "Travel dots pan the camera between worlds",
   },
   {
     id: "shelf",
