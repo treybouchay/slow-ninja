@@ -249,8 +249,8 @@
 
   .universe-nebula {
     background-image:
-      radial-gradient(ellipse 50% 40% at 75% 25%, color-mix(in oklab, var(--lime) 22%, transparent), transparent),
-      radial-gradient(ellipse 35% 30% at 20% 75%, color-mix(in oklab, var(--cyan) 16%, transparent), transparent),
+      radial-gradient(ellipse 50% 40% at 75% 25%, color-mix(in oklab, var(--violet) 26%, transparent), transparent),
+      radial-gradient(ellipse 35% 30% at 20% 75%, color-mix(in oklab, var(--cyan) 14%, transparent), transparent),
       radial-gradient(1.5px 1.5px at 15% 20%, white, transparent),
       radial-gradient(1px 1px at 42% 55%, white, transparent),
       radial-gradient(1.5px 1.5px at 78% 40%, white, transparent),
@@ -258,13 +258,6 @@
       radial-gradient(1px 1px at 55% 12%, white, transparent);
   }
 
-  .universe-relic-a {
-    animation: universe-drift-a 14s ease-in-out infinite;
-  }
-
-  .universe-relic-b {
-    animation: universe-drift-b 18s ease-in-out infinite;
-  }
 
   .tilt-hover:hover {
     transform: rotate(-1.2deg) scale(1.01);
@@ -330,26 +323,6 @@
   }
 }
 
-@keyframes universe-drift-a {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(-2deg);
-  }
-  50% {
-    transform: translate3d(-12px, -18px, 0) rotate(1deg);
-  }
-}
-
-@keyframes universe-drift-b {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(3deg);
-  }
-  50% {
-    transform: translate3d(14px, 10px, 0) rotate(-1deg);
-  }
-}
-
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -367,8 +340,6 @@
   .orbit-spin-rev,
   .space-grid,
   .universe-sql-grid,
-  .universe-relic-a,
-  .universe-relic-b,
   .pop-in,
   .pop-in-delay,
   .pop-in-late,

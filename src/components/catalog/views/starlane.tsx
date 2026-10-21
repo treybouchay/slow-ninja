@@ -149,33 +149,31 @@ export function StarlaneView() {
                 <div className="universe-nebula absolute inset-0 opacity-50" />
               ) : null}
 
-              {game.relics.map((relic, relicIndex) => (
+              {game.motionArt ? (
                 <div
-                  key={relic}
-                  className={cn(
-                    "absolute overflow-hidden rounded-[1.25rem] border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.45)]",
-                    relicIndex === 0 &&
-                      "universe-relic-a right-[-4%] bottom-[8%] h-[42%] w-[38%] max-w-[420px] md:right-[4%] md:bottom-[12%] md:h-[48%] md:w-[32%]",
-                    relicIndex === 1 &&
-                      "universe-relic-b left-[-6%] top-[18%] h-[28%] w-[30%] max-w-[280px] md:left-[6%] md:top-[22%] md:h-[34%] md:w-[22%]",
-                  )}
+                  className="absolute top-1/2 right-[-4%] w-[min(52vw,420px)] -translate-y-[42%] md:right-[4%] md:w-[min(38vw,460px)]"
                   style={{
-                    boxShadow: `0 0 40px color-mix(in oklab, ${game.accent} 25%, transparent)`,
+                    filter: `drop-shadow(0 0 36px color-mix(in oklab, ${game.accent} 45%, transparent))`,
                   }}
                 >
-                  <Image
-                    src={relic}
+                  {/* Native img keeps GIF animation; next/image can freeze frames */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={game.motionArt}
                     alt=""
-                    fill
-                    sizes="40vw"
-                    className="object-cover opacity-70"
+                    className="h-auto w-full select-none opacity-90"
+                    draggable={false}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#070d16]/70 to-transparent" />
                 </div>
-              ))}
+              ) : null}
 
               <p
-                className="absolute top-[12%] right-6 hidden max-w-[220px] text-right font-mono-label text-[9px] tracking-[0.18em] uppercase md:block"
+                className={cn(
+                  "absolute top-[12%] hidden max-w-[220px] font-mono-label text-[9px] tracking-[0.18em] uppercase md:block",
+                  game.motionArt
+                    ? "left-6 text-left"
+                    : "right-6 text-right",
+                )}
                 style={{ color: game.accent }}
               >
                 {game.atmosphere}
