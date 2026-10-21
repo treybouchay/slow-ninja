@@ -35,7 +35,7 @@ const VIEWS: {
   {
     id: "constellation",
     label: "Constellation",
-    blurb: "Travel dots pan the camera between worlds",
+    blurb: "Zoomed-out map — dots on top, then fly in",
   },
   {
     id: "shelf",
