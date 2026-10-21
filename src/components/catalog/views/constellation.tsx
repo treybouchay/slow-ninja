@@ -2,8 +2,72 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
+
+const TRAVEL_SLOT_ID = "constellation-travel-slot";
+
+function TravelDots({
+  engaged,
+  active,
+  onBegin,
+  onSelect,
+}: {
+  engaged: boolean;
+  active: number;
+  onBegin: () => void;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label="Travel between universes"
+      className="flex h-full w-full items-center justify-start gap-3"
+    >
+      {games.map((game, index) => {
+        const selected = engaged && index === active;
+        return (
+          <button
+            key={`dot-${game.slug}`}
+            type="button"
+            role="tab"
+            aria-selected={selected}
+            aria-label={
+              engaged
+                ? `Travel to ${game.name}`
+                : `Begin journey at ${game.name}`
+            }
+            title={game.name}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => {
+              if (!engaged) {
+                onBegin();
+                return;
+              }
+              onSelect(index);
+            }}
+            className={cn(
+              "rounded-full border transition-all duration-300",
+              selected
+                ? "h-3.5 w-3.5 scale-110"
+                : "h-2.5 w-2.5 border-white/35 bg-white/20 hover:border-white/60 hover:bg-white/40",
+            )}
+            style={
+              selected
+                ? {
+                    background: game.accent,
+                    borderColor: game.accent,
+                    boxShadow: `0 0 16px ${game.accent}88`,
+                  }
+                : undefined
+            }
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 /**
  * Constellation — starts zoomed out on the full V.
@@ -58,6 +122,7 @@ export function ConstellationView() {
   const [engaged, setEngaged] = useState(false);
   const [camera, setCamera] = useState({ x: 0, y: 0, scale: 1 });
   const [ready, setReady] = useState(false);
+  const [travelSlot, setTravelSlot] = useState<HTMLElement | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const mobile = useIsMobile();
@@ -149,6 +214,22 @@ export function ConstellationView() {
     return () => observer.disconnect();
   }, []);
 
+  // Mount travel dots into the sticky catalog bar slot (98×43).
+  useEffect(() => {
+    let frames = 0;
+    let raf = 0;
+    const bind = () => {
+      const el = document.getElementById(TRAVEL_SLOT_ID);
+      if (el) {
+        setTravelSlot(el);
+        return;
+      }
+      if (frames++ < 30) raf = requestAnimationFrame(bind);
+    };
+    bind();
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
   const engage = (index: number) => {
     setActive(index);
     setEngaged(true);
@@ -214,66 +295,27 @@ export function ConstellationView() {
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
           {engaged
-            ? "Travel the dots to jump between worlds—each pan opens that planet’s dossier."
-            : "The full constellation at a glance. Tap a world or a dot to zoom into the first planet and begin."}
+            ? "Travel the dots above to jump between worlds—each pan opens that planet’s dossier."
+            : "The full constellation at a glance. Tap a world or a travel dot to zoom into the first planet and begin."}
         </p>
-
-        {/* Travel dots — top */}
-        <div className="mt-6 flex flex-col items-start gap-2">
-          <div
-            role="tablist"
-            aria-label="Travel between universes"
-            className="flex items-center gap-3"
-          >
-            {games.map((game, index) => {
-              const selected = engaged && index === active;
-              return (
-                <button
-                  key={`dot-${game.slug}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  aria-label={
-                    engaged
-                      ? `Travel to ${game.name}`
-                      : `Begin journey at ${game.name}`
-                  }
-                  title={game.name}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => {
-                    if (!engaged) {
-                      // Overview: any dot starts the journey on the first planet.
-                      beginJourney();
-                      return;
-                    }
-                    select(index);
-                  }}
-                  className={cn(
-                    "rounded-full border transition-all duration-300",
-                    selected
-                      ? "h-3.5 w-3.5 scale-110"
-                      : "h-2.5 w-2.5 border-white/35 bg-white/20 hover:border-white/60 hover:bg-white/40",
-                  )}
-                  style={
-                    selected
-                      ? {
-                          background: game.accent,
-                          borderColor: game.accent,
-                          boxShadow: `0 0 16px ${game.accent}88`,
-                        }
-                      : undefined
-                  }
-                />
-              );
-            })}
-          </div>
-          <p className="font-mono-label text-[8px] tracking-widest text-white/40 uppercase">
-            {engaged
-              ? `${current.name} · ${active + 1} / ${games.length}`
-              : "Overview · tap to zoom in"}
-          </p>
-        </div>
+        <p className="mt-2 font-mono-label text-[8px] tracking-widest text-white/40 uppercase">
+          {engaged
+            ? `${current.name} · ${active + 1} / ${games.length}`
+            : "Overview · tap a travel dot to zoom in"}
+        </p>
       </div>
+
+      {travelSlot
+        ? createPortal(
+            <TravelDots
+              engaged={engaged}
+              active={active}
+              onBegin={beginJourney}
+              onSelect={select}
+            />,
+            travelSlot,
+          )
+        : null}
 
       <div
         ref={viewportRef}

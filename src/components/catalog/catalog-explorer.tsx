@@ -35,7 +35,7 @@ const VIEWS: {
   {
     id: "constellation",
     label: "Constellation",
-    blurb: "Zoomed-out map — dots on top, then fly in",
+    blurb: "Zoomed-out map — travel dots in the bar",
   },
   {
     id: "shelf",
@@ -91,11 +91,18 @@ export function CatalogExplorer() {
       {/* View switcher */}
       <div className="sticky top-[4.5rem] z-40 border-b border-white/10 bg-[#070d16]/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6">
-          <div>
+          <div className="min-w-0">
             <p className="font-mono-label text-[7px] tracking-widest text-[var(--cyan)] uppercase md:text-[8px]">
               Catalog views · experiment switcher
             </p>
-            <p className="mt-1 text-sm text-white/55">{active.blurb}</p>
+            {view === "constellation" ? (
+              <div
+                id="constellation-travel-slot"
+                className="mt-1.5 flex h-[43px] w-[98px] items-center"
+              />
+            ) : (
+              <p className="mt-1 text-sm text-white/55">{active.blurb}</p>
+            )}
           </div>
           <div
             role="tablist"
