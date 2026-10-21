@@ -211,6 +211,22 @@ export function ConstellationView() {
           if (!engaged && e.target === e.currentTarget) beginJourney();
         }}
       >
+        {/* Planet relic — top-right, semi-transparent (e.g. Coindroid unit) */}
+        {engaged && current.motionArt ? (
+          <div
+            className="pointer-events-none absolute top-3 right-3 z-[5] w-[min(28vw,200px)] opacity-45 md:top-5 md:right-6 md:w-[min(22vw,240px)]"
+            aria-hidden
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={current.motionArt}
+              alt=""
+              className="h-auto w-full select-none"
+              draggable={false}
+            />
+          </div>
+        ) : null}
+
         {/* Travel dots — float above the focused planet */}
         <div
           className="pointer-events-none absolute top-5 z-50 flex flex-col items-center gap-2 md:top-7"
