@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { UniverseAtmosphere } from "@/components/catalog/universe-atmosphere";
+import {
+  SchemaverseSqlStage,
+  UniverseAtmosphere,
+} from "@/components/catalog/universe-atmosphere";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -157,6 +160,7 @@ export function DiagonalLaneView() {
         className="relative z-10 mt-10 w-full overflow-hidden md:mt-14"
         style={{ height: Math.max(activeSize + 220, mobile ? 360 : 480) }}
       >
+        <SchemaverseSqlStage active={expanded && active === 0} />
         <div
           className={cn(
             "relative will-change-transform",

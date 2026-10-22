@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { UniverseAtmosphere } from "@/components/catalog/universe-atmosphere";
+import {
+  SchemaverseSqlStage,
+  UniverseAtmosphere,
+} from "@/components/catalog/universe-atmosphere";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -287,6 +290,9 @@ export function ConstellationView() {
               : "Overview · tap to zoom in"}
           </p>
         </div>
+
+        <SchemaverseSqlStage active={engaged && active === 0} />
+
         <div
           className={cn(
             "relative origin-top-left will-change-transform",
