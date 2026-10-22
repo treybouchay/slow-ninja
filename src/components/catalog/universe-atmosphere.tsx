@@ -80,22 +80,22 @@ function SchemaverseTyping({ active }: { active: boolean }) {
       <div className="universe-sql-grid absolute inset-0 opacity-30" />
       <div className="sql-scanlines absolute inset-0 opacity-40" />
       <div
-        className="absolute inset-x-0 top-[18%] bottom-[22%] flex flex-col justify-end gap-2 px-5 font-mono-label md:px-12"
+        className="absolute top-[22%] right-4 left-[42%] flex flex-col justify-start gap-2 font-mono-label md:right-10 md:left-[48%]"
         style={{
           maskImage:
-            "linear-gradient(180deg, transparent 0%, black 18%, black 78%, transparent 100%)",
+            "linear-gradient(180deg, black 0%, black 70%, transparent 100%)",
         }}
       >
         {history.map((line) => (
           <p
             key={`${queryIndex}-${line}`}
-            className="truncate text-[10px] tracking-wide text-[var(--cyan)]/35 md:text-xs"
+            className="truncate text-[10px] tracking-wide text-[var(--cyan)]/40 md:text-xs"
           >
             {line}
           </p>
         ))}
-        <p className="min-h-[1.4em] text-[11px] tracking-wide text-[var(--cyan)]/80 md:text-sm">
-          <span className="text-[var(--cyan)]/45">ninja=# </span>
+        <p className="min-h-[1.4em] text-[12px] leading-relaxed tracking-wide text-[var(--cyan)]/90 md:text-sm">
+          <span className="text-[var(--cyan)]/55">ninja=# </span>
           {query.slice(0, chars)}
           <span className="sql-caret ml-0.5 inline-block h-[1em] w-[0.55ch] translate-y-[2px] bg-[var(--cyan)] align-baseline" />
         </p>
