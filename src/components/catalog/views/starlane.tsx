@@ -6,16 +6,12 @@ import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 /**
- * Working timeline version — pan + grow/shrink animation verified.
- * Circles wake when the section enters view. Starlane segments stop at
- * each circle edge and never run past the last bubble. Dossier card
- * below updates in place with the focused game.
+ * Starlane — horizontal lane with travel dots above the focused circle.
+ * Dossier floats beside the focus: Schemaverse left, Coindroids/Structs right.
  */
 
-/** Tighter center-to-center spacing. */
-const SLOT_DESKTOP = 236;
-const SLOT_MOBILE = 152;
-/** Active grows; neighbors stay small. */
+const SLOT_DESKTOP = 280;
+const SLOT_MOBILE = 180;
 const ACTIVE_DESKTOP = 220;
 const INACTIVE_DESKTOP = 64;
 const ACTIVE_MOBILE = 148;
@@ -44,10 +40,9 @@ function circleSize(
 }
 
 export function StarlaneView() {
-  const [active, setActive] = useState(games.length - 1);
+  const [active, setActive] = useState(0);
   const [offset, setOffset] = useState(0);
   const [ready, setReady] = useState(false);
-  /** True once the starlane is on screen — unlocks the expanded focus state. */
   const [inView, setInView] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -63,9 +58,12 @@ export function StarlaneView() {
     if (!viewport) return;
     const vw = viewport.clientWidth;
     if (vw <= 0) return;
-    setOffset(vw / 2 - (active + 0.5) * slot);
+    // Bias so the floating dossier has room on its preferred side.
+    const bias =
+      mobile ? 0 : active === 0 ? Math.min(120, vw * 0.1) : -Math.min(120, vw * 0.1);
+    setOffset(vw / 2 - (active + 0.5) * slot + bias);
     setReady(true);
-  }, [active, slot]);
+  }, [active, mobile, slot]);
 
   useEffect(() => {
     recenter();
@@ -101,6 +99,8 @@ export function StarlaneView() {
   };
 
   const trackWidth = games.length * slot;
+  /** Schemaverse → card on left; Coindroids & Structs → card on right */
+  const cardOnLeft = active === 0;
 
   return (
     <section
@@ -108,7 +108,6 @@ export function StarlaneView() {
       id="games"
       className="relative scroll-mt-28 overflow-hidden bg-[#070d16] py-16 md:py-28"
     >
-      {/* Universe atmosphere — swaps with the focused circle */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {games.map((game, index) => {
           const lit = expanded && index === active;
@@ -127,7 +126,7 @@ export function StarlaneView() {
                 sizes="100vw"
                 className="object-cover scale-110 blur-2xl saturate-125"
                 style={{ opacity: 0.38 }}
-                priority={index === games.length - 1}
+                priority={index === 0}
               />
               <div
                 className="absolute inset-0"
@@ -148,40 +147,9 @@ export function StarlaneView() {
               {game.slug === "structs" ? (
                 <div className="universe-nebula absolute inset-0 opacity-50" />
               ) : null}
-
-              {game.motionArt ? (
-                <div
-                  className="absolute top-6 right-4 w-[min(20.8vw,168px)] md:top-8 md:right-8 md:w-[min(15.2vw,184px)]"
-                  style={{
-                    filter: `drop-shadow(0 0 24px color-mix(in oklab, ${game.accent} 45%, transparent))`,
-                  }}
-                >
-                  {/* Native img keeps GIF animation; next/image can freeze frames */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={game.motionArt}
-                    alt=""
-                    className="h-auto w-full select-none opacity-90"
-                    draggable={false}
-                  />
-                </div>
-              ) : null}
-
-              <p
-                className={cn(
-                  "absolute top-[12%] hidden max-w-[220px] font-mono-label text-[9px] tracking-[0.18em] uppercase md:block",
-                  game.motionArt
-                    ? "left-6 text-left"
-                    : "right-6 text-right",
-                )}
-                style={{ color: game.accent }}
-              >
-                {game.atmosphere}
-              </p>
             </div>
           );
         })}
-        {/* Idle veil when lane is asleep */}
         <div
           className={cn(
             "absolute inset-0 bg-[#070d16]/55 transition-opacity duration-700",
@@ -192,40 +160,87 @@ export function StarlaneView() {
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 md:px-6">
         <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
-          Project timeline
+          Project timeline · starlane
         </p>
         <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
           Explore our universes
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
-          Scroll to wake the lane—then click a circle to focus it. Your place
-          on the page stays put.
+          Use the dots above the focused world to travel the lane—each jump
+          opens its dossier beside the circle.
         </p>
       </div>
 
       <div
         ref={viewportRef}
-        className="relative z-10 mt-10 w-full overflow-hidden md:mt-14"
-        style={{
-          minHeight: activeSize + 160,
-        }}
+        className="relative z-10 mx-auto mt-8 w-full max-w-6xl overflow-hidden md:mt-12"
+        style={{ height: mobile ? 520 : 600 }}
       >
+        {/* Travel dots — above the centered circle */}
+        <div
+          className="pointer-events-none absolute top-4 z-50 flex flex-col items-center gap-2 md:top-6"
+          style={{
+            left: mobile
+              ? "50%"
+              : cardOnLeft
+                ? "calc(50% + 8%)"
+                : "calc(50% - 8%)",
+            transform: "translateX(-50%)",
+          }}
+        >
+          <div
+            role="tablist"
+            aria-label="Travel between universes"
+            className="pointer-events-auto flex h-[43px] w-[98px] items-center justify-center gap-3"
+          >
+            {games.map((game, index) => {
+              const selected = expanded && index === active;
+              return (
+                <button
+                  key={`dot-${game.slug}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-label={`Travel to ${game.name}`}
+                  title={game.name}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => select(index)}
+                  className={cn(
+                    "rounded-full border transition-all duration-300",
+                    selected
+                      ? "h-3.5 w-3.5 scale-110"
+                      : "h-2.5 w-2.5 border-white/35 bg-white/25 hover:border-white/60 hover:bg-white/45",
+                  )}
+                  style={
+                    selected
+                      ? {
+                          background: game.accent,
+                          borderColor: game.accent,
+                          boxShadow: `0 0 16px ${game.accent}88`,
+                        }
+                      : undefined
+                  }
+                />
+              );
+            })}
+          </div>
+          <p className="font-mono-label text-[8px] tracking-widest text-white/45 uppercase">
+            {current.name} · {active + 1} / {games.length}
+          </p>
+        </div>
+
         <div
           className={cn(
             "relative flex items-center will-change-transform",
-            ready &&
-              "transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+            ready && "camera-glide",
           )}
           style={{
             width: trackWidth,
             transform: `translate3d(${offset}px, 0, 0)`,
-            minHeight: activeSize + 140,
+            minHeight: activeSize + 180,
+            marginTop: mobile ? 72 : 88,
           }}
         >
-          {/*
-            Line segments between circle edges only — never through a bubble,
-            never past the last circle.
-          */}
           {games.slice(0, -1).map((_, index) => {
             const leftSize = circleSize(
               index,
@@ -268,7 +283,7 @@ export function StarlaneView() {
                 aria-pressed={selected}
                 aria-label={`Select ${game.name}`}
                 className="relative z-20 flex shrink-0 cursor-pointer flex-col items-center justify-center border-0 bg-transparent p-0 outline-none"
-                style={{ width: slot, minHeight: activeSize + 100 }}
+                style={{ width: slot, minHeight: activeSize + 120 }}
               >
                 <span
                   className={cn(
@@ -322,87 +337,51 @@ export function StarlaneView() {
             );
           })}
         </div>
-      </div>
 
-      <div className="relative z-10 mx-auto mt-4 flex max-w-6xl items-center justify-between px-4 md:mt-6 md:px-6">
-        <button
-          type="button"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {
-            setActive((i) => Math.max(0, i - 1));
-            if (!inView) setInView(true);
+        {/* Floating dossier — Schemaverse left; Coindroids & Structs right */}
+        <div
+          key={current.slug}
+          className={cn(
+            "pointer-events-none absolute z-40 w-[min(320px,calc(100%-1.5rem))] rounded-[1.25rem] border border-white/10 bg-[#0a1220]/95 p-4 backdrop-blur-md md:p-5",
+            expanded ? "dossier-spring opacity-100" : "invisible opacity-0",
+            mobile
+              ? "right-3 bottom-3 left-3 w-auto"
+              : cardOnLeft
+                ? "top-1/2 left-4 -translate-y-1/2"
+                : "top-1/2 right-4 -translate-y-1/2",
+          )}
+          style={{
+            maxHeight: mobile ? "38%" : "min(340px, 72%)",
+            boxShadow: `0 0 0 1px ${current.accent}33, 0 24px 60px rgba(0,0,0,0.55)`,
           }}
-          disabled={active === 0}
-          className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:border-[var(--cyan)] disabled:opacity-30"
         >
-          ← Earlier
-        </button>
-        <span className="font-mono-label text-[8px] text-white/40 uppercase">
-          {active + 1} / {games.length}
-        </span>
-        <button
-          type="button"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {
-            setActive((i) => Math.min(games.length - 1, i + 1));
-            if (!inView) setInView(true);
-          }}
-          disabled={active === games.length - 1}
-          className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:border-[var(--lime)] disabled:opacity-30"
-        >
-          Later →
-        </button>
-      </div>
-
-      {/* Dossier card — updates in place with focused game */}
-      <div
-        key={current.slug}
-        className={cn(
-          "pop-in relative z-10 mx-auto mt-10 grid max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a1220]/92 backdrop-blur-sm transition-opacity duration-500 md:mt-14 md:grid-cols-[1.2fr_0.8fr]",
-          expanded ? "opacity-100" : "opacity-40",
-        )}
-        style={{ boxShadow: `0 0 0 1px ${current.accent}44` }}
-      >
-        <div className="relative min-h-[280px] md:min-h-[440px]">
-          <Image
-            src={current.artwork}
-            alt={current.name}
-            fill
-            className="pointer-events-none object-cover"
-            sizes="(max-width:768px) 100vw, 60vw"
-            priority
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-[#0a1220]/75" />
-          <div className="absolute top-4 left-4 rounded-full border border-white/10 bg-black/50 px-3 py-1.5 font-mono-label text-[8px] tracking-widest text-white uppercase">
-            {current.years}
+          <div className="max-h-full overflow-y-auto overscroll-contain pr-1">
+            <p
+              className="font-mono-label text-[8px] tracking-widest uppercase"
+              style={{ color: current.accent }}
+            >
+              {current.mechanic}
+            </p>
+            <h3 className="font-display mt-2 text-xl font-bold text-white md:text-2xl">
+              {current.name}
+            </h3>
+            <p className="mt-1 text-sm text-white/75">{current.tagline}</p>
+            <p className="mt-3 text-xs leading-relaxed text-white/55 md:text-sm">
+              {current.summary}
+            </p>
+            <p className="mt-3 text-[10px] font-semibold tracking-wide text-white/35 uppercase">
+              {current.status}
+            </p>
+            <a
+              href={current.href}
+              target="_blank"
+              rel="noreferrer"
+              className="pointer-events-auto mt-4 inline-flex w-fit rounded-full px-5 py-2.5 text-sm font-bold text-[var(--ink)]"
+              style={{ background: current.accent }}
+            >
+              Explore more →
+            </a>
           </div>
-        </div>
-        <div className="flex flex-col justify-center p-6 md:p-10">
-          <p
-            className="font-mono-label text-[8px] tracking-widest uppercase"
-            style={{ color: current.accent }}
-          >
-            {current.mechanic}
-          </p>
-          <h3 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
-            {current.name}
-          </h3>
-          <p className="mt-2 text-lg text-white/75">{current.tagline}</p>
-          <p className="mt-4 text-sm leading-relaxed text-white/60 md:text-base">
-            {current.summary}
-          </p>
-          <p className="mt-4 text-xs font-semibold tracking-wide text-white/40 uppercase">
-            {current.status}
-          </p>
-          <a
-            href={current.href}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-8 inline-flex w-fit rounded-full px-6 py-3.5 text-sm font-bold text-[var(--ink)]"
-            style={{ background: current.accent }}
-          >
-            Explore more →
-          </a>
         </div>
       </div>
     </section>
