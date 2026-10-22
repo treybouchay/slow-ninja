@@ -304,11 +304,11 @@
     animation: structs-drift-c 10s ease-in-out infinite;
   }
 
-  /* Command ship: ease into place, then gentle hover */
+  /* Command ship: short settle, then ±2px hover loop */
   .structs-ship-drift {
     animation:
-      structs-ship-settle 4.5s cubic-bezier(0.22, 1, 0.36, 1) forwards,
-      structs-ship-hover 5.5s ease-in-out 4.5s infinite;
+      structs-ship-settle 2.8s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+      structs-ship-hover 2.4s ease-in-out 2.8s infinite;
     will-change: transform;
   }
 
@@ -445,24 +445,22 @@
   }
 }
 
-@keyframes structs-ship-wander {
+@keyframes structs-ship-settle {
   0% {
-    transform: translate3d(0, 0, 0);
-  }
-  20% {
-    transform: translate3d(42vw, 8vh, 0);
-  }
-  40% {
-    transform: translate3d(28vw, 38vh, 0);
-  }
-  60% {
-    transform: translate3d(52vw, 22vh, 0);
-  }
-  80% {
-    transform: translate3d(12vw, 40vh, 0);
+    transform: translate3d(0, 10px, 0);
   }
   100% {
     transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes structs-ship-hover {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -2px, 0);
   }
 }
 

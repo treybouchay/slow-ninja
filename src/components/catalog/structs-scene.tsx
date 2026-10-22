@@ -4,8 +4,8 @@ import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
 /**
- * Structs atmosphere — command ship at regular size.
- * Plays once (no loop), then drifts around the stage.
+ * Structs atmosphere — command ship in the marked upper-right pocket
+ * (≈200×152). Short settle float, then ±2px hover loop.
  */
 export function StructsScene({ active }: { active: boolean }) {
   return (
@@ -29,10 +29,11 @@ export function StructsScene({ active }: { active: boolean }) {
                 `,
               }}
             />
-            <div className="structs-ship-drift pointer-events-none absolute top-[18%] left-[12%] h-[110px] w-[110px] md:h-[140px] md:w-[140px]">
+            {/* Region match: section left ~1092, top ~316 → stage upper-right */}
+            <div className="structs-ship-drift pointer-events-none absolute top-[316px] left-[1092px] flex h-[152px] w-[200px] -translate-x-0 items-center justify-center max-lg:left-auto max-lg:right-6 max-lg:top-[280px]">
               <LottieClip
                 src="/lottie/structs/move_arrive"
-                className="h-full w-full"
+                className="h-[110px] w-[110px] md:h-[128px] md:w-[128px]"
                 loop={false}
                 opacity={0.9}
                 speed={0.95}
