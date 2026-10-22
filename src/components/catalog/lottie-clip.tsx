@@ -14,6 +14,8 @@ type ClipProps = {
   speed?: number;
   /** 0–1 */
   opacity?: number;
+  /** Delay before autoplay starts (ms) */
+  delayMs?: number;
 };
 
 export function LottieClip({
@@ -24,8 +26,30 @@ export function LottieClip({
   autoplay = true,
   speed = 1,
   opacity = 1,
+  delayMs = 0,
 }: ClipProps) {
   const base = src.replace(/\/$/, "");
+  const [ready, setReady] = useState(delayMs <= 0);
+
+  useEffect(() => {
+    if (delayMs <= 0) {
+      setReady(true);
+      return;
+    }
+    setReady(false);
+    const t = window.setTimeout(() => setReady(true), delayMs);
+    return () => window.clearTimeout(t);
+  }, [delayMs, src]);
+
+  if (!ready) {
+    return (
+      <div
+        className={cn("pointer-events-none", className)}
+        style={{ opacity: 0, ...style }}
+        aria-hidden
+      />
+    );
+  }
 
   return (
     <div

@@ -3,9 +3,11 @@
 import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
+const INTRO_DELAY_MS = 1000;
+
 /**
- * Structs atmosphere — command ship in the marked upper-right pocket
- * (≈200×152). Short settle float, then ±2px hover loop.
+ * Structs atmosphere — command ship upper-right; satellite above the dossier.
+ * All motion starts after a 1s delay.
  */
 export function StructsScene({ active }: { active: boolean }) {
   return (
@@ -29,25 +31,27 @@ export function StructsScene({ active }: { active: boolean }) {
                 `,
               }}
             />
-            {/* Region match: section left ~1092, top ~316 → stage upper-right */}
-            <div className="structs-ship-drift pointer-events-none absolute top-[316px] left-[1092px] flex h-[152px] w-[200px] -translate-x-0 items-center justify-center max-lg:left-auto max-lg:right-6 max-lg:top-[280px]">
+            {/* Command ship — upper-right pocket */}
+            <div className="structs-ship-drift pointer-events-none absolute top-[316px] left-[1092px] flex h-[152px] w-[200px] items-center justify-center max-lg:left-auto max-lg:right-6 max-lg:top-[280px]">
               <LottieClip
                 src="/lottie/structs/move_arrive"
                 className="h-[110px] w-[110px] md:h-[128px] md:w-[128px]"
                 loop={false}
                 opacity={0.9}
                 speed={0.95}
+                delayMs={INTRO_DELAY_MS}
               />
             </div>
 
-            {/* Satellite signal jamming — lower-left pocket */}
-            <div className="structs-float-b pointer-events-none absolute bottom-[18%] left-[8%] h-[100px] w-[100px] md:bottom-[20%] md:left-[12%] md:h-[128px] md:w-[128px]">
+            {/* Satellite — above the left dossier card */}
+            <div className="structs-sat-drift pointer-events-none absolute top-[300px] left-[168px] h-[100px] w-[100px] md:left-[180px] md:h-[120px] md:w-[120px] max-lg:left-6">
               <LottieClip
                 src="/lottie/structs/satellite_signal_jamming"
                 className="h-full w-full"
                 loop
-                opacity={0.82}
+                opacity={0.85}
                 speed={0.9}
+                delayMs={INTRO_DELAY_MS}
               />
             </div>
           </>
