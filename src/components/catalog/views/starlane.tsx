@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Starlane — horizontal lane with travel dots above the focused circle.
- * Dossier floats beside the focus: Schemaverse left, Coindroids/Structs right.
+ * Dossier always floats to the left of the focused circle.
  */
 
 const SLOT_DESKTOP = 280;
@@ -58,9 +58,8 @@ export function StarlaneView() {
     if (!viewport) return;
     const vw = viewport.clientWidth;
     if (vw <= 0) return;
-    // Bias so the floating dossier has room on its preferred side.
-    const bias =
-      mobile ? 0 : active === 0 ? Math.min(120, vw * 0.1) : -Math.min(120, vw * 0.1);
+    // Bias circle right so the left-side dossier has room.
+    const bias = mobile ? 0 : Math.min(120, vw * 0.1);
     setOffset(vw / 2 - (active + 0.5) * slot + bias);
     setReady(true);
   }, [active, mobile, slot]);
@@ -99,8 +98,6 @@ export function StarlaneView() {
   };
 
   const trackWidth = games.length * slot;
-  /** Schemaverse → card on left; Coindroids & Structs → card on right */
-  const cardOnLeft = active === 0;
 
   return (
     <section
@@ -180,11 +177,7 @@ export function StarlaneView() {
         <div
           className="pointer-events-none absolute top-4 z-50 flex flex-col items-center gap-2 md:top-6"
           style={{
-            left: mobile
-              ? "50%"
-              : cardOnLeft
-                ? "calc(50% + 8%)"
-                : "calc(50% - 8%)",
+            left: mobile ? "50%" : "calc(50% + 8%)",
             transform: "translateX(-50%)",
           }}
         >
@@ -338,7 +331,7 @@ export function StarlaneView() {
           })}
         </div>
 
-        {/* Floating dossier — Schemaverse left; Coindroids & Structs right */}
+        {/* Floating dossier — always to the left of the focused circle */}
         <div
           key={current.slug}
           className={cn(
@@ -346,9 +339,7 @@ export function StarlaneView() {
             expanded ? "dossier-spring opacity-100" : "invisible opacity-0",
             mobile
               ? "right-3 bottom-3 left-3 w-auto"
-              : cardOnLeft
-                ? "top-1/2 left-4 -translate-y-1/2"
-                : "top-1/2 right-4 -translate-y-1/2",
+              : "top-1/2 left-4 -translate-y-1/2",
           )}
           style={{
             maxHeight: mobile ? "38%" : "min(340px, 72%)",
