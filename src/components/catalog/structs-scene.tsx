@@ -3,7 +3,8 @@
 import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
-const INTRO_DELAY_MS = 1000;
+const SHIP_DELAY_MS = 2000;
+const SAT_DELAY_MS = 1000;
 
 /**
  * Structs atmosphere — command ship upper-right; satellite above the dossier.
@@ -39,19 +40,19 @@ export function StructsScene({ active }: { active: boolean }) {
                 loop={false}
                 opacity={0.9}
                 speed={0.95}
-                delayMs={INTRO_DELAY_MS}
+                delayMs={SHIP_DELAY_MS}
               />
             </div>
 
-            {/* Satellite — above the left dossier card */}
+            {/* Satellite idle — above the left dossier card */}
             <div className="structs-sat-drift pointer-events-none absolute top-[300px] left-[168px] h-[100px] w-[100px] md:left-[180px] md:h-[120px] md:w-[120px] max-lg:left-6">
               <LottieClip
-                src="/lottie/structs/satellite_signal_jamming"
+                src="/lottie/structs/sat_idle"
                 className="h-full w-full"
                 loop
                 opacity={0.85}
                 speed={0.9}
-                delayMs={INTRO_DELAY_MS}
+                delayMs={SAT_DELAY_MS}
               />
             </div>
           </>
