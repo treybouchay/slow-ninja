@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { UniverseAtmosphere } from "@/components/catalog/universe-atmosphere";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -197,22 +198,10 @@ export function ConstellationView() {
       className="relative scroll-mt-28 overflow-hidden bg-[#070c16] py-16 md:py-28"
     >
       <div
-        className="pointer-events-none absolute inset-0 transition-transform duration-300 ease-out"
+        className="absolute inset-0 transition-transform duration-300 ease-out"
         style={{ transform: `translate3d(${parallax.x * 0.4}px, ${parallax.y * 0.4}px, 0)` }}
-        aria-hidden
       >
-        {games.map((game, index) => (
-          <div
-            key={`wash-${game.slug}`}
-            className={cn(
-              "absolute inset-0 transition-opacity duration-700",
-              engaged && index === active ? "opacity-100" : "opacity-0",
-            )}
-            style={{
-              background: `radial-gradient(ellipse 55% 45% at 50% 45%, color-mix(in oklab, ${game.accent} 20%, transparent), transparent 70%)`,
-            }}
-          />
-        ))}
+        <UniverseAtmosphere active={active} lit={engaged} />
       </div>
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 md:px-6">

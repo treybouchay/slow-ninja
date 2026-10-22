@@ -236,7 +236,7 @@
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  /* Starlane universe atmospheres */
+  /* Universe atmospheres */
   .universe-sql-grid {
     background-image:
       linear-gradient(color-mix(in oklab, var(--cyan) 22%, transparent) 1px, transparent 1px),
@@ -244,6 +244,19 @@
     background-size: 36px 36px;
     mask-image: radial-gradient(ellipse at 40% 50%, black 10%, transparent 75%);
     animation: grid-drift 48s linear infinite;
+  }
+
+  .sql-scanlines {
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0 2px,
+      color-mix(in oklab, var(--cyan) 6%, transparent) 2px 3px
+    );
+    animation: scan-drift 10s linear infinite;
+  }
+
+  .sql-caret {
+    animation: caret-blink 1s steps(1) infinite;
   }
 
   .universe-ruins {
@@ -255,6 +268,19 @@
       radial-gradient(1px 1px at 35% 70%, white, transparent);
   }
 
+  .tx-rain > p {
+    animation-name: tx-rise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .coin-pulse {
+    background:
+      radial-gradient(circle at 72% 38%, color-mix(in oklab, var(--coral) 22%, transparent), transparent 42%),
+      radial-gradient(circle at 28% 68%, color-mix(in oklab, var(--sun) 12%, transparent), transparent 38%);
+    animation: coin-breathe 4.5s ease-in-out infinite;
+  }
+
   .universe-nebula {
     background-image:
       radial-gradient(ellipse 50% 40% at 75% 25%, color-mix(in oklab, var(--violet) 26%, transparent), transparent),
@@ -264,6 +290,20 @@
       radial-gradient(1.5px 1.5px at 78% 40%, white, transparent),
       radial-gradient(1px 1px at 88% 78%, white, transparent),
       radial-gradient(1px 1px at 55% 12%, white, transparent);
+  }
+
+  .structs-orbit {
+    animation: orbit-spin 28s linear infinite;
+    box-shadow: 0 0 40px color-mix(in oklab, var(--violet) 18%, transparent);
+  }
+
+  .structs-orbit-rev {
+    animation: orbit-spin 18s linear infinite reverse;
+  }
+
+  .alpha-matter {
+    animation: alpha-drift 6s ease-in-out infinite;
+    box-shadow: 0 0 10px color-mix(in oklab, var(--violet) 70%, transparent);
   }
 
 
@@ -320,6 +360,67 @@
   }
 }
 
+@keyframes scan-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 48px;
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes tx-rise {
+  0% {
+    transform: translateY(110vh);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.7;
+  }
+  88% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateY(-20vh);
+    opacity: 0;
+  }
+}
+
+@keyframes coin-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes alpha-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(8px, -14px, 0) scale(1.4);
+    opacity: 0.95;
+  }
+}
+
 @keyframes dossier-spring {
   0% {
     opacity: 0;
@@ -363,6 +464,13 @@
   .orbit-spin-rev,
   .space-grid,
   .universe-sql-grid,
+  .sql-scanlines,
+  .sql-caret,
+  .tx-rain > p,
+  .coin-pulse,
+  .structs-orbit,
+  .structs-orbit-rev,
+  .alpha-matter,
   .pop-in,
   .pop-in-delay,
   .pop-in-late,

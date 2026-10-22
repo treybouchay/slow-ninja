@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { UniverseAtmosphere } from "@/components/catalog/universe-atmosphere";
 import { games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -105,55 +106,7 @@ export function StarlaneView() {
       id="games"
       className="relative scroll-mt-28 overflow-hidden bg-[#070d16] py-16 md:py-28"
     >
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        {games.map((game, index) => {
-          const lit = expanded && index === active;
-          return (
-            <div
-              key={`atmosphere-${game.slug}`}
-              className={cn(
-                "absolute inset-0 transition-opacity duration-700 ease-out",
-                lit ? "opacity-100" : "opacity-0",
-              )}
-            >
-              <Image
-                src={game.artwork}
-                alt=""
-                fill
-                sizes="100vw"
-                className="object-cover scale-110 blur-2xl saturate-125"
-                style={{ opacity: 0.38 }}
-                priority={index === 0}
-              />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `
-                    radial-gradient(ellipse 70% 55% at 18% 30%, color-mix(in oklab, ${game.accent} 28%, transparent), transparent 70%),
-                    radial-gradient(ellipse 55% 45% at 88% 70%, color-mix(in oklab, ${game.accent} 18%, transparent), transparent 65%),
-                    linear-gradient(180deg, #070d16e6 0%, #070d16aa 45%, #070d16f2 100%)
-                  `,
-                }}
-              />
-              {game.slug === "schemaverse" ? (
-                <div className="universe-sql-grid absolute inset-0 opacity-35" />
-              ) : null}
-              {game.slug === "coindroids" ? (
-                <div className="universe-ruins absolute inset-0 opacity-40" />
-              ) : null}
-              {game.slug === "structs" ? (
-                <div className="universe-nebula absolute inset-0 opacity-50" />
-              ) : null}
-            </div>
-          );
-        })}
-        <div
-          className={cn(
-            "absolute inset-0 bg-[#070d16]/55 transition-opacity duration-700",
-            expanded ? "opacity-0" : "opacity-100",
-          )}
-        />
-      </div>
+      <UniverseAtmosphere active={active} lit={expanded} />
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 md:px-6">
         <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
