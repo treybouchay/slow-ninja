@@ -14,15 +14,6 @@ const SCHEMAVERSE_QUERIES = [
   "CREATE OR REPLACE FUNCTION fly_home() RETURNS void AS $$ … $$;",
 ];
 
-/** Shorter second stream — same mono colour, no highlighting */
-const SCHEMAVERSE_SHORT = [
-  "SELECT attack($1);",
-  "SELECT fleet_power();",
-  "INSERT INTO ships DEFAULT VALUES;",
-  "SELECT remaining_tic();",
-  "UPDATE my_ships SET location = get_player_xy();",
-];
-
 const COINDROID_TXS = [
   "0x7a3f…b2e1  combat.engage(droid_04)",
   "0x91c0…44aa  wager.lock(1200 COIN)",
@@ -129,29 +120,20 @@ function SqlTerminal({
 }
 
 /**
- * Schemaverse SQL typing — sits inside the stage viewport.
- * Primary panel ~325×152 (upper-right empty grid); shorter stream below it.
+ * Schemaverse SQL typing — upper-left of the stage (~363×147),
+ * clear of the focused circle. Uniform mono ink, no highlights.
  */
 export function SchemaverseSqlStage({ active }: { active: boolean }) {
   if (!active) return null;
 
   return (
-    <>
-      <SqlTerminal
-        lines={SCHEMAVERSE_QUERIES}
-        active={active}
-        msPerChar={30}
-        showHistory={2}
-        className="top-[72px] right-4 h-[152px] w-[min(325px,calc(100%-1.5rem))] md:right-6"
-      />
-      <SqlTerminal
-        lines={SCHEMAVERSE_SHORT}
-        active={active}
-        msPerChar={36}
-        showHistory={1}
-        className="right-4 bottom-10 h-[162px] w-[min(397px,calc(100%-1.5rem))] md:right-6 md:bottom-12"
-      />
-    </>
+    <SqlTerminal
+      lines={SCHEMAVERSE_QUERIES}
+      active={active}
+      msPerChar={30}
+      showHistory={2}
+      className="top-0 left-4 h-[147px] w-[min(363px,calc(100%-1.5rem))] md:left-8"
+    />
   );
 }
 
