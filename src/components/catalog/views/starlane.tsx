@@ -44,7 +44,7 @@ function circleSize(
 }
 
 export function StarlaneView() {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(games.length - 1);
   const [offset, setOffset] = useState(0);
   const [ready, setReady] = useState(false);
   const [inView, setInView] = useState(false);

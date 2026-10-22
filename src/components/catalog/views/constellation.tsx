@@ -57,7 +57,7 @@ function rimPoint(
 }
 
 export function ConstellationView() {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(games.length - 1);
   /** False = zoomed-out map; true = camera locked on a planet */
   const [engaged, setEngaged] = useState(false);
   const [camera, setCamera] = useState({ x: 0, y: 0, scale: 1 });
@@ -136,17 +136,21 @@ export function ConstellationView() {
     };
   }, [updateCamera]);
 
-  // Zoom back out to the map when the section leaves focus / view.
+  // Scroll in → focus Structs; leave → zoom back to the map.
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+    const structs = games.length - 1;
     const observer = new IntersectionObserver(
       ([entry]) => {
         const focused =
           entry.isIntersecting && entry.intersectionRatio >= 0.35;
-        if (!focused) {
+        if (focused) {
+          setActive(structs);
+          setEngaged(true);
+        } else {
           setEngaged(false);
-          setActive(0);
+          setActive(structs);
         }
       },
       { threshold: [0, 0.2, 0.35, 0.55], rootMargin: "-10% 0px -14% 0px" },
@@ -181,9 +185,9 @@ export function ConstellationView() {
     setEngaged(true);
   };
 
-  /** First interaction from overview always opens the first planet. */
+  /** First interaction from overview opens Structs. */
   const beginJourney = () => {
-    if (!engaged) engage(0);
+    if (!engaged) engage(games.length - 1);
   };
 
   const select = (index: number) => {
