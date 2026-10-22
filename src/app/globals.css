@@ -304,11 +304,11 @@
     animation: structs-drift-c 10s ease-in-out infinite;
   }
 
-  /* Command ship: 3s delay, short settle, then ±2px hover loop */
+  /* Command ship: 2s delay, short settle, then ±2px hover loop */
   .structs-ship-drift {
     animation:
-      structs-ship-settle 2.8s cubic-bezier(0.22, 1, 0.36, 1) 3s forwards,
-      structs-ship-hover 2.4s ease-in-out 5.8s infinite;
+      structs-ship-settle 2.8s cubic-bezier(0.22, 1, 0.36, 1) 2s forwards,
+      structs-ship-hover 2.4s ease-in-out 4.8s infinite;
     will-change: transform;
   }
 
