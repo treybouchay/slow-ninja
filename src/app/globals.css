@@ -304,11 +304,9 @@
     animation: structs-drift-c 10s ease-in-out infinite;
   }
 
-  /* Command ship: 2s delay, short settle, then ±2px hover loop */
-  .structs-ship-drift {
-    animation:
-      structs-ship-settle 2.8s cubic-bezier(0.22, 1, 0.36, 1) 2s forwards,
-      structs-ship-hover 2.4s ease-in-out 4.8s infinite;
+  /* Command ship ±2px hover — applied only after arrive Lottie completes */
+  .structs-ship-hover {
+    animation: structs-ship-hover 2.4s ease-in-out infinite;
     will-change: transform;
   }
 
@@ -451,15 +449,6 @@
   }
 }
 
-@keyframes structs-ship-settle {
-  0% {
-    transform: translate3d(0, 10px, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
 @keyframes structs-ship-hover {
   0%,
   100% {
@@ -523,7 +512,7 @@
   .structs-float-a,
   .structs-float-b,
   .structs-float-c,
-  .structs-ship-drift,
+  .structs-ship-hover,
   .structs-sat-drift,
   .pop-in,
   .pop-in-delay,

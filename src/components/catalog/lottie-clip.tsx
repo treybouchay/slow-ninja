@@ -16,6 +16,8 @@ type ClipProps = {
   opacity?: number;
   /** Delay before autoplay starts (ms) */
   delayMs?: number;
+  /** Fires when a non-looping clip finishes */
+  onComplete?: () => void;
 };
 
 export function LottieClip({
@@ -27,6 +29,7 @@ export function LottieClip({
   speed = 1,
   opacity = 1,
   delayMs = 0,
+  onComplete,
 }: ClipProps) {
   const base = src.replace(/\/$/, "");
   const [ready, setReady] = useState(delayMs <= 0);
@@ -64,6 +67,11 @@ export function LottieClip({
         autoplay={autoplay}
         speed={speed}
         className="h-full w-full"
+        subscriptions={{
+          complete: () => {
+            onComplete?.();
+          },
+        }}
       />
     </div>
   );

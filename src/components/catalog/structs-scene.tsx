@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
@@ -8,9 +9,15 @@ const SAT_DELAY_MS = 0;
 
 /**
  * Structs atmosphere — command ship upper-right; satellite above the dossier.
- * All motion starts after a 1s delay.
+ * Ship hover (±2px) starts only after the arrive Lottie finishes.
  */
 export function StructsScene({ active }: { active: boolean }) {
+  const [shipHover, setShipHover] = useState(false);
+
+  useEffect(() => {
+    if (!active) setShipHover(false);
+  }, [active]);
+
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div className="universe-nebula absolute inset-0 opacity-55" />
@@ -32,8 +39,13 @@ export function StructsScene({ active }: { active: boolean }) {
                 `,
               }}
             />
-            {/* Command ship — upper-right pocket */}
-            <div className="structs-ship-drift pointer-events-none absolute top-[316px] left-[1092px] flex h-[152px] w-[200px] items-center justify-center max-lg:left-auto max-lg:right-6 max-lg:top-[280px]">
+            {/* Command ship — hover only after Lottie completes */}
+            <div
+              className={cn(
+                "pointer-events-none absolute top-[316px] left-[1092px] flex h-[152px] w-[200px] items-center justify-center max-lg:left-auto max-lg:right-6 max-lg:top-[280px]",
+                shipHover && "structs-ship-hover",
+              )}
+            >
               <LottieClip
                 src="/lottie/structs/move_arrive"
                 className="h-[110px] w-[110px] md:h-[128px] md:w-[128px]"
@@ -41,6 +53,7 @@ export function StructsScene({ active }: { active: boolean }) {
                 opacity={0.9}
                 speed={0.95}
                 delayMs={SHIP_DELAY_MS}
+                onComplete={() => setShipHover(true)}
               />
             </div>
 
