@@ -194,9 +194,6 @@ function StructsOrbitField({ active }: { active: boolean }) {
     <div className="absolute inset-0 overflow-hidden">
       <div className="universe-nebula absolute inset-0 opacity-55" />
       <div className={cn("absolute inset-0", active ? "opacity-100" : "opacity-0")}>
-        <div className="structs-orbit absolute top-[28%] left-[62%] h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--violet)]/25 md:h-[320px] md:w-[320px]" />
-        <div className="structs-orbit-rev absolute top-[28%] left-[62%] h-[140px] w-[140px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--cyan)]/20 md:h-[200px] md:w-[200px]" />
-        <div className="structs-orbit absolute top-[28%] left-[62%] h-[60px] w-[60px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 md:h-[88px] md:w-[88px]" />
         {Array.from({ length: 8 }).map((_, i) => (
           <span
             key={i}
