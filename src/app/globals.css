@@ -292,18 +292,16 @@
       radial-gradient(1px 1px at 55% 12%, white, transparent);
   }
 
-  .structs-orbit {
-    animation: orbit-spin 28s linear infinite;
-    box-shadow: 0 0 40px color-mix(in oklab, var(--violet) 18%, transparent);
+  .structs-float-a {
+    animation: structs-drift-a 9s ease-in-out infinite;
   }
 
-  .structs-orbit-rev {
-    animation: orbit-spin 18s linear infinite reverse;
+  .structs-float-b {
+    animation: structs-drift-b 11s ease-in-out infinite;
   }
 
-  .alpha-matter {
-    animation: alpha-drift 6s ease-in-out infinite;
-    box-shadow: 0 0 10px color-mix(in oklab, var(--violet) 70%, transparent);
+  .structs-float-c {
+    animation: structs-drift-c 10s ease-in-out infinite;
   }
 
 
@@ -409,15 +407,33 @@
   }
 }
 
-@keyframes alpha-drift {
+@keyframes structs-drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(10px, -12px, 0);
+  }
+}
+
+@keyframes structs-drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-12px, 8px, 0);
+  }
+}
+
+@keyframes structs-drift-c {
   0%,
   100% {
     transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.35;
   }
   50% {
-    transform: translate3d(8px, -14px, 0) scale(1.4);
-    opacity: 0.95;
+    transform: translate3d(8px, 10px, 0) scale(1.04);
   }
 }
 
@@ -468,9 +484,9 @@
   .sql-caret,
   .tx-rain > p,
   .coin-pulse,
-  .structs-orbit,
-  .structs-orbit-rev,
-  .alpha-matter,
+  .structs-float-a,
+  .structs-float-b,
+  .structs-float-c,
   .pop-in,
   .pop-in-delay,
   .pop-in-late,

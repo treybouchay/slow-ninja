@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { StructsScene } from "@/components/catalog/structs-scene";
 import { games, type Game } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -189,27 +190,6 @@ function CoindroidsTxRain({ active }: { active: boolean }) {
   );
 }
 
-function StructsOrbitField({ active }: { active: boolean }) {
-  return (
-    <div className="absolute inset-0 overflow-hidden">
-      <div className="universe-nebula absolute inset-0 opacity-55" />
-      <div className={cn("absolute inset-0", active ? "opacity-100" : "opacity-0")}>
-        {Array.from({ length: 8 }).map((_, i) => (
-          <span
-            key={i}
-            className="alpha-matter absolute h-1.5 w-1.5 rounded-full bg-[var(--violet)]"
-            style={{
-              left: `${12 + i * 11}%`,
-              top: `${20 + ((i * 17) % 55)}%`,
-              animationDelay: `${i * 0.45}s`,
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function GameOverlay({ game, active }: { game: Game; active: boolean }) {
   if (game.slug === "schemaverse") {
     return <SchemaverseField />;
@@ -218,7 +198,7 @@ function GameOverlay({ game, active }: { game: Game; active: boolean }) {
     return <CoindroidsTxRain active={active} />;
   }
   if (game.slug === "structs") {
-    return <StructsOrbitField active={active} />;
+    return <StructsScene active={active} />;
   }
   return null;
 }
