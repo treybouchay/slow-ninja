@@ -3,8 +3,8 @@
 import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
-const SHIP_DELAY_MS = 2000;
-const SAT_DELAY_MS = 1000;
+const SHIP_DELAY_MS = 3000;
+const SAT_DELAY_MS = 0;
 
 /**
  * Structs atmosphere — command ship upper-right; satellite above the dossier.
