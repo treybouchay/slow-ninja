@@ -304,6 +304,12 @@
     animation: structs-drift-c 10s ease-in-out infinite;
   }
 
+  /* Command ship wanders the Structs stage */
+  .structs-ship-drift {
+    animation: structs-ship-wander 36s ease-in-out infinite;
+    will-change: transform;
+  }
+
 
   .tilt-hover:hover {
     transform: rotate(-1.2deg) scale(1.01);
