@@ -23,8 +23,17 @@ const COINDROID_TXS = [
   "0xe014…a61b  forge.mint(chassis)",
 ];
 
-/** Single muted cyan for every character — no keyword highlighting */
-const SQL_INK = "color-mix(in oklab, var(--cyan) 52%, transparent)";
+/** Single light ink for every character — no keyword highlighting */
+const SQL_INK = "color-mix(in oklab, var(--cyan) 28%, transparent)";
+
+const SCHEMAVERSE_SECONDARY = [
+  "SELECT attack($1);",
+  "SELECT fleet_power();",
+  "INSERT INTO ships DEFAULT VALUES;",
+  "SELECT remaining_tic();",
+  "UPDATE my_ships SET location = get_player_xy();",
+  "SELECT * FROM planets WHERE conqueror IS NULL;",
+];
 
 type Props = {
   active: number;
@@ -120,20 +129,30 @@ function SqlTerminal({
 }
 
 /**
- * Schemaverse SQL typing — upper-left of the stage (~363×147),
- * clear of the focused circle. Uniform mono ink, no highlights.
+ * Schemaverse SQL typing inside the stage:
+ * 1) upper-left ~363×94 — slightly above the dossier, light ink
+ * 2) lower-right ~434×121 — a few more typed lines
  */
 export function SchemaverseSqlStage({ active }: { active: boolean }) {
   if (!active) return null;
 
   return (
-    <SqlTerminal
-      lines={SCHEMAVERSE_QUERIES}
-      active={active}
-      msPerChar={30}
-      showHistory={2}
-      className="top-0 left-4 h-[147px] w-[min(363px,calc(100%-1.5rem))] md:left-8"
-    />
+    <>
+      <SqlTerminal
+        lines={SCHEMAVERSE_QUERIES}
+        active={active}
+        msPerChar={30}
+        showHistory={1}
+        className="top-2 left-1.5 h-[94px] w-[min(363px,calc(100%-1rem))] md:left-2"
+      />
+      <SqlTerminal
+        lines={SCHEMAVERSE_SECONDARY}
+        active={active}
+        msPerChar={34}
+        showHistory={3}
+        className="right-4 bottom-2 h-[121px] w-[min(434px,calc(100%-1.5rem))] md:right-6"
+      />
+    </>
   );
 }
 
