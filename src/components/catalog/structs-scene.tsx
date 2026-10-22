@@ -39,6 +39,17 @@ export function StructsScene({ active }: { active: boolean }) {
                 speed={0.95}
               />
             </div>
+
+            {/* Satellite signal jamming — lower-left pocket */}
+            <div className="structs-float-b pointer-events-none absolute bottom-[18%] left-[8%] h-[100px] w-[100px] md:bottom-[20%] md:left-[12%] md:h-[128px] md:w-[128px]">
+              <LottieClip
+                src="/lottie/structs/satellite_signal_jamming"
+                className="h-full w-full"
+                loop
+                opacity={0.82}
+                speed={0.9}
+              />
+            </div>
           </>
         ) : null}
       </div>
