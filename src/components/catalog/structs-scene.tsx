@@ -1,23 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
-const SHIP_DELAY_MS = 1000;
+const CANNON_DELAY_MS = 700;
 
 /**
- * Structs atmosphere — command ship arrives upper left after 1s, then hovers.
+ * Structs atmosphere — cannon appears upper left and plays its downward shot once.
  */
 export function StructsScene({ active }: { active: boolean }) {
-  const [shipHover, setShipHover] = useState(false);
-  const [wasActive, setWasActive] = useState(active);
-
-  if (active !== wasActive) {
-    setWasActive(active);
-    if (!active) setShipHover(false);
-  }
-
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div className="universe-nebula absolute inset-0 opacity-55" />
@@ -40,27 +31,18 @@ export function StructsScene({ active }: { active: boolean }) {
               }}
             />
 
-            {/* Command ship — upper left, where the satellite sat. Arrives after 1s */}
+            {/* Cannon sits where the command ship was and fires downward. */}
             <FleetPiece
-              className="top-[268px] left-[5%] h-[116px] w-[128px] max-lg:top-[248px] max-lg:left-2 max-lg:h-[96px] max-lg:w-[108px]"
-              delayMs={SHIP_DELAY_MS}
+              className="top-[268px] left-[5%] h-[100px] w-[90px] max-lg:top-[248px] max-lg:left-2 max-lg:h-[90px] max-lg:w-[80px]"
+              delayMs={CANNON_DELAY_MS}
             >
-              <div
-                className={cn(
-                  "flex h-full w-full items-center justify-center",
-                  shipHover && "structs-ship-hover",
-                )}
-              >
-                <LottieClip
-                  src="/lottie/structs/move_arrive"
-                  className="h-[100px] w-[100px] md:h-[120px] md:w-[120px]"
-                  loop={false}
-                  opacity={0.92}
-                  speed={0.95}
-                  delayMs={SHIP_DELAY_MS}
-                  onComplete={() => setShipHover(true)}
-                />
-              </div>
+              <LottieClip
+                src="/lottie/structs/canon_downwards"
+                className="h-full w-full"
+                loop={false}
+                opacity={0.95}
+                delayMs={CANNON_DELAY_MS}
+              />
             </FleetPiece>
           </>
         ) : null}

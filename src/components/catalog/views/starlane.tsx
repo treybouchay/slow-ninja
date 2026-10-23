@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Starlane — horizontal lane with travel dots above the focused circle.
- * Dossier sits on the right of the focused circle.
+ * Dossier sits centered under the focused circle.
  */
 
 const SLOT_DESKTOP = 280;
@@ -57,17 +57,15 @@ export function StarlaneView() {
   const inactiveSize = mobile ? INACTIVE_MOBILE : INACTIVE_DESKTOP;
   const current = games[active];
   const expanded = inView;
-  const focusBias = mobile ? 96 : 130;
 
   const recenter = useCallback(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
     const vw = viewport.clientWidth;
     if (vw <= 0) return;
-    // Shift the focused circle left so the dossier fits on the right.
-    setOffset(vw / 2 - (active + 0.5) * slot - focusBias);
+    setOffset(vw / 2 - (active + 0.5) * slot);
     setReady(true);
-  }, [active, focusBias, slot]);
+  }, [active, slot]);
 
   useEffect(() => {
     recenter();
@@ -121,23 +119,17 @@ export function StarlaneView() {
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
           Use the dots above the focused world to travel the lane—each jump
-          opens its dossier to the right of the circle.
+          opens its dossier under the circle.
         </p>
       </div>
 
       <div
         ref={viewportRef}
         className="relative z-10 mx-auto mt-8 w-full max-w-6xl overflow-hidden md:mt-12"
-        style={{ height: mobile ? 580 : 560 }}
+        style={{ height: mobile ? 420 : 500 }}
       >
         {/* Travel dots — above the centered circle */}
-        <div
-          className="pointer-events-none absolute top-4 z-50 flex flex-col items-center gap-2 md:top-6"
-          style={{
-            left: `calc(50% - ${focusBias}px)`,
-            transform: "translateX(-50%)",
-          }}
-        >
+        <div className="pointer-events-none absolute top-4 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2 md:top-6">
           <div
             role="tablist"
             aria-label="Travel between universes"
@@ -292,12 +284,12 @@ export function StarlaneView() {
           })}
         </div>
 
+      </div>
+
+      <div className="relative z-10 mx-auto mt-2 w-full max-w-6xl px-4 md:px-6">
         <div
           className={cn(
-            "absolute z-40",
-            mobile
-              ? "top-14 right-1 w-[42%]"
-              : "top-[18%] right-5 w-[min(280px,34%)]",
+            "mx-auto w-full max-w-[340px]",
             expanded ? "" : "hidden",
           )}
         >
