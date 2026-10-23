@@ -8,7 +8,7 @@ const SHIP_DELAY_MS = 1000;
 
 /**
  * Structs fleet, staggered so the field fills in like a live patrol.
- * Command ship arrives at 1s, then the rest ease in around the planet.
+ * The command ship arrives upper left after 1s, then the rest ease in around the planet.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [shipHover, setShipHover] = useState(false);
@@ -41,19 +41,27 @@ export function StructsScene({ active }: { active: boolean }) {
               }}
             />
 
-            {/* Satellite — already on station, upper left */}
+            {/* Command ship — upper left, where the satellite sat. Arrives after 1s */}
             <FleetPiece
-              className="top-[268px] left-[5%] h-[92px] w-[92px] md:h-[116px] md:w-[116px]"
-              delayMs={0}
-              drift="structs-sat-drift"
+              className="top-[268px] left-[5%] h-[116px] w-[128px] max-lg:top-[248px] max-lg:left-2 max-lg:h-[96px] max-lg:w-[108px]"
+              delayMs={SHIP_DELAY_MS}
             >
-              <LottieClip
-                src="/lottie/structs/sat_idle"
-                className="h-full w-full"
-                loop
-                opacity={0.88}
-                speed={0.85}
-              />
+              <div
+                className={cn(
+                  "flex h-full w-full items-center justify-center",
+                  shipHover && "structs-ship-hover",
+                )}
+              >
+                <LottieClip
+                  src="/lottie/structs/move_arrive"
+                  className="h-[100px] w-[100px] md:h-[120px] md:w-[120px]"
+                  loop={false}
+                  opacity={0.92}
+                  speed={0.95}
+                  delayMs={SHIP_DELAY_MS}
+                  onComplete={() => setShipHover(true)}
+                />
+              </div>
             </FleetPiece>
 
             {/* Distant jammer — high, left of the planet */}
@@ -86,29 +94,6 @@ export function StructsScene({ active }: { active: boolean }) {
                 speed={0.7}
                 delayMs={3400}
               />
-            </FleetPiece>
-
-            {/* Command ship — upper right, arrives after 1s */}
-            <FleetPiece
-              className="top-[292px] right-[6%] h-[132px] w-[148px] max-lg:top-[248px] max-lg:right-2 max-lg:h-[96px] max-lg:w-[108px]"
-              delayMs={SHIP_DELAY_MS}
-            >
-              <div
-                className={cn(
-                  "flex h-full w-full items-center justify-center",
-                  shipHover && "structs-ship-hover",
-                )}
-              >
-                <LottieClip
-                  src="/lottie/structs/move_arrive"
-                  className="h-[100px] w-[100px] md:h-[128px] md:w-[128px]"
-                  loop={false}
-                  opacity={0.92}
-                  speed={0.95}
-                  delayMs={SHIP_DELAY_MS}
-                  onComplete={() => setShipHover(true)}
-                />
-              </div>
             </FleetPiece>
 
             {/* Deployment craft — mid-right, in from the edge */}
