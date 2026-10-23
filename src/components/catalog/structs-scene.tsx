@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
+import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
 const SHIP_DELAY_MS = 1000;
 
 /**
- * Structs fleet, staggered so the field fills in like a live patrol.
- * The command ship arrives upper left after 1s, then the rest ease in around the planet.
+ * Structs atmosphere — command ship arrives upper left after 1s, then hovers.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [shipHover, setShipHover] = useState(false);
@@ -63,82 +62,6 @@ export function StructsScene({ active }: { active: boolean }) {
                 />
               </div>
             </FleetPiece>
-
-            {/* Distant jammer — high, left of the planet */}
-            <FleetPiece
-              className="top-[214px] left-[24%] h-[64px] w-[64px] max-md:hidden"
-              delayMs={2200}
-              drift="structs-float-c"
-            >
-              <LottieClip
-                src="/lottie/structs/signal_jamming"
-                className="h-full w-full"
-                loop
-                opacity={0.62}
-                speed={0.75}
-                delayMs={2200}
-              />
-            </FleetPiece>
-
-            {/* Shield installation — lower left */}
-            <FleetPiece
-              className="top-[500px] left-[7%] h-[104px] w-[104px] max-md:hidden"
-              delayMs={3400}
-              drift="structs-float-a"
-            >
-              <LottieClip
-                src="/lottie/structs/shield_generator/idle"
-                className="h-full w-full"
-                loop
-                opacity={0.8}
-                speed={0.7}
-                delayMs={3400}
-              />
-            </FleetPiece>
-
-            {/* Deployment craft — mid-right, in from the edge */}
-            <FleetPiece
-              className="top-[470px] right-[18%] h-[108px] w-[108px] max-md:hidden"
-              delayMs={4800}
-              drift="structs-float-b"
-            >
-              <LottieClip
-                src="/lottie/structs/deployment_air"
-                className="h-full w-full"
-                loop
-                opacity={0.78}
-                speed={0.8}
-                delayMs={4800}
-              />
-            </FleetPiece>
-
-            {/* Stealth bomber — lower right, cloaks on its own beat */}
-            <FleetPiece
-              className="top-[600px] right-[6%] h-[96px] w-[96px] max-md:hidden"
-              delayMs={6600}
-              drift="structs-float-a"
-            >
-              <StealthCycle
-                className="h-full w-full"
-                opacity={0.74}
-                delayMs={6600}
-              />
-            </FleetPiece>
-
-            {/* Far flash — one shot, small, above the lane */}
-            <FleetPiece
-              className="top-[188px] right-[30%] h-[52px] w-[52px] max-md:hidden"
-              delayMs={8600}
-            >
-              <LottieClip
-                src="/lottie/structs/destroy_space"
-                className="h-full w-full"
-                loop={false}
-                opacity={0.55}
-                speed={0.85}
-                delayMs={8600}
-              />
-            </FleetPiece>
           </>
         ) : null}
       </div>
@@ -149,12 +72,10 @@ export function StructsScene({ active }: { active: boolean }) {
 function FleetPiece({
   className,
   delayMs,
-  drift,
   children,
 }: {
   className?: string;
   delayMs: number;
-  drift?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -162,7 +83,7 @@ function FleetPiece({
       className={cn("structs-fade-in pointer-events-none absolute", className)}
       style={{ animationDelay: `${delayMs}ms` }}
     >
-      <div className={cn("h-full w-full", drift)}>{children}</div>
+      {children}
     </div>
   );
 }
