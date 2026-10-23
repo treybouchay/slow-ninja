@@ -419,46 +419,46 @@ export function ConstellationView() {
           })}
         </div>
 
-        {/* Compact floating dossier — bottom-right of the stage, not full-bleed */}
+        {/* Compact floating dossier — small enough to clear the planet */}
         <div
           key={current.slug}
           className={cn(
-            "pointer-events-none absolute z-40 w-[min(340px,calc(100%-1.5rem))] rounded-[1.25rem] border border-white/10 bg-[#0a1220]/95 p-4 backdrop-blur-md md:p-5",
+            "pointer-events-none absolute z-40 flex flex-col overflow-hidden rounded-[1rem] border border-white/10 bg-[#0a1220]/95 p-3 backdrop-blur-md",
             engaged ? "dossier-spring opacity-100" : "invisible opacity-0",
-            mobile ? "right-3 bottom-3 left-3 w-auto" : "right-5 bottom-5",
+            mobile
+              ? "right-3 bottom-3 left-3 w-auto"
+              : "right-5 bottom-5 w-[240px]",
           )}
           style={{
-            maxHeight: "min(320px, 46%)",
-            boxShadow: `0 0 0 1px ${current.accent}33, 0 24px 60px rgba(0,0,0,0.55)`,
+            maxHeight: mobile ? 168 : 236,
+            boxShadow: `0 0 0 1px ${current.accent}33, 0 18px 40px rgba(0,0,0,0.55)`,
           }}
         >
-          <div className="max-h-full overflow-y-auto overscroll-contain pr-1">
-            <p
-              className="font-mono-label text-[8px] tracking-widest uppercase"
-              style={{ color: current.accent }}
-            >
-              {current.mechanic}
-            </p>
-            <h3 className="font-display mt-2 text-xl font-bold text-white md:text-2xl">
-              {current.name}
-            </h3>
-            <p className="mt-1 text-sm text-white/75">{current.tagline}</p>
-            <p className="mt-3 text-xs leading-relaxed text-white/55 md:text-sm">
-              {current.summary}
-            </p>
-            <p className="mt-3 text-[10px] font-semibold tracking-wide text-white/35 uppercase">
-              {current.status}
-            </p>
-            <a
-              href={current.href}
-              target="_blank"
-              rel="noreferrer"
-              className="pointer-events-auto mt-4 inline-flex w-fit rounded-full px-5 py-2.5 text-sm font-bold text-[var(--ink)]"
-              style={{ background: current.accent }}
-            >
-              Explore more →
-            </a>
-          </div>
+          <p
+            className="font-mono-label shrink-0 text-[8px] leading-tight tracking-widest uppercase"
+            style={{ color: current.accent }}
+          >
+            {current.mechanic}
+          </p>
+          <h3 className="font-display mt-1 shrink-0 text-base font-bold text-white">
+            {current.name}
+          </h3>
+          <p className="mt-0.5 shrink-0 text-xs text-white/75">{current.tagline}</p>
+          <p className="mt-2 min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 text-[11px] leading-relaxed text-white/55">
+            {current.summary}
+          </p>
+          <p className="mt-2 shrink-0 text-[10px] font-semibold tracking-wide text-white/35 uppercase">
+            {current.status}
+          </p>
+          <a
+            href={current.href}
+            target="_blank"
+            rel="noreferrer"
+            className="pointer-events-auto mt-2.5 inline-flex w-fit shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold text-[var(--ink)]"
+            style={{ background: current.accent }}
+          >
+            Explore more →
+          </a>
         </div>
       </div>
     </section>
