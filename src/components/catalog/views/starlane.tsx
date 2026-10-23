@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Starlane — horizontal lane with travel dots above the focused circle.
- * Dossier sits below the lane so it never covers a circle.
+ * Dossier sits on the right of the focused circle.
  */
 
 const SLOT_DESKTOP = 280;
@@ -57,15 +57,17 @@ export function StarlaneView() {
   const inactiveSize = mobile ? INACTIVE_MOBILE : INACTIVE_DESKTOP;
   const current = games[active];
   const expanded = inView;
+  const focusBias = mobile ? 96 : 130;
 
   const recenter = useCallback(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
     const vw = viewport.clientWidth;
     if (vw <= 0) return;
-    setOffset(vw / 2 - (active + 0.5) * slot);
+    // Shift the focused circle left so the dossier fits on the right.
+    setOffset(vw / 2 - (active + 0.5) * slot - focusBias);
     setReady(true);
-  }, [active, slot]);
+  }, [active, focusBias, slot]);
 
   useEffect(() => {
     recenter();
@@ -119,20 +121,20 @@ export function StarlaneView() {
         </h2>
         <p className="mt-3 max-w-xl text-white/60">
           Use the dots above the focused world to travel the lane—each jump
-          opens its dossier below the circles.
+          opens its dossier to the right of the circle.
         </p>
       </div>
 
       <div
         ref={viewportRef}
         className="relative z-10 mx-auto mt-8 w-full max-w-6xl overflow-hidden md:mt-12"
-        style={{ height: mobile ? 440 : 520 }}
+        style={{ height: mobile ? 580 : 560 }}
       >
         {/* Travel dots — above the centered circle */}
         <div
           className="pointer-events-none absolute top-4 z-50 flex flex-col items-center gap-2 md:top-6"
           style={{
-            left: "50%",
+            left: `calc(50% - ${focusBias}px)`,
             transform: "translateX(-50%)",
           }}
         >
@@ -290,17 +292,21 @@ export function StarlaneView() {
           })}
         </div>
 
-      </div>
-
-      <div className="relative z-10 mx-auto mt-4 w-full max-w-6xl px-4 md:px-6">
-        <UniverseDossier
-          key={current.slug}
-          game={current}
+        <div
           className={cn(
-            "w-full md:w-[420px]",
-            expanded ? "dossier-spring" : "hidden",
+            "absolute z-40",
+            mobile
+              ? "top-14 right-1 w-[42%]"
+              : "top-[18%] right-5 w-[min(280px,34%)]",
+            expanded ? "" : "hidden",
           )}
-        />
+        >
+          <UniverseDossier
+            key={current.slug}
+            game={current}
+            className={expanded ? "dossier-spring" : "hidden"}
+          />
+        </div>
       </div>
     </section>
   );
