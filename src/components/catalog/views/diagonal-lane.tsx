@@ -6,12 +6,12 @@ import {
   SchemaverseSqlStage,
   UniverseAtmosphere,
 } from "@/components/catalog/universe-atmosphere";
-import { games } from "@/lib/content";
+import { featuredGameIndex, games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 /**
  * Diagonal starlane experiment — same wake/focus/dossier behavior as
- * Starlane, but circles climb a / lane (older lower-left → newer upper-right).
+ * Starlane, but circles climb a / lane (first lower-left → last upper-right).
  */
 
 const STEP_X_DESKTOP = 210;
@@ -64,7 +64,7 @@ function rimPoint(
 }
 
 export function DiagonalLaneView() {
-  const [active, setActive] = useState(games.length - 1);
+  const [active, setActive] = useState(featuredGameIndex);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [ready, setReady] = useState(false);
   const [inView, setInView] = useState(false);
@@ -160,7 +160,9 @@ export function DiagonalLaneView() {
         className="relative z-10 mt-10 w-full overflow-hidden md:mt-14"
         style={{ height: Math.max(activeSize + 220, mobile ? 360 : 480) }}
       >
-        <SchemaverseSqlStage active={expanded && active === 0} />
+        <SchemaverseSqlStage
+          active={expanded && current.slug === "schemaverse"}
+        />
         <div
           className={cn(
             "relative will-change-transform",
@@ -257,7 +259,7 @@ export function DiagonalLaneView() {
                     boxShadow: selected
                       ? `0 0 48px ${game.accent}66`
                       : "none",
-                    opacity: expanded ? 1 : 0.72,
+                    opacity: !expanded ? 0.72 : selected ? 1 : 0.22,
                   }}
                 >
                   <Image
@@ -267,7 +269,7 @@ export function DiagonalLaneView() {
                     sizes={`${Math.ceil(activeSize)}px`}
                     className={cn(
                       "pointer-events-none object-cover transition-all duration-500",
-                      selected ? "grayscale-0" : "grayscale-[45%]",
+                      selected ? "grayscale-0" : "grayscale-[80%]",
                     )}
                     draggable={false}
                   />
@@ -278,7 +280,7 @@ export function DiagonalLaneView() {
                     "font-display text-center font-bold transition-all duration-500",
                     selected
                       ? "mt-4 text-xl text-white md:text-2xl"
-                      : "mt-2 text-sm text-white/50",
+                      : "mt-2 text-sm text-white/30",
                   )}
                 >
                   {game.name}

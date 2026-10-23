@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { games, type Game } from "@/lib/content";
+import { featuredGameIndex, games, type Game } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 /**
@@ -117,7 +117,7 @@ function Cartridge({
 }
 
 export function DiagonalCaseView() {
-  const [active, setActive] = useState<number | null>(games.length - 1);
+  const [active, setActive] = useState<number | null>(featuredGameIndex);
   const [awake, setAwake] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const current = active !== null ? games[active] : null;

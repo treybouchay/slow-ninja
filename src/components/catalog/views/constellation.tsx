@@ -6,7 +6,8 @@ import {
   SchemaverseSqlStage,
   UniverseAtmosphere,
 } from "@/components/catalog/universe-atmosphere";
-import { games } from "@/lib/content";
+import { UniverseDossier } from "@/components/catalog/universe-dossier";
+import { featuredGameIndex, games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 /**
@@ -23,9 +24,9 @@ const OVERVIEW_MOBILE = 64;
 
 /** World-space planet centers — far enough apart that only one fills the frame. */
 const WORLD = [
-  { x: 280, y: 260 }, // Schemaverse — upper left of the V
+  { x: 280, y: 260 }, // Structs — upper left of the V
   { x: 980, y: 480 }, // Coindroids — lower center
-  { x: 1680, y: 280 }, // Structs — upper right
+  { x: 1680, y: 280 }, // Schemaverse — upper right
 ] as const;
 
 function useIsMobile() {
@@ -57,7 +58,7 @@ function rimPoint(
 }
 
 export function ConstellationView() {
-  const [active, setActive] = useState(games.length - 1);
+  const [active, setActive] = useState(featuredGameIndex);
   /** False = zoomed-out map; true = camera locked on a planet */
   const [engaged, setEngaged] = useState(false);
   const [camera, setCamera] = useState({ x: 0, y: 0, scale: 1 });
@@ -112,11 +113,9 @@ export function ConstellationView() {
       });
     } else {
       const focus = centers[active];
-      // Nudge planet up/left so the floating dossier fits below-right.
-      const biasX = mobile ? 0 : Math.min(120, w * 0.1);
       setCamera({
-        x: w / 2 - focus.x - biasX,
-        y: h / 2 - focus.y - (mobile ? 24 : 40),
+        x: w / 2 - focus.x,
+        y: h / 2 - focus.y,
         scale: 1,
       });
     }
@@ -140,7 +139,7 @@ export function ConstellationView() {
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-    const structs = games.length - 1;
+    const structs = featuredGameIndex;
     const observer = new IntersectionObserver(
       ([entry]) => {
         const focused =
@@ -187,7 +186,7 @@ export function ConstellationView() {
 
   /** First interaction from overview opens Structs. */
   const beginJourney = () => {
-    if (!engaged) engage(games.length - 1);
+    if (!engaged) engage(featuredGameIndex);
   };
 
   const select = (index: number) => {
@@ -228,7 +227,7 @@ export function ConstellationView() {
       <div
         ref={viewportRef}
         className="relative z-10 mx-auto mt-6 w-full max-w-6xl overflow-hidden md:mt-8"
-        style={{ height: mobile ? 580 : 680 }}
+        style={{ height: mobile ? 500 : 680 }}
         onClick={(e) => {
           if (!engaged && e.target === e.currentTarget) beginJourney();
         }}
@@ -237,7 +236,7 @@ export function ConstellationView() {
         <div
           className="pointer-events-none absolute top-5 z-50 flex flex-col items-center gap-2 md:top-7"
           style={{
-            left: mobile ? "50%" : "calc(50% - 8%)",
+            left: "50%",
             transform: "translateX(-50%)",
           }}
         >
@@ -295,7 +294,7 @@ export function ConstellationView() {
           </p>
         </div>
 
-        <SchemaverseSqlStage active={engaged && active === 0} />
+        <SchemaverseSqlStage active={engaged && current.slug === "schemaverse"} />
 
         <div
           className={cn(
@@ -386,7 +385,7 @@ export function ConstellationView() {
                     boxShadow: selected
                       ? `0 0 48px ${game.accent}55`
                       : "none",
-                    opacity: engaged ? (selected ? 1 : 0.55) : 0.9,
+                    opacity: engaged ? (selected ? 1 : 0.22) : 0.9,
                   }}
                 >
                   <Image
@@ -398,7 +397,7 @@ export function ConstellationView() {
                       "pointer-events-none object-cover transition-all duration-500",
                       selected || !engaged
                         ? "grayscale-0"
-                        : "grayscale-[50%]",
+                        : "grayscale-[80%]",
                     )}
                     draggable={false}
                   />
@@ -409,7 +408,7 @@ export function ConstellationView() {
                     "font-display text-center font-bold transition-all duration-500",
                     selected
                       ? "mt-4 text-xl text-white md:text-2xl"
-                      : "mt-2 text-sm text-white/55",
+                      : "mt-2 text-sm text-white/30",
                   )}
                 >
                   {game.name}
@@ -419,47 +418,17 @@ export function ConstellationView() {
           })}
         </div>
 
-        {/* Compact floating dossier — small enough to clear the planet */}
-        <div
+      </div>
+
+      <div className="relative z-10 mx-auto mt-4 w-full max-w-6xl px-4 md:px-6">
+        <UniverseDossier
           key={current.slug}
+          game={current}
           className={cn(
-            "pointer-events-none absolute z-40 flex flex-col overflow-hidden rounded-[1rem] border border-white/10 bg-[#0a1220]/95 p-3 backdrop-blur-md",
-            engaged ? "dossier-spring opacity-100" : "invisible opacity-0",
-            mobile
-              ? "right-3 bottom-3 left-3 w-auto"
-              : "right-5 bottom-5 w-[240px]",
+            "w-full md:w-[420px]",
+            engaged ? "dossier-spring" : "hidden",
           )}
-          style={{
-            maxHeight: mobile ? 168 : 236,
-            boxShadow: `0 0 0 1px ${current.accent}33, 0 18px 40px rgba(0,0,0,0.55)`,
-          }}
-        >
-          <p
-            className="font-mono-label shrink-0 text-[8px] leading-tight tracking-widest uppercase"
-            style={{ color: current.accent }}
-          >
-            {current.mechanic}
-          </p>
-          <h3 className="font-display mt-1 shrink-0 text-base font-bold text-white">
-            {current.name}
-          </h3>
-          <p className="mt-0.5 shrink-0 text-xs text-white/75">{current.tagline}</p>
-          <p className="mt-2 min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 text-[11px] leading-relaxed text-white/55">
-            {current.summary}
-          </p>
-          <p className="mt-2 shrink-0 text-[10px] font-semibold tracking-wide text-white/35 uppercase">
-            {current.status}
-          </p>
-          <a
-            href={current.href}
-            target="_blank"
-            rel="noreferrer"
-            className="pointer-events-auto mt-2.5 inline-flex w-fit shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold text-[var(--ink)]"
-            style={{ background: current.accent }}
-          >
-            Explore more →
-          </a>
-        </div>
+        />
       </div>
     </section>
   );

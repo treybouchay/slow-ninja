@@ -35,22 +35,22 @@ export const studio = {
     "We build games as systems you can read—transactions as moves, SQL as a controller, on-chain state as truth.",
 };
 
-/** Chronological studio timeline (oldest → newest) */
+/** Circle order: Structs, Coindroids, Schemaverse. */
 export const games: Game[] = [
   {
-    slug: "schemaverse",
-    name: "Schemaverse",
-    years: "2010–present",
-    era: "2010",
-    tagline: "A space war played in SQL",
+    slug: "structs",
+    name: "Structs",
+    years: "2022–present",
+    era: "2022",
+    tagline: "A 5X space strategy game",
     summary:
-      "Every player is a PostgreSQL role. Buy ships with INSERT, steer with a function call, read the battle in a view. Write PL/pgSQL and the database flies your fleet—or click the map and watch the query it wrote.",
-    status: "Ongoing · DEF CON favorite",
-    href: "https://schemaverse.com/",
-    mechanic: "PostgreSQL as game engine",
-    artwork: "/games/schemaverse.png",
-    accent: "var(--cyan)",
-    atmosphere: "SELECT * FROM ships WHERE fleet = you",
+      "Command sentient machines racing for Alpha Matter across a decentralized Cosmos galaxy. Explore, extract, expand, exterminate, and exchange—then leave the world running for as long as players keep the chain alive.",
+    status: "Beta playtest live",
+    href: "https://www.playstructs.com/",
+    mechanic: "On-chain guild strategy · Cosmos SDK",
+    artwork: "/games/structs.png",
+    accent: "var(--violet)",
+    atmosphere: "Alpha Matter · guild fleets on-chain",
   },
   {
     slug: "coindroids",
@@ -68,21 +68,27 @@ export const games: Game[] = [
     atmosphere: "Ruins of 20X5 · every move a signed tx",
   },
   {
-    slug: "structs",
-    name: "Structs",
-    years: "2022–present",
-    era: "2022",
-    tagline: "A 5X space strategy game",
+    slug: "schemaverse",
+    name: "Schemaverse",
+    years: "2010–present",
+    era: "2010",
+    tagline: "A space war played in SQL",
     summary:
-      "Command sentient machines racing for Alpha Matter across a decentralized Cosmos galaxy. Explore, extract, expand, exterminate, and exchange—then leave the world running for as long as players keep the chain alive.",
-    status: "Beta playtest live",
-    href: "https://www.playstructs.com/",
-    mechanic: "On-chain guild strategy · Cosmos SDK",
-    artwork: "/games/structs.png",
-    accent: "var(--violet)",
-    atmosphere: "Alpha Matter · guild fleets on-chain",
+      "Every player is a PostgreSQL role. Buy ships with INSERT, steer with a function call, read the battle in a view. Write PL/pgSQL and the database flies your fleet—or click the map and watch the query it wrote.",
+    status: "Ongoing · DEF CON favorite",
+    href: "https://schemaverse.com/",
+    mechanic: "PostgreSQL as game engine",
+    artwork: "/games/schemaverse.png",
+    accent: "var(--cyan)",
+    atmosphere: "SELECT * FROM ships WHERE fleet = you",
   },
 ];
+
+/** Catalog opens on Structs, which now leads the circle order. */
+export const featuredGameIndex = Math.max(
+  0,
+  games.findIndex((game) => game.slug === "structs"),
+);
 
 export const journalPosts: JournalPost[] = [
   {

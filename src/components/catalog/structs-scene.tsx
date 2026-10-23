@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
-const SHIP_DELAY_MS = 2000;
+const SHIP_DELAY_MS = 1000;
 const SAT_DELAY_MS = 0;
 
 /**
