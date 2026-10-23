@@ -35,11 +35,7 @@ export function LottieClip({
   const [ready, setReady] = useState(delayMs <= 0);
 
   useEffect(() => {
-    if (delayMs <= 0) {
-      setReady(true);
-      return;
-    }
-    setReady(false);
+    if (delayMs <= 0) return;
     const t = window.setTimeout(() => setReady(true), delayMs);
     return () => window.clearTimeout(t);
   }, [delayMs, src]);
@@ -82,21 +78,42 @@ export function StealthCycle({
   className,
   style,
   opacity = 1,
+  delayMs = 0,
 }: {
   className?: string;
   style?: CSSProperties;
   opacity?: number;
+  /** Delay before the cloak cycle starts (ms) */
+  delayMs?: number;
 }) {
   const [phase, setPhase] = useState<"activate" | "deactivate">("activate");
   const [tick, setTick] = useState(0);
+  const [ready, setReady] = useState(delayMs <= 0);
 
   useEffect(() => {
+    if (delayMs <= 0) return;
+    const t = window.setTimeout(() => setReady(true), delayMs);
+    return () => window.clearTimeout(t);
+  }, [delayMs]);
+
+  useEffect(() => {
+    if (!ready) return;
     const t = window.setTimeout(() => {
       setPhase((p) => (p === "activate" ? "deactivate" : "activate"));
       setTick((n) => n + 1);
-    }, 1400);
+    }, 2200);
     return () => window.clearTimeout(t);
-  }, [phase, tick]);
+  }, [phase, tick, ready]);
+
+  if (!ready) {
+    return (
+      <div
+        className={cn("pointer-events-none", className)}
+        style={{ opacity: 0, ...style }}
+        aria-hidden
+      />
+    );
+  }
 
   return (
     <div
