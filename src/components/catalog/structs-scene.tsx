@@ -69,7 +69,7 @@ export function StructsScene({ active }: { active: boolean }) {
             >
               <div
                 className="h-full w-full"
-                style={{ transform: "translateY(22px) scaleX(-1)" }}
+                style={{ transform: "translateY(72px) scaleX(-1)" }}
               >
                 <LottieClip
                   src="/lottie/structs/stealth_deactivate"
