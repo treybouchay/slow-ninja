@@ -4,9 +4,11 @@ import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
 const CANNON_DELAY_MS = 700;
+/** Shell reaches the lower-right of the cannon frame, then the impact plays. */
+const IMPACT_DELAY_MS = 1000;
 
 /**
- * Structs atmosphere — cannon appears upper left and plays its downward shot once.
+ * Structs atmosphere — cannon fires down-right once, and the impact blooms where the shot lands.
  */
 export function StructsScene({ active }: { active: boolean }) {
   return (
@@ -31,19 +33,27 @@ export function StructsScene({ active }: { active: boolean }) {
               }}
             />
 
-            {/* Cannon sits where the command ship was and fires downward. */}
-            <FleetPiece
-              className="top-[268px] left-[5%] h-[100px] w-[90px] max-lg:top-[248px] max-lg:left-2 max-lg:h-[90px] max-lg:w-[80px]"
-              delayMs={CANNON_DELAY_MS}
-            >
-              <LottieClip
-                src="/lottie/structs/canon_downwards"
-                className="h-full w-full"
-                loop={false}
-                opacity={0.95}
-                delayMs={CANNON_DELAY_MS}
-              />
-            </FleetPiece>
+            {/* Cannon upper left. Impact is offset along the shot, which exits the lower-right of the sprite. */}
+            <div className="absolute top-[268px] left-[5%] h-[100px] w-[90px] max-lg:top-[248px] max-lg:left-2 max-lg:h-[90px] max-lg:w-[80px]">
+              <FleetPiece className="inset-0 h-full w-full" delayMs={CANNON_DELAY_MS}>
+                <LottieClip
+                  src="/lottie/structs/canon_downwards"
+                  className="h-full w-full"
+                  loop={false}
+                  opacity={0.95}
+                  delayMs={CANNON_DELAY_MS}
+                />
+              </FleetPiece>
+              <div className="absolute h-[130%] w-[130%]" style={{ left: "86%", top: "80%" }}>
+                <LottieClip
+                  src="/lottie/structs/impact_angled_down_cannon"
+                  className="h-full w-full"
+                  loop={false}
+                  opacity={1}
+                  delayMs={IMPACT_DELAY_MS}
+                />
+              </div>
+            </div>
           </>
         ) : null}
       </div>
