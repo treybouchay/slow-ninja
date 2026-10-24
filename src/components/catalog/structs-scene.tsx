@@ -79,7 +79,10 @@ export function StructsScene({ active }: { active: boolean }) {
                   delayMs={STEALTH_DELAY_MS}
                 />
               </div>
-              <div className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]">
+              <div
+                className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]"
+                style={{ transform: "translateY(72px)" }}
+              >
                 <LottieClip
                   src="/lottie/structs/impact_angled_down_cannon"
                   className="h-full w-full"
