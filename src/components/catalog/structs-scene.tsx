@@ -8,13 +8,14 @@ const CANNON_DELAY_MS = 700;
 const STEALTH_DELAY_MS = 250;
 /** Impact lands on the stealth ship after the shell leaves the cannon. */
 const IMPACT_DELAY_MS = 1150;
-const SHIP_DELAY_MS = 900;
+/** Command ship arrives after the stealth ship has taken the hit. */
+const SHIP_DELAY_MS = 2600;
 
 /**
  * Structs atmosphere.
  * Cannon sits left, under the Structs counter, and fires down-right.
- * A ship comes out of stealth in that path and takes the impact.
- * The command ship flies in lower left and stays.
+ * A ship comes out of stealth, flipped toward the cannon, and takes the impact.
+ * After that hit, the command ship flies in lower left and stays.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [shipHover, setShipHover] = useState(false);
@@ -61,18 +62,23 @@ export function StructsScene({ active }: { active: boolean }) {
               />
             </FleetPiece>
 
-            {/* Comes out of stealth on the shot's path and takes the impact. */}
+            {/* Comes out of stealth, flipped toward the cannon, and dropped onto the impact. */}
             <FleetPiece
               className="top-[530px] left-[100px] h-[76px] w-[76px] md:top-[524px] md:left-[160px] md:h-[104px] md:w-[104px]"
               delayMs={STEALTH_DELAY_MS}
             >
-              <LottieClip
-                src="/lottie/structs/stealth_deactivate"
+              <div
                 className="h-full w-full"
-                loop={false}
-                opacity={0.95}
-                delayMs={STEALTH_DELAY_MS}
-              />
+                style={{ transform: "translateY(22px) scaleX(-1)" }}
+              >
+                <LottieClip
+                  src="/lottie/structs/stealth_deactivate"
+                  className="h-full w-full"
+                  loop={false}
+                  opacity={0.95}
+                  delayMs={STEALTH_DELAY_MS}
+                />
+              </div>
               <div className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]">
                 <LottieClip
                   src="/lottie/structs/impact_angled_down_cannon"
