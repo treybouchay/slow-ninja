@@ -1,16 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
 const CANNON_DELAY_MS = 700;
-/** Shell reaches the lower-right of the cannon frame, then the impact plays. */
-const IMPACT_DELAY_MS = 1000;
+const STEALTH_DELAY_MS = 250;
+/** Impact lands on the stealth ship after the shell leaves the cannon. */
+const IMPACT_DELAY_MS = 1150;
+const SHIP_DELAY_MS = 900;
 
 /**
- * Structs atmosphere — cannon fires down-right once, and the impact blooms where the shot lands.
+ * Structs atmosphere.
+ * Cannon sits left, under the Structs counter, and fires down-right.
+ * A ship comes out of stealth in that path and takes the impact.
+ * The command ship flies in lower left and stays.
  */
 export function StructsScene({ active }: { active: boolean }) {
+  const [shipHover, setShipHover] = useState(false);
+  const [wasActive, setWasActive] = useState(active);
+
+  if (active !== wasActive) {
+    setWasActive(active);
+    if (!active) setShipHover(false);
+  }
+
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div className="universe-nebula absolute inset-0 opacity-55" />
@@ -33,18 +47,33 @@ export function StructsScene({ active }: { active: boolean }) {
               }}
             />
 
-            {/* Cannon upper left. Impact is offset along the shot, which exits the lower-right of the sprite. */}
-            <div className="absolute top-[268px] left-[5%] h-[100px] w-[90px] max-lg:top-[248px] max-lg:left-2 max-lg:h-[90px] max-lg:w-[80px]">
-              <FleetPiece className="inset-0 h-full w-full" delayMs={CANNON_DELAY_MS}>
-                <LottieClip
-                  src="/lottie/structs/canon_downwards"
-                  className="h-full w-full"
-                  loop={false}
-                  opacity={0.95}
-                  delayMs={CANNON_DELAY_MS}
-                />
-              </FleetPiece>
-              <div className="absolute h-[130%] w-[130%]" style={{ left: "86%", top: "80%" }}>
+            {/* Below the Structs 1/3 label, still on the left. Fires down-right. */}
+            <FleetPiece
+              className="top-[468px] left-4 h-[90px] w-[80px] md:top-[456px] md:left-6 md:h-[100px] md:w-[90px]"
+              delayMs={CANNON_DELAY_MS}
+            >
+              <LottieClip
+                src="/lottie/structs/canon_downwards"
+                className="h-full w-full"
+                loop={false}
+                opacity={0.95}
+                delayMs={CANNON_DELAY_MS}
+              />
+            </FleetPiece>
+
+            {/* Comes out of stealth on the shot's path and takes the impact. */}
+            <FleetPiece
+              className="top-[530px] left-[100px] h-[76px] w-[76px] md:top-[524px] md:left-[160px] md:h-[104px] md:w-[104px]"
+              delayMs={STEALTH_DELAY_MS}
+            >
+              <LottieClip
+                src="/lottie/structs/stealth_deactivate"
+                className="h-full w-full"
+                loop={false}
+                opacity={0.95}
+                delayMs={STEALTH_DELAY_MS}
+              />
+              <div className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]">
                 <LottieClip
                   src="/lottie/structs/impact_angled_down_cannon"
                   className="h-full w-full"
@@ -53,7 +82,30 @@ export function StructsScene({ active }: { active: boolean }) {
                   delayMs={IMPACT_DELAY_MS}
                 />
               </div>
-            </div>
+            </FleetPiece>
+
+            {/* Command ship flies in lower left, then holds. */}
+            <FleetPiece
+              className="top-[590px] left-3 h-[92px] w-[104px] md:top-[680px] md:left-6 md:h-[112px] md:w-[124px]"
+              delayMs={SHIP_DELAY_MS}
+            >
+              <div
+                className={cn(
+                  "flex h-full w-full items-center justify-center",
+                  shipHover && "structs-ship-hover",
+                )}
+              >
+                <LottieClip
+                  src="/lottie/structs/move_arrive"
+                  className="h-full w-full"
+                  loop={false}
+                  opacity={0.92}
+                  speed={0.95}
+                  delayMs={SHIP_DELAY_MS}
+                  onComplete={() => setShipHover(true)}
+                />
+              </div>
+            </FleetPiece>
           </>
         ) : null}
       </div>

@@ -6,6 +6,7 @@ import {
   SchemaverseSqlStage,
   UniverseAtmosphere,
 } from "@/components/catalog/universe-atmosphere";
+import { CatalogViewPicker } from "@/components/catalog/catalog-view-picker";
 import { UniverseDossier } from "@/components/catalog/universe-dossier";
 import { featuredGameIndex, games } from "@/lib/content";
 import { cn } from "@/lib/utils";
@@ -121,6 +122,7 @@ export function StarlaneView() {
           Use the dots above the focused world to travel the lane—each jump
           opens its dossier under the circle.
         </p>
+        <CatalogViewPicker />
       </div>
 
       <div

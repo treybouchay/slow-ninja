@@ -6,6 +6,7 @@ import {
   SchemaverseSqlStage,
   UniverseAtmosphere,
 } from "@/components/catalog/universe-atmosphere";
+import { CatalogViewPicker } from "@/components/catalog/catalog-view-picker";
 import { featuredGameIndex, games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -153,6 +154,7 @@ export function DiagonalLaneView() {
           Circles climb a diagonal lane—earliest low-left, latest high-right.
           Click one to focus; the page stays put.
         </p>
+        <CatalogViewPicker />
       </div>
 
       <div

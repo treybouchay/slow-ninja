@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { CatalogViewPicker } from "@/components/catalog/catalog-view-picker";
 import { games, type Game } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -112,6 +113,7 @@ export function FileCaseView() {
           Three titles stacked front-to-back. Pull one up—it lifts out and
           expands.
         </p>
+        <CatalogViewPicker />
       </div>
 
       <div className="relative mx-auto mt-8 flex min-h-[400px] max-w-4xl items-end justify-center px-4 md:mt-10 md:min-h-[520px]">

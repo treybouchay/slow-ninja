@@ -6,6 +6,7 @@ import {
   SchemaverseSqlStage,
   UniverseAtmosphere,
 } from "@/components/catalog/universe-atmosphere";
+import { CatalogViewPicker } from "@/components/catalog/catalog-view-picker";
 import { UniverseDossier } from "@/components/catalog/universe-dossier";
 import { featuredGameIndex, games } from "@/lib/content";
 import { cn } from "@/lib/utils";
@@ -222,6 +223,7 @@ export function ConstellationView() {
             ? "Use the dots above the planet to jump between worlds."
             : "The full constellation at a glance. Tap a world or a travel dot to zoom into the first planet and begin."}
         </p>
+        <CatalogViewPicker />
       </div>
 
       <div

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { CatalogViewPicker } from "@/components/catalog/catalog-view-picker";
 import { featuredGameIndex, games, type Game } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -159,6 +160,7 @@ export function DiagonalCaseView() {
           Three carts docked in the box. Pull one toward you—it slides out and
           expands.
         </p>
+        <CatalogViewPicker />
       </div>
 
       {/* Stage */}

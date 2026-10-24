@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { CatalogViewPicker } from "@/components/catalog/catalog-view-picker";
 import { featuredGameIndex, games, type Game } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -174,6 +175,7 @@ export function ShelfView() {
           Three boxes on the shelf. Click one to slide it out like a cart—the
           rest stay docked.
         </p>
+        <CatalogViewPicker />
       </div>
 
       {/* Shelf / bay */}
