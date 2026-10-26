@@ -17,7 +17,7 @@ export default function HomePage() {
             <p className="pop-in font-mono-label mb-6 rounded-full border border-[var(--cyan)]/35 bg-black/30 px-4 py-2 text-[8px] leading-none tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
               Sector 2014 · Toronto uplink
             </p>
-            <div className="pop-in-delay drop-shadow-[0_0_40px_rgba(77,226,232,0.35)]">
+            <div className="pop-in-delay">
               <BrandLogo size="hero" href={null} priority />
               <h1 className="sr-only">Slow Ninja</h1>
             </div>
