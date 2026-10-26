@@ -12,49 +12,41 @@ const IMPACT_DELAY_MS = 1150;
 const SHIP_DELAY_MS = 2600;
 
 /**
- * Five bombers on the right of the focused circle, opposite the ship
- * taking the cannon hit. Scattered in the open sky, not on the planets.
+ * Five bombers inside the open square to the right of the Structs circle
+ * (about 430×440, from just above the year label to the dossier).
+ * Every nose points left, toward the cannon and the ship taking the hit.
+ * Tops are section-relative; horizontal offsets are from the page center.
  */
 const RIGHT_WING = [
   {
     className:
-      "top-[268px] right-[22%] h-12 w-12 md:top-[286px] md:right-[24%] md:h-[80px] md:w-[80px]",
-    delayMs: 1300,
-    drift: "structs-float-b",
-    flip: true,
-    opacity: 0.8,
+      "top-[470px] right-2 h-8 w-8 md:top-[456px] md:right-auto md:left-[calc(50%+128px)] md:h-[62px] md:w-[62px]",
+    delayMs: 900,
+    opacity: 0.92,
   },
   {
     className:
-      "top-[360px] right-[2%] h-10 w-10 md:top-[378px] md:right-[4%] md:h-[62px] md:w-[62px]",
-    delayMs: 1900,
-    drift: "structs-float-c",
-    flip: false,
-    opacity: 0.64,
+      "top-[530px] right-14 h-8 w-8 md:top-[498px] md:right-auto md:left-[calc(50%+336px)] md:h-[56px] md:w-[56px]",
+    delayMs: 1400,
+    opacity: 0.88,
   },
   {
     className:
-      "top-[500px] right-[12%] h-11 w-11 md:top-[528px] md:right-[15%] md:h-[90px] md:w-[90px]",
-    delayMs: 2400,
-    drift: "structs-float-a",
-    flip: true,
-    opacity: 0.84,
+      "top-[600px] right-1 h-9 w-9 md:top-[572px] md:right-auto md:left-[calc(50%+150px)] md:h-[68px] md:w-[68px]",
+    delayMs: 1800,
+    opacity: 0.94,
   },
   {
     className:
-      "top-[690px] right-[26%] h-10 w-10 md:top-[708px] md:right-[29%] md:h-[70px] md:w-[70px]",
-    delayMs: 3000,
-    drift: "structs-float-b",
-    flip: true,
-    opacity: 0.72,
+      "top-[690px] right-12 h-8 w-8 md:top-[748px] md:right-auto md:left-[calc(50%+122px)] md:h-[58px] md:w-[58px]",
+    delayMs: 2300,
+    opacity: 0.9,
   },
   {
     className:
-      "top-[800px] right-[3%] h-12 w-12 md:top-[830px] md:right-[6%] md:h-[84px] md:w-[84px]",
-    delayMs: 3600,
-    drift: "structs-float-a",
-    flip: false,
-    opacity: 0.76,
+      "top-[760px] right-2 h-8 w-8 md:top-[796px] md:right-auto md:left-[calc(50%+316px)] md:h-[64px] md:w-[64px]",
+    delayMs: 2800,
+    opacity: 0.92,
   },
 ] as const;
 
@@ -62,7 +54,7 @@ const RIGHT_WING = [
  * Structs atmosphere.
  * Cannon sits left, under the Structs counter, and fires down-right.
  * A ship comes out of stealth, flipped toward the cannon, and takes the impact.
- * Five more bombers cloak on the far side of the circle.
+ * Five bombers decloak once inside the square on the right, facing left, then hold.
  * After that hit, the command ship flies in lower left and stays.
  */
 export function StructsScene({ active }: { active: boolean }) {
@@ -146,16 +138,13 @@ export function StructsScene({ active }: { active: boolean }) {
                 key={ship.className}
                 className={ship.className}
                 delayMs={ship.delayMs}
-                drift={ship.drift}
               >
-                <div
-                  className="h-full w-full"
-                  style={ship.flip ? { transform: "scaleX(-1)" } : undefined}
-                >
+                <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
                   <StealthCycle
                     className="h-full w-full"
                     opacity={ship.opacity}
                     delayMs={ship.delayMs}
+                    once
                   />
                 </div>
               </FleetPiece>

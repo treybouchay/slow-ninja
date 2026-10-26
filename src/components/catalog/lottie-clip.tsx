@@ -73,18 +73,24 @@ export function LottieClip({
   );
 }
 
-/** Plays activate then deactivate in a loop (stealth bomber). */
+/**
+ * Plays the cloak, then the reveal.
+ * `once` holds the last frame of the reveal instead of looping.
+ */
 export function StealthCycle({
   className,
   style,
   opacity = 1,
   delayMs = 0,
+  once = false,
 }: {
   className?: string;
   style?: CSSProperties;
   opacity?: number;
   /** Delay before the cloak cycle starts (ms) */
   delayMs?: number;
+  /** Play activate → deactivate a single time, then hold the last frame */
+  once?: boolean;
 }) {
   const [phase, setPhase] = useState<"activate" | "deactivate">("activate");
   const [tick, setTick] = useState(0);
@@ -97,13 +103,13 @@ export function StealthCycle({
   }, [delayMs]);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || once) return;
     const t = window.setTimeout(() => {
       setPhase((p) => (p === "activate" ? "deactivate" : "activate"));
       setTick((n) => n + 1);
     }, 2200);
     return () => window.clearTimeout(t);
-  }, [phase, tick, ready]);
+  }, [phase, tick, ready, once]);
 
   if (!ready) {
     return (
@@ -127,6 +133,11 @@ export function StealthCycle({
         loop={false}
         className="absolute inset-0"
         opacity={1}
+        onComplete={() => {
+          if (!once || phase !== "activate") return;
+          setPhase("deactivate");
+          setTick((n) => n + 1);
+        }}
       />
     </div>
   );
