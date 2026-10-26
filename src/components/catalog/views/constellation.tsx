@@ -7,6 +7,7 @@ import {
   UniverseAtmosphere,
 } from "@/components/catalog/universe-atmosphere";
 import { CatalogViewPicker } from "@/components/catalog/catalog-view-picker";
+import { useTravelSwipe } from "@/components/catalog/use-travel-swipe";
 import { UniverseDossier } from "@/components/catalog/universe-dossier";
 import { featuredGameIndex, games } from "@/lib/content";
 import { cn } from "@/lib/utils";
@@ -198,6 +199,8 @@ export function ConstellationView() {
     setActive(index);
   };
 
+  const travelSwipe = useTravelSwipe(active, games.length, select);
+
   return (
     <section
       ref={sectionRef}
@@ -245,7 +248,8 @@ export function ConstellationView() {
           <div
             role="tablist"
             aria-label="Travel between universes"
-            className="pointer-events-auto flex h-[43px] w-[98px] items-center justify-center gap-3"
+            className="pointer-events-auto flex h-[43px] w-[98px] touch-none items-center justify-center gap-3"
+            {...travelSwipe}
           >
             {games.map((game, index) => {
               const selected = engaged && index === active;
