@@ -172,7 +172,7 @@ function CoindroidsField({ active }: { active: boolean }) {
           alt=""
           width={750}
           height={750}
-          className="h-[min(50.4vh,476px)] w-[min(50.4vh,476px)] object-contain opacity-80"
+          className="h-[min(50.4vh,476px)] w-[min(50.4vh,476px)] object-contain opacity-50"
         />
       </div>
     </div>
