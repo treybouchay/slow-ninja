@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LottieClip } from "@/components/catalog/lottie-clip";
+import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
 const CANNON_DELAY_MS = 700;
@@ -12,9 +12,57 @@ const IMPACT_DELAY_MS = 1150;
 const SHIP_DELAY_MS = 2600;
 
 /**
+ * Five bombers on the right of the focused circle, opposite the ship
+ * taking the cannon hit. Scattered in the open sky, not on the planets.
+ */
+const RIGHT_WING = [
+  {
+    className:
+      "top-[268px] right-[22%] h-12 w-12 md:top-[286px] md:right-[24%] md:h-[80px] md:w-[80px]",
+    delayMs: 1300,
+    drift: "structs-float-b",
+    flip: true,
+    opacity: 0.8,
+  },
+  {
+    className:
+      "top-[360px] right-[2%] h-10 w-10 md:top-[378px] md:right-[4%] md:h-[62px] md:w-[62px]",
+    delayMs: 1900,
+    drift: "structs-float-c",
+    flip: false,
+    opacity: 0.64,
+  },
+  {
+    className:
+      "top-[500px] right-[12%] h-11 w-11 md:top-[528px] md:right-[15%] md:h-[90px] md:w-[90px]",
+    delayMs: 2400,
+    drift: "structs-float-a",
+    flip: true,
+    opacity: 0.84,
+  },
+  {
+    className:
+      "top-[690px] right-[26%] h-10 w-10 md:top-[708px] md:right-[29%] md:h-[70px] md:w-[70px]",
+    delayMs: 3000,
+    drift: "structs-float-b",
+    flip: true,
+    opacity: 0.72,
+  },
+  {
+    className:
+      "top-[800px] right-[3%] h-12 w-12 md:top-[830px] md:right-[6%] md:h-[84px] md:w-[84px]",
+    delayMs: 3600,
+    drift: "structs-float-a",
+    flip: false,
+    opacity: 0.76,
+  },
+] as const;
+
+/**
  * Structs atmosphere.
  * Cannon sits left, under the Structs counter, and fires down-right.
  * A ship comes out of stealth, flipped toward the cannon, and takes the impact.
+ * Five more bombers cloak on the far side of the circle.
  * After that hit, the command ship flies in lower left and stays.
  */
 export function StructsScene({ active }: { active: boolean }) {
@@ -93,6 +141,26 @@ export function StructsScene({ active }: { active: boolean }) {
               </div>
             </FleetPiece>
 
+            {RIGHT_WING.map((ship) => (
+              <FleetPiece
+                key={ship.className}
+                className={ship.className}
+                delayMs={ship.delayMs}
+                drift={ship.drift}
+              >
+                <div
+                  className="h-full w-full"
+                  style={ship.flip ? { transform: "scaleX(-1)" } : undefined}
+                >
+                  <StealthCycle
+                    className="h-full w-full"
+                    opacity={ship.opacity}
+                    delayMs={ship.delayMs}
+                  />
+                </div>
+              </FleetPiece>
+            ))}
+
             {/* Command ship flies in lower left, then holds. */}
             <FleetPiece
               className="top-[590px] left-3 h-[92px] w-[104px] md:top-[680px] md:left-6 md:h-[112px] md:w-[124px]"
@@ -125,10 +193,12 @@ export function StructsScene({ active }: { active: boolean }) {
 function FleetPiece({
   className,
   delayMs,
+  drift,
   children,
 }: {
   className?: string;
   delayMs: number;
+  drift?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -136,7 +206,7 @@ function FleetPiece({
       className={cn("structs-fade-in pointer-events-none absolute", className)}
       style={{ animationDelay: `${delayMs}ms` }}
     >
-      {children}
+      {drift ? <div className={cn("h-full w-full", drift)}>{children}</div> : children}
     </div>
   );
 }
