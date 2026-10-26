@@ -268,17 +268,8 @@
       radial-gradient(1px 1px at 35% 70%, white, transparent);
   }
 
-  .tx-rain > p {
-    animation-name: tx-rise;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-  }
-
-  .coin-pulse {
-    background:
-      radial-gradient(circle at 72% 38%, color-mix(in oklab, var(--coral) 22%, transparent), transparent 42%),
-      radial-gradient(circle at 28% 68%, color-mix(in oklab, var(--sun) 12%, transparent), transparent 38%);
-    animation: coin-breathe 4.5s ease-in-out infinite;
+  .coindroid-fade-in {
+    animation: coindroid-fade-in 1.2s ease-out both;
   }
 
   .universe-nebula {
@@ -394,32 +385,12 @@
   }
 }
 
-@keyframes tx-rise {
-  0% {
-    transform: translateY(110vh);
+@keyframes coindroid-fade-in {
+  from {
     opacity: 0;
   }
-  12% {
-    opacity: 0.7;
-  }
-  88% {
-    opacity: 0.55;
-  }
-  100% {
-    transform: translateY(-20vh);
-    opacity: 0;
-  }
-}
-
-@keyframes coin-breathe {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.04);
+  to {
+    opacity: 1;
   }
 }
 
@@ -520,8 +491,7 @@
   .universe-sql-grid,
   .sql-scanlines,
   .sql-caret,
-  .tx-rain > p,
-  .coin-pulse,
+  .coindroid-fade-in,
   .structs-float-a,
   .structs-float-b,
   .structs-float-c,

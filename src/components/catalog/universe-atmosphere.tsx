@@ -15,15 +15,6 @@ const SCHEMAVERSE_QUERIES = [
   "CREATE OR REPLACE FUNCTION fly_home() RETURNS void AS $$ … $$;",
 ];
 
-const COINDROID_TXS = [
-  "0x7a3f…b2e1  combat.engage(droid_04)",
-  "0x91c0…44aa  wager.lock(1200 COIN)",
-  "0xd8e2…19fc  arena.submit_move(STRIKE)",
-  "0x2bf1…c770  loot.claim(round_88)",
-  "0x55a9…0de3  repair.spend(scrap)",
-  "0xe014…a61b  forge.mint(chassis)",
-];
-
 /** Single light ink for every character — no keyword highlighting */
 const SQL_INK = "color-mix(in oklab, var(--cyan) 28%, transparent)";
 
@@ -166,26 +157,24 @@ function SchemaverseField() {
   );
 }
 
-function CoindroidsTxRain({ active }: { active: boolean }) {
+function CoindroidsField({ active }: { active: boolean }) {
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div className="universe-ruins absolute inset-0 opacity-45" />
-      <div className={cn("absolute inset-0", active ? "tx-rain" : "opacity-0")}>
-        {COINDROID_TXS.map((tx, i) => (
-          <p
-            key={tx}
-            className="absolute whitespace-nowrap font-mono-label text-[10px] tracking-wider text-[var(--coral)]/45 md:text-xs"
-            style={{
-              left: `${8 + (i % 3) * 28}%`,
-              animationDelay: `${i * 1.1}s`,
-              animationDuration: `${9 + (i % 3)}s`,
-            }}
-          >
-            {tx}
-          </p>
-        ))}
+      <div
+        className={cn(
+          "absolute inset-x-0 bottom-[4%] flex justify-center",
+          active ? "coindroid-fade-in" : "opacity-0",
+        )}
+      >
+        <Image
+          src="/games/coindroid.png"
+          alt=""
+          width={750}
+          height={750}
+          className="h-[min(72vh,680px)] w-auto max-w-[min(640px,88vw)] object-contain"
+        />
       </div>
-      <div className="coin-pulse absolute inset-0 opacity-50" />
     </div>
   );
 }
@@ -195,7 +184,7 @@ function GameOverlay({ game, active }: { game: Game; active: boolean }) {
     return <SchemaverseField />;
   }
   if (game.slug === "coindroids") {
-    return <CoindroidsTxRain active={active} />;
+    return <CoindroidsField active={active} />;
   }
   if (game.slug === "structs") {
     return <StructsScene active={active} />;
