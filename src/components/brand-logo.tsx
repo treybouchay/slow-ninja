@@ -10,7 +10,7 @@ type BrandLogoProps = {
 };
 
 const sizes = {
-  nav: { width: 128, height: 96, className: "h-6 w-auto md:h-7" },
+  nav: { width: 128, height: 96, className: "h-4 w-auto md:h-5" },
   hero: { width: 128, height: 96, className: "h-auto w-[min(100%,8rem)] md:w-[9rem]" },
   footer: { width: 128, height: 96, className: "h-8 w-auto" },
 };
