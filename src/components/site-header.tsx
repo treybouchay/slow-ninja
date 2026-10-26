@@ -28,7 +28,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 px-4 pt-3 md:px-6 md:pt-4">
       <div
         className={cn(
-          "mx-auto flex max-w-6xl items-center justify-between gap-4 px-2 py-2 transition-all duration-300 md:px-3",
+          "mx-auto flex max-w-6xl items-center justify-between gap-4 py-2 pr-2 pl-5 transition-all duration-300 md:pr-3 md:pl-7",
           scrolled
             ? "rounded-full border border-white/10 bg-[#070d16]/55 shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-md"
             : "border border-transparent bg-transparent",
