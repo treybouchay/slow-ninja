@@ -10,9 +10,9 @@ type BrandLogoProps = {
 };
 
 const sizes = {
-  nav: { width: 120, height: 69, className: "h-10 w-auto md:h-11" },
-  hero: { width: 420, height: 242, className: "h-auto w-[min(100%,22rem)] md:w-[28rem]" },
-  footer: { width: 160, height: 92, className: "h-12 w-auto" },
+  nav: { width: 128, height: 96, className: "h-10 w-auto md:h-11" },
+  hero: { width: 128, height: 96, className: "h-auto w-[min(100%,16rem)] md:w-[20rem]" },
+  footer: { width: 128, height: 96, className: "h-14 w-auto" },
 };
 
 export function BrandLogo({
@@ -29,7 +29,11 @@ export function BrandLogo({
       width={dims.width}
       height={dims.height}
       priority={priority}
-      className={cn(dims.className, "object-contain", className)}
+      className={cn(
+        dims.className,
+        "object-contain [image-rendering:pixelated]",
+        className,
+      )}
     />
   );
 
