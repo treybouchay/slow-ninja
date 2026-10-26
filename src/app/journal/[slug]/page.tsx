@@ -43,17 +43,17 @@ export default async function JournalPostPage({ params }: Props) {
         <p className="mt-4 text-[var(--ink)]/75">{post.excerpt}</p>
       </div>
 
-      <div className="mt-10 space-y-5 text-base leading-relaxed text-[var(--ink)]/90 md:text-lg">
+      <div className="mt-10 space-y-5 text-base leading-relaxed text-white/80 md:text-lg">
         {post.body.map((paragraph) => (
           <p key={paragraph.slice(0, 40)}>{paragraph}</p>
         ))}
       </div>
 
-      <nav className="mt-16 grid gap-4 border-t-2 border-[var(--ink)]/10 pt-8 md:grid-cols-2">
+      <nav className="mt-16 grid gap-4 border-t border-white/15 pt-8 md:grid-cols-2">
         {previous ? (
           <Link
             href={`/journal/${previous.slug}`}
-            className="rounded-2xl border-2 border-[var(--ink)] bg-white p-4 hover:bg-[var(--mint)]"
+            className="rounded-2xl border-2 border-[var(--ink)] bg-white p-4 text-[var(--ink)] hover:bg-[var(--mint)]"
           >
             <p className="text-xs font-bold uppercase opacity-50">Older</p>
             <p className="font-display mt-1 font-bold">{previous.title}</p>
@@ -64,7 +64,7 @@ export default async function JournalPostPage({ params }: Props) {
         {next ? (
           <Link
             href={`/journal/${next.slug}`}
-            className="rounded-2xl border-2 border-[var(--ink)] bg-white p-4 text-right hover:bg-[var(--sun)]"
+            className="rounded-2xl border-2 border-[var(--ink)] bg-white p-4 text-right text-[var(--ink)] hover:bg-[var(--sun)]"
           >
             <p className="text-xs font-bold uppercase opacity-50">Newer</p>
             <p className="font-display mt-1 font-bold">{next.title}</p>

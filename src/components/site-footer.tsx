@@ -25,6 +25,9 @@ export function SiteFooter() {
               <Link href="/journal" className="hover:text-[var(--lime)]">
                 Journal
               </Link>
+              <Link href="/team" className="hover:text-[var(--lime)]">
+                Team
+              </Link>
             </div>
             <div className="flex flex-col gap-3">
               <a

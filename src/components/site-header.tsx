@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/#games", label: "Games" },
   { href: "/#studio", label: "Studio" },
+  { href: "/team", label: "Team" },
   { href: "/journal", label: "Journal" },
 ];
 
@@ -39,7 +40,8 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-1 md:flex">
           {links.map((link) => {
             const active =
-              link.href === "/journal" && pathname.startsWith("/journal");
+              !link.href.includes("#") &&
+              (pathname === link.href || pathname.startsWith(`${link.href}/`));
             return (
               <Link
                 key={link.href}

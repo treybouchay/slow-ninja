@@ -12,13 +12,19 @@ export default function StudioPage() {
       <p className="font-mono-label text-[8px] tracking-widest md:text-[9px] text-[var(--coral)] uppercase">
         Studio
       </p>
-      <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold text-[var(--ink)] md:text-6xl">
+      <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold text-white md:text-6xl">
         Building games for the sentient
       </h1>
-      <p className="mt-5 max-w-2xl text-lg text-[var(--mist)]">
+      <p className="mt-5 max-w-2xl text-lg text-white/70">
         We build skill-based worlds with inspectable systems—and we refuse to
         make them boring while we&apos;re at it.
       </p>
+      <Link
+        href="/team"
+        className="mt-6 inline-flex font-bold text-[var(--lime)] hover:underline"
+      >
+        Meet the team →
+      </Link>
 
       <div className="mt-14 grid gap-5 md:grid-cols-3">
         {[
@@ -50,12 +56,12 @@ export default function StudioPage() {
         ))}
       </div>
 
-      <ol className="mt-16 space-y-6 border-l-4 border-[var(--ink)] pl-6">
+      <ol className="mt-16 space-y-6 border-l-4 border-white/25 pl-6">
         <li>
           <p className="font-mono-label text-[8px] uppercase md:text-[9px] text-[var(--coral)]">
             2010
           </p>
-          <p className="mt-1 font-semibold text-[var(--ink)]">
+          <p className="mt-1 font-semibold text-white">
             Schemaverse — a space war played in SQL.
           </p>
         </li>
@@ -63,7 +69,7 @@ export default function StudioPage() {
           <p className="font-mono-label text-[8px] uppercase md:text-[9px] text-[var(--coral)]">
             2014
           </p>
-          <p className="mt-1 font-semibold text-[var(--ink)]">
+          <p className="mt-1 font-semibold text-white">
             Coindroids — skill-based crypto combat that helped kick off the
             genre.
           </p>
@@ -72,7 +78,7 @@ export default function StudioPage() {
           <p className="font-mono-label text-[8px] uppercase md:text-[9px] text-[var(--coral)]">
             Now
           </p>
-          <p className="mt-1 font-semibold text-[var(--ink)]">
+          <p className="mt-1 font-semibold text-white">
             Structs — decentralized 5X strategy in the Cosmos ecosystem.
           </p>
         </li>

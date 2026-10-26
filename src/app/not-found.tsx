@@ -22,7 +22,7 @@ export default function NotFound() {
           </Link>
           <Link
             href="/journal"
-            className="rounded-full border-2 border-[var(--ink)] bg-white px-5 py-3 text-sm font-bold"
+            className="rounded-full border-2 border-[var(--ink)] bg-white px-5 py-3 text-sm font-bold text-[var(--ink)]"
           >
             Journal
           </Link>
