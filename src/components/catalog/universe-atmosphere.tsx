@@ -163,7 +163,7 @@ function CoindroidsField({ active }: { active: boolean }) {
       <div className="universe-ruins absolute inset-0 opacity-45" />
       <div
         className={cn(
-          "absolute inset-x-0 bottom-[4%] flex justify-center",
+          "absolute top-[46%] right-3 md:top-[446px] md:right-[112px]",
           active ? "coindroid-fade-in" : "opacity-0",
         )}
       >
@@ -172,7 +172,7 @@ function CoindroidsField({ active }: { active: boolean }) {
           alt=""
           width={750}
           height={750}
-          className="h-[min(72vh,680px)] w-auto max-w-[min(640px,88vw)] object-contain"
+          className="h-[min(36vh,340px)] w-auto max-w-[min(320px,44vw)] object-contain"
         />
       </div>
     </div>
