@@ -38,6 +38,48 @@ const RIGHT_WING = [
 const BATTLESHIP = "top-[320px] left-4 z-10 h-[90px] w-[80px] md:top-[436px] md:left-[calc(50%-360px)] md:h-[100px] md:w-[90px]";
 const BOMBER_HIT = `top-[720px] right-1 z-10 md:top-[760px] md:right-auto md:left-[calc(50%+160px)] ${WING_SIZE}`;
 
+/** Fixed field so the sky does not reshuffle between renders. */
+const STARS = makeStars(64);
+
+/** Occasional streaks. Angle matches the travel vector so the head leads. */
+const METEORS = [
+  { id: "a", left: "6%", top: "10%", x: "320px", y: "180px", angle: "29deg", delay: "0.4s", duration: "9s" },
+  { id: "b", left: "70%", top: "8%", x: "-280px", y: "160px", angle: "150deg", delay: "3.4s", duration: "11s" },
+  { id: "c", left: "84%", top: "42%", x: "-240px", y: "130px", angle: "152deg", delay: "6.2s", duration: "10s" },
+  { id: "d", left: "18%", top: "54%", x: "260px", y: "140px", angle: "28deg", delay: "8s", duration: "12.5s" },
+] as const;
+
+function makeStars(count: number) {
+  let seed = 20261027;
+  const next = () => {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
+  return Array.from({ length: count }, (_, id) => {
+    const roll = next();
+    const size = roll > 0.88 ? 2.5 : roll > 0.62 ? 1.5 : 1;
+    const tintRoll = next();
+    return {
+      id,
+      left: `${(next() * 100).toFixed(2)}%`,
+      top: `${(next() * 100).toFixed(2)}%`,
+      size,
+      twinkle: next() > 0.45,
+      dim: (0.28 + next() * 0.35).toFixed(2),
+      bright: (0.75 + next() * 0.25).toFixed(2),
+      delay: `${(next() * 5).toFixed(2)}s`,
+      duration: `${(2.6 + next() * 3.4).toFixed(2)}s`,
+      tint:
+        tintRoll > 0.84
+          ? "color-mix(in oklab, var(--cyan) 70%, white)"
+          : tintRoll > 0.72
+            ? "color-mix(in oklab, var(--violet) 55%, white)"
+            : "white",
+      glow: size > 2,
+    };
+  });
+}
+
 /**
  * Structs atmosphere.
  * The battleship (cannon unit) sits at the top of the open column left of the circle and fires down-right.
@@ -81,6 +123,7 @@ export function StructsScene({ active }: { active: boolean }) {
                 `,
               }}
             />
+            <StructsSky />
 
             {/* Battleship at the top of the column left of the circle. Fires down-right. */}
             <FleetPiece className={BATTLESHIP} delayMs={CANNON_DELAY_MS}>
@@ -155,6 +198,47 @@ export function StructsScene({ active }: { active: boolean }) {
           </>
         ) : null}
       </div>
+    </div>
+  );
+}
+
+function StructsSky() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {STARS.map((star) => (
+        <span
+          key={star.id}
+          className={cn("absolute rounded-full", star.twinkle && "structs-star")}
+          style={{
+            left: star.left,
+            top: star.top,
+            width: star.size,
+            height: star.size,
+            background: star.tint,
+            opacity: Number(star.twinkle ? star.bright : star.dim),
+            animationDelay: star.delay,
+            animationDuration: star.duration,
+            ["--star-dim" as string]: star.dim,
+            ["--star-bright" as string]: star.bright,
+            boxShadow: star.glow ? `0 0 ${star.size * 2}px ${star.tint}` : undefined,
+          }}
+        />
+      ))}
+      {METEORS.map((meteor) => (
+        <span
+          key={meteor.id}
+          className="structs-meteor absolute"
+          style={{
+            left: meteor.left,
+            top: meteor.top,
+            animationDelay: meteor.delay,
+            animationDuration: meteor.duration,
+            ["--meteor-x" as string]: meteor.x,
+            ["--meteor-y" as string]: meteor.y,
+            ["--meteor-angle" as string]: meteor.angle,
+          }}
+        />
+      ))}
     </div>
   );
 }

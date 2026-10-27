@@ -311,6 +311,29 @@
     animation: structs-fade-in 0.9s ease-out both;
   }
 
+  .structs-star {
+    animation-name: structs-twinkle;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  .structs-meteor {
+    width: 110px;
+    height: 1.5px;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--cyan) 55%, white) 72%,
+      white
+    );
+    box-shadow: 0 0 8px color-mix(in oklab, var(--cyan) 45%, white);
+    opacity: 0;
+    animation-name: structs-meteor;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
 
   .tilt-hover:hover {
     transform: rotate(-1.2deg) scale(1.01);
@@ -433,6 +456,34 @@
   }
 }
 
+@keyframes structs-twinkle {
+  0%,
+  100% {
+    opacity: var(--star-dim, 0.3);
+  }
+  50% {
+    opacity: var(--star-bright, 0.95);
+  }
+}
+
+@keyframes structs-meteor {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(var(--meteor-angle));
+  }
+  6% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0;
+    transform: translate3d(var(--meteor-x), var(--meteor-y), 0) rotate(var(--meteor-angle));
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--meteor-x), var(--meteor-y), 0) rotate(var(--meteor-angle));
+  }
+}
+
 @keyframes structs-ship-hover {
   0%,
   100% {
@@ -498,6 +549,8 @@
   .structs-ship-hover,
   .structs-sat-drift,
   .structs-fade-in,
+  .structs-star,
+  .structs-meteor,
   .pop-in,
   .pop-in-delay,
   .pop-in-late,
