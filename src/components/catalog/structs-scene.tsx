@@ -31,15 +31,18 @@ const RIGHT_WING = [
   },
 ] as const;
 
-/** Where the lower-right bomber sat. The cannon impact lands here instead. */
-const IMPACT_SHIP = `top-[720px] right-1 z-10 md:top-[760px] md:right-auto md:left-[calc(50%+160px)] ${WING_SIZE}`;
+/**
+ * Empty column left of the Structs circle (the 130×321 strip).
+ * The visible ship sits at the top of that column; the clip has 26px of padding above the graphic.
+ */
+const IMPACT_SHIP = `top-[320px] left-4 z-10 md:top-[436px] md:left-[calc(50%-360px)] ${WING_SIZE}`;
 
 /**
  * Structs atmosphere.
  * Cannon sits left, under the Structs counter, and fires down-right.
  * The command ship flies in on the lower left and stays.
- * The battleship decloaks in the lower-right slot and takes the cannon impact.
- * After that impact finishes, two matching bombers decloak once above it, facing left, then hold.
+ * The battleship decloaks at the top of the open column left of the circle and takes the cannon impact.
+ * After that impact finishes, two matching bombers decloak once on the right, facing left, then hold.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [cannonHover, setCannonHover] = useState(false);
@@ -118,7 +121,7 @@ export function StructsScene({ active }: { active: boolean }) {
               </div>
             </FleetPiece>
 
-            {/* Battleship in the lower-right slot, facing the cannon, taking the hit. */}
+            {/* Battleship at the top of the column left of the circle, facing the cannon. */}
             <FleetPiece className={IMPACT_SHIP} delayMs={STEALTH_DELAY_MS}>
               <div
                 className={cn(
