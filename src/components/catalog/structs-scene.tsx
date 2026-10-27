@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
@@ -16,28 +16,43 @@ const SHIP_DELAY_MS = 2600;
 const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
 
 /**
- * Two identical 2×2 grids, one on each side of the circle.
- * Column 2 on the left and column 1 on the right are the inner files, so those
- * units sit on the same rows and face each other.
+ * Two identical 4×4 grids, one on each side of the circle.
+ * Column 4 on the left and column 1 on the right are the inner files.
+ * Row 1 is the highest rank.
  */
 const WINGS = [
   { id: "inner", column: 1, row: 1 },
   { id: "outer", column: 2, row: 1 },
 ] as const;
 
-const FLANK_EDGE = "calc(50% + clamp(84px, 9vw, 132px))";
+/**
+ * Inner edge of each grid, mirrored on both sides.
+ * Desktop leaves sky around the 220px circle without landing the inner file
+ * on the next circle. Phones use a shorter inset so the inner file stays on screen.
+ */
+function useFlankEdge() {
+  const [desktop, setDesktop] = useState(true);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const apply = () => setDesktop(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+  return desktop ? "calc(50% + 148px)" : "calc(50% + 96px)";
+}
 
-function flankStyle(side: "left" | "right"): CSSProperties {
+function flankStyle(side: "left" | "right", edge: string): CSSProperties {
   return {
     position: "absolute",
-    top: 488,
-    width: "clamp(156px, 40vw, 280px)",
-    height: "clamp(156px, 40vw, 280px)",
+    top: 460,
+    width: "min(416px, 42vw)",
+    height: "min(416px, 42vw)",
     display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gridTemplateRows: "1fr 1fr",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gridTemplateRows: "repeat(4, 1fr)",
     pointerEvents: "none",
-    ...(side === "left" ? { right: FLANK_EDGE } : { left: FLANK_EDGE }),
+    ...(side === "left" ? { right: edge } : { left: edge }),
   };
 }
 
@@ -91,8 +106,8 @@ function makeStars(count: number, start: number) {
 
 /**
  * Structs atmosphere.
- * Each side has the same invisible 2×2 grid. The battleship faces the inner bomber,
- * and the command ship faces the bomber taking the hit.
+ * Each side has the same invisible 4×4 grid. The battleship sits on the highest
+ * inner cell and faces the inner bomber. The command ship faces the bomber taking the hit.
  * After the impact finishes, the right-hand bombers decloak once, facing left, then hold.
  */
 export function StructsScene({ active }: { active: boolean }) {
@@ -101,6 +116,7 @@ export function StructsScene({ active }: { active: boolean }) {
   const [shipHover, setShipHover] = useState(false);
   const [settledWings, setSettledWings] = useState(0);
   const [wasActive, setWasActive] = useState(active);
+  const flankEdge = useFlankEdge();
 
   if (active !== wasActive) {
     setWasActive(active);
@@ -135,8 +151,8 @@ export function StructsScene({ active }: { active: boolean }) {
             />
             <StructsSky meteors={settledWings >= WINGS.length} />
 
-            <div style={flankStyle("left")}>
-              <FleetPiece column={2} row={1} delayMs={CANNON_DELAY_MS}>
+            <div style={flankStyle("left", flankEdge)}>
+              <FleetPiece column={4} row={1} delayMs={CANNON_DELAY_MS}>
                 <div className={cn(UNIT, cannonHover && "structs-ship-hover")}>
                   <LottieClip
                     src="/lottie/structs/canon_downwards"
@@ -149,7 +165,7 @@ export function StructsScene({ active }: { active: boolean }) {
                 </div>
               </FleetPiece>
 
-              <FleetPiece column={2} row={2} delayMs={SHIP_DELAY_MS}>
+              <FleetPiece column={4} row={2} delayMs={SHIP_DELAY_MS}>
                 <div className={cn(UNIT, "flex items-center justify-center", shipHover && "structs-ship-hover")}>
                   <LottieClip
                     src="/lottie/structs/move_arrive"
@@ -164,7 +180,7 @@ export function StructsScene({ active }: { active: boolean }) {
               </FleetPiece>
             </div>
 
-            <div style={flankStyle("right")}>
+            <div style={flankStyle("right", flankEdge)}>
               <FleetPiece column={1} row={2} delayMs={STEALTH_DELAY_MS} className="z-10">
                 <div className={cn(UNIT, stealthHover && "structs-ship-hover")}>
                   <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
