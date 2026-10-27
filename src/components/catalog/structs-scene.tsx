@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
@@ -38,15 +38,16 @@ const RIGHT_WING = [
 const BATTLESHIP = "top-[320px] left-4 z-10 h-[90px] w-[80px] md:top-[436px] md:left-[calc(50%-360px)] md:h-[100px] md:w-[90px]";
 const BOMBER_HIT = `top-[720px] right-1 z-10 md:top-[760px] md:right-auto md:left-[calc(50%+160px)] ${WING_SIZE}`;
 
-/** Fixed field so the sky does not reshuffle between renders. */
-const STARS = makeStars(64);
+/** A few fixed stars so the sky does not reshuffle between renders. */
+const STARS = makeStars(16);
 
-/** Occasional streaks. Angle matches the travel vector so the head leads. */
+/**
+ * Two streaks, well apart. They mount only after the fleet clips have finished,
+ * so these delays are measured from that moment, not from when Structs appears.
+ */
 const METEORS = [
-  { id: "a", left: "6%", top: "10%", x: "320px", y: "180px", angle: "29deg", delay: "0.4s", duration: "9s" },
-  { id: "b", left: "70%", top: "8%", x: "-280px", y: "160px", angle: "150deg", delay: "3.4s", duration: "11s" },
-  { id: "c", left: "84%", top: "42%", x: "-240px", y: "130px", angle: "152deg", delay: "6.2s", duration: "10s" },
-  { id: "d", left: "18%", top: "54%", x: "260px", y: "140px", angle: "28deg", delay: "8s", duration: "12.5s" },
+  { id: "a", left: "12%", top: "14%", x: "300px", y: "170px", angle: "30deg", delay: "1.2s", duration: "16s" },
+  { id: "b", left: "74%", top: "22%", x: "-260px", y: "150px", angle: "150deg", delay: "9s", duration: "18s" },
 ] as const;
 
 function makeStars(count: number) {
@@ -64,7 +65,7 @@ function makeStars(count: number) {
       left: `${(next() * 100).toFixed(2)}%`,
       top: `${(next() * 100).toFixed(2)}%`,
       size,
-      twinkle: next() > 0.45,
+      twinkle: true,
       dim: (0.28 + next() * 0.35).toFixed(2),
       bright: (0.75 + next() * 0.25).toFixed(2),
       delay: `${(next() * 5).toFixed(2)}s`,
@@ -91,6 +92,7 @@ export function StructsScene({ active }: { active: boolean }) {
   const [cannonHover, setCannonHover] = useState(false);
   const [stealthHover, setStealthHover] = useState(false);
   const [shipHover, setShipHover] = useState(false);
+  const [settledWings, setSettledWings] = useState(0);
   const [wasActive, setWasActive] = useState(active);
 
   if (active !== wasActive) {
@@ -99,6 +101,7 @@ export function StructsScene({ active }: { active: boolean }) {
       setCannonHover(false);
       setStealthHover(false);
       setShipHover(false);
+      setSettledWings(0);
     }
   }
 
@@ -123,7 +126,7 @@ export function StructsScene({ active }: { active: boolean }) {
                 `,
               }}
             />
-            <StructsSky />
+            <StructsSky meteors={settledWings >= RIGHT_WING.length} />
 
             {/* Battleship at the top of the column left of the circle. Fires down-right. */}
             <FleetPiece className={BATTLESHIP} delayMs={CANNON_DELAY_MS}>
@@ -193,7 +196,11 @@ export function StructsScene({ active }: { active: boolean }) {
             </FleetPiece>
 
             {RIGHT_WING.map((ship) => (
-              <WingBomber key={ship.className} className={ship.className} />
+              <WingBomber
+                key={ship.className}
+                className={ship.className}
+                onDone={() => setSettledWings((count) => count + 1)}
+              />
             ))}
           </>
         ) : null}
@@ -202,7 +209,7 @@ export function StructsScene({ active }: { active: boolean }) {
   );
 }
 
-function StructsSky() {
+function StructsSky({ meteors }: { meteors: boolean }) {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
       {STARS.map((star) => (
@@ -224,27 +231,30 @@ function StructsSky() {
           }}
         />
       ))}
-      {METEORS.map((meteor) => (
-        <span
-          key={meteor.id}
-          className="structs-meteor absolute"
-          style={{
-            left: meteor.left,
-            top: meteor.top,
-            animationDelay: meteor.delay,
-            animationDuration: meteor.duration,
-            ["--meteor-x" as string]: meteor.x,
-            ["--meteor-y" as string]: meteor.y,
-            ["--meteor-angle" as string]: meteor.angle,
-          }}
-        />
-      ))}
+      {meteors
+        ? METEORS.map((meteor) => (
+            <span
+              key={meteor.id}
+              className="structs-meteor absolute"
+              style={{
+                left: meteor.left,
+                top: meteor.top,
+                animationDelay: meteor.delay,
+                animationDuration: meteor.duration,
+                ["--meteor-x" as string]: meteor.x,
+                ["--meteor-y" as string]: meteor.y,
+                ["--meteor-angle" as string]: meteor.angle,
+              }}
+            />
+          ))
+        : null}
     </div>
   );
 }
 
-function WingBomber({ className }: { className: string }) {
+function WingBomber({ className, onDone }: { className: string; onDone: () => void }) {
   const [hover, setHover] = useState(false);
+  const reported = useRef(false);
 
   return (
     <FleetPiece className={className} delayMs={WING_DELAY_MS}>
@@ -255,7 +265,12 @@ function WingBomber({ className }: { className: string }) {
             opacity={0.92}
             delayMs={WING_DELAY_MS}
             once
-            onSettled={() => setHover(true)}
+            onSettled={() => {
+              setHover(true);
+              if (reported.current) return;
+              reported.current = true;
+              onDone();
+            }}
           />
         </div>
       </div>
