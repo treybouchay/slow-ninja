@@ -83,6 +83,7 @@ export function StealthCycle({
   opacity = 1,
   delayMs = 0,
   once = false,
+  onSettled,
 }: {
   className?: string;
   style?: CSSProperties;
@@ -91,6 +92,8 @@ export function StealthCycle({
   delayMs?: number;
   /** Play activate → deactivate a single time, then hold the last frame */
   once?: boolean;
+  /** Fires when a one-shot cycle is holding its last frame */
+  onSettled?: () => void;
 }) {
   const [phase, setPhase] = useState<"activate" | "deactivate">("activate");
   const [tick, setTick] = useState(0);
@@ -134,9 +137,13 @@ export function StealthCycle({
         className="absolute inset-0"
         opacity={1}
         onComplete={() => {
-          if (!once || phase !== "activate") return;
-          setPhase("deactivate");
-          setTick((n) => n + 1);
+          if (!once) return;
+          if (phase === "activate") {
+            setPhase("deactivate");
+            setTick((n) => n + 1);
+            return;
+          }
+          onSettled?.();
         }}
       />
     </div>

@@ -49,12 +49,18 @@ const RIGHT_WING = [
  * After that hit, the command ship flies in lower left and stays.
  */
 export function StructsScene({ active }: { active: boolean }) {
+  const [cannonHover, setCannonHover] = useState(false);
+  const [stealthHover, setStealthHover] = useState(false);
   const [shipHover, setShipHover] = useState(false);
   const [wasActive, setWasActive] = useState(active);
 
   if (active !== wasActive) {
     setWasActive(active);
-    if (!active) setShipHover(false);
+    if (!active) {
+      setCannonHover(false);
+      setStealthHover(false);
+      setShipHover(false);
+    }
   }
 
   return (
@@ -84,13 +90,16 @@ export function StructsScene({ active }: { active: boolean }) {
               className="top-[468px] left-4 h-[90px] w-[80px] md:top-[456px] md:left-6 md:h-[100px] md:w-[90px]"
               delayMs={CANNON_DELAY_MS}
             >
-              <LottieClip
-                src="/lottie/structs/canon_downwards"
-                className="h-full w-full"
-                loop={false}
-                opacity={0.95}
-                delayMs={CANNON_DELAY_MS}
-              />
+              <div className={cn("h-full w-full", cannonHover && "structs-ship-hover")}>
+                <LottieClip
+                  src="/lottie/structs/canon_downwards"
+                  className="h-full w-full"
+                  loop={false}
+                  opacity={0.95}
+                  delayMs={CANNON_DELAY_MS}
+                  onComplete={() => setCannonHover(true)}
+                />
+              </div>
             </FleetPiece>
 
             {/* Comes out of stealth, flipped toward the cannon, and dropped onto the impact. */}
@@ -99,46 +108,41 @@ export function StructsScene({ active }: { active: boolean }) {
               delayMs={STEALTH_DELAY_MS}
             >
               <div
-                className="h-full w-full"
-                style={{ transform: "translateY(72px) scaleX(-1)" }}
+                className={cn(
+                  "relative h-full w-full",
+                  stealthHover && "structs-ship-hover",
+                )}
               >
-                <LottieClip
-                  src="/lottie/structs/stealth_deactivate"
+                <div
                   className="h-full w-full"
-                  loop={false}
-                  opacity={0.95}
-                  delayMs={STEALTH_DELAY_MS}
-                />
-              </div>
-              <div
-                className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]"
-                style={{ transform: "translateY(72px)" }}
-              >
-                <LottieClip
-                  src="/lottie/structs/impact_angled_down_cannon"
-                  className="h-full w-full"
-                  loop={false}
-                  opacity={1}
-                  delayMs={IMPACT_DELAY_MS}
-                />
+                  style={{ transform: "translateY(72px) scaleX(-1)" }}
+                >
+                  <LottieClip
+                    src="/lottie/structs/stealth_deactivate"
+                    className="h-full w-full"
+                    loop={false}
+                    opacity={0.95}
+                    delayMs={STEALTH_DELAY_MS}
+                  />
+                </div>
+                <div
+                  className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]"
+                  style={{ transform: "translateY(72px)" }}
+                >
+                  <LottieClip
+                    src="/lottie/structs/impact_angled_down_cannon"
+                    className="h-full w-full"
+                    loop={false}
+                    opacity={1}
+                    delayMs={IMPACT_DELAY_MS}
+                    onComplete={() => setStealthHover(true)}
+                  />
+                </div>
               </div>
             </FleetPiece>
 
             {RIGHT_WING.map((ship) => (
-              <FleetPiece
-                key={ship.className}
-                className={ship.className}
-                delayMs={WING_DELAY_MS}
-              >
-                <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
-                  <StealthCycle
-                    className="h-full w-full"
-                    opacity={0.92}
-                    delayMs={WING_DELAY_MS}
-                    once
-                  />
-                </div>
-              </FleetPiece>
+              <WingBomber key={ship.className} className={ship.className} />
             ))}
 
             {/* Command ship flies in lower left, then holds. */}
@@ -167,6 +171,26 @@ export function StructsScene({ active }: { active: boolean }) {
         ) : null}
       </div>
     </div>
+  );
+}
+
+function WingBomber({ className }: { className: string }) {
+  const [hover, setHover] = useState(false);
+
+  return (
+    <FleetPiece className={className} delayMs={WING_DELAY_MS}>
+      <div className={cn("h-full w-full", hover && "structs-ship-hover")}>
+        <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
+          <StealthCycle
+            className="h-full w-full"
+            opacity={0.92}
+            delayMs={WING_DELAY_MS}
+            once
+            onSettled={() => setHover(true)}
+          />
+        </div>
+      </div>
+    </FleetPiece>
   );
 }
 

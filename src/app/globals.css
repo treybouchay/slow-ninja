@@ -295,7 +295,7 @@
     animation: structs-drift-c 10s ease-in-out infinite;
   }
 
-  /* Command ship ±2px hover — applied only after arrive Lottie completes */
+  /* ±2px hover shared by every Structs clip once it has finished */
   .structs-ship-hover {
     animation: structs-ship-hover 2.4s ease-in-out infinite;
     will-change: transform;
