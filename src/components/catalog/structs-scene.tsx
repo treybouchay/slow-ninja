@@ -1,20 +1,51 @@
 "use client";
 
 import { useState } from "react";
-import { LottieClip } from "@/components/catalog/lottie-clip";
+import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
 const CANNON_DELAY_MS = 700;
 const STEALTH_DELAY_MS = 250;
 /** Impact lands on the stealth ship after the shell leaves the cannon. */
 const IMPACT_DELAY_MS = 1150;
+/** Impact clip is 63 frames at 30fps. */
+const IMPACT_DURATION_MS = Math.round((63 / 30) * 1000);
 /** Command ship arrives after the stealth ship has taken the hit. */
 const SHIP_DELAY_MS = 2600;
+/** Wing decloaks only once that impact clip has finished. */
+const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
+
+/**
+ * Five bombers inside the open square to the right of the Structs circle
+ * (about 430×440, from just above the year label to the dossier).
+ * Same box as the bomber taking the hit, noses left toward that ship.
+ * Tops are section-relative; horizontal offsets are from the page center.
+ */
+const WING_SIZE = "h-[76px] w-[76px] md:h-[104px] md:w-[104px]";
+
+const RIGHT_WING = [
+  {
+    className: `top-[400px] right-1 md:top-[448px] md:right-auto md:left-[calc(50%+124px)] ${WING_SIZE}`,
+  },
+  {
+    className: `top-[490px] right-1 md:top-[492px] md:right-auto md:left-[calc(50%+318px)] ${WING_SIZE}`,
+  },
+  {
+    className: `top-[580px] right-1 md:top-[568px] md:right-auto md:left-[calc(50%+136px)] ${WING_SIZE}`,
+  },
+  {
+    className: `top-[680px] right-1 md:top-[740px] md:right-auto md:left-[calc(50%+124px)] ${WING_SIZE}`,
+  },
+  {
+    className: `top-[770px] right-1 md:top-[768px] md:right-auto md:left-[calc(50%+312px)] ${WING_SIZE}`,
+  },
+] as const;
 
 /**
  * Structs atmosphere.
  * Cannon sits left, under the Structs counter, and fires down-right.
  * A ship comes out of stealth, flipped toward the cannon, and takes the impact.
+ * After the impact finishes, five matching bombers decloak once in the square on the right, facing left, then hold.
  * After that hit, the command ship flies in lower left and stays.
  */
 export function StructsScene({ active }: { active: boolean }) {
@@ -93,6 +124,23 @@ export function StructsScene({ active }: { active: boolean }) {
               </div>
             </FleetPiece>
 
+            {RIGHT_WING.map((ship) => (
+              <FleetPiece
+                key={ship.className}
+                className={ship.className}
+                delayMs={WING_DELAY_MS}
+              >
+                <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
+                  <StealthCycle
+                    className="h-full w-full"
+                    opacity={0.92}
+                    delayMs={WING_DELAY_MS}
+                    once
+                  />
+                </div>
+              </FleetPiece>
+            ))}
+
             {/* Command ship flies in lower left, then holds. */}
             <FleetPiece
               className="top-[590px] left-3 h-[92px] w-[104px] md:top-[680px] md:left-6 md:h-[112px] md:w-[124px]"
@@ -125,10 +173,12 @@ export function StructsScene({ active }: { active: boolean }) {
 function FleetPiece({
   className,
   delayMs,
+  drift,
   children,
 }: {
   className?: string;
   delayMs: number;
+  drift?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -136,7 +186,7 @@ function FleetPiece({
       className={cn("structs-fade-in pointer-events-none absolute", className)}
       style={{ animationDelay: `${delayMs}ms` }}
     >
-      {children}
+      {drift ? <div className={cn("h-full w-full", drift)}>{children}</div> : children}
     </div>
   );
 }
