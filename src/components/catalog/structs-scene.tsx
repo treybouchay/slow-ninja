@@ -18,27 +18,26 @@ const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
 /**
  * Five bombers inside the open square to the right of the Structs circle
  * (about 430×440, from just above the year label to the dossier).
- * Same size, noses left toward the cannon and the ship taking the hit.
+ * Same box as the bomber taking the hit, noses left toward that ship.
  * Tops are section-relative; horizontal offsets are from the page center.
  */
-const WING_SIZE =
-  "h-8 w-8 md:h-16 md:w-16";
+const WING_SIZE = "h-[76px] w-[76px] md:h-[104px] md:w-[104px]";
 
 const RIGHT_WING = [
   {
-    className: `top-[470px] right-2 md:top-[456px] md:right-auto md:left-[calc(50%+128px)] ${WING_SIZE}`,
+    className: `top-[400px] right-1 md:top-[448px] md:right-auto md:left-[calc(50%+124px)] ${WING_SIZE}`,
   },
   {
-    className: `top-[530px] right-14 md:top-[498px] md:right-auto md:left-[calc(50%+336px)] ${WING_SIZE}`,
+    className: `top-[490px] right-1 md:top-[492px] md:right-auto md:left-[calc(50%+318px)] ${WING_SIZE}`,
   },
   {
-    className: `top-[600px] right-1 md:top-[572px] md:right-auto md:left-[calc(50%+150px)] ${WING_SIZE}`,
+    className: `top-[580px] right-1 md:top-[568px] md:right-auto md:left-[calc(50%+136px)] ${WING_SIZE}`,
   },
   {
-    className: `top-[690px] right-12 md:top-[748px] md:right-auto md:left-[calc(50%+122px)] ${WING_SIZE}`,
+    className: `top-[680px] right-1 md:top-[740px] md:right-auto md:left-[calc(50%+124px)] ${WING_SIZE}`,
   },
   {
-    className: `top-[760px] right-2 md:top-[796px] md:right-auto md:left-[calc(50%+316px)] ${WING_SIZE}`,
+    className: `top-[770px] right-1 md:top-[768px] md:right-auto md:left-[calc(50%+312px)] ${WING_SIZE}`,
   },
 ] as const;
 
