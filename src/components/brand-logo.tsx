@@ -24,11 +24,12 @@ export function BrandLogo({
   const dims = sizes[size];
   const image = (
     <Image
-      src="/slow-ninja-logo.png"
+      src="/slow-ninja-mark.png"
       alt="Slow Ninja"
       width={dims.width}
       height={dims.height}
       priority={priority}
+      unoptimized
       className={cn(
         dims.className,
         "object-contain [image-rendering:pixelated]",
