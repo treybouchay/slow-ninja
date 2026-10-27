@@ -8,45 +8,37 @@ const CANNON_DELAY_MS = 700;
 const STEALTH_DELAY_MS = 250;
 /** Impact lands on the stealth ship after the shell leaves the cannon. */
 const IMPACT_DELAY_MS = 1150;
+/** Impact clip is 63 frames at 30fps. */
+const IMPACT_DURATION_MS = Math.round((63 / 30) * 1000);
 /** Command ship arrives after the stealth ship has taken the hit. */
 const SHIP_DELAY_MS = 2600;
+/** Wing decloaks only once that impact clip has finished. */
+const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
 
 /**
  * Five bombers inside the open square to the right of the Structs circle
  * (about 430×440, from just above the year label to the dossier).
- * Every nose points left, toward the cannon and the ship taking the hit.
+ * Same size, noses left toward the cannon and the ship taking the hit.
  * Tops are section-relative; horizontal offsets are from the page center.
  */
+const WING_SIZE =
+  "h-8 w-8 md:h-16 md:w-16";
+
 const RIGHT_WING = [
   {
-    className:
-      "top-[470px] right-2 h-8 w-8 md:top-[456px] md:right-auto md:left-[calc(50%+128px)] md:h-[62px] md:w-[62px]",
-    delayMs: 900,
-    opacity: 0.92,
+    className: `top-[470px] right-2 md:top-[456px] md:right-auto md:left-[calc(50%+128px)] ${WING_SIZE}`,
   },
   {
-    className:
-      "top-[530px] right-14 h-8 w-8 md:top-[498px] md:right-auto md:left-[calc(50%+336px)] md:h-[56px] md:w-[56px]",
-    delayMs: 1400,
-    opacity: 0.88,
+    className: `top-[530px] right-14 md:top-[498px] md:right-auto md:left-[calc(50%+336px)] ${WING_SIZE}`,
   },
   {
-    className:
-      "top-[600px] right-1 h-9 w-9 md:top-[572px] md:right-auto md:left-[calc(50%+150px)] md:h-[68px] md:w-[68px]",
-    delayMs: 1800,
-    opacity: 0.94,
+    className: `top-[600px] right-1 md:top-[572px] md:right-auto md:left-[calc(50%+150px)] ${WING_SIZE}`,
   },
   {
-    className:
-      "top-[690px] right-12 h-8 w-8 md:top-[748px] md:right-auto md:left-[calc(50%+122px)] md:h-[58px] md:w-[58px]",
-    delayMs: 2300,
-    opacity: 0.9,
+    className: `top-[690px] right-12 md:top-[748px] md:right-auto md:left-[calc(50%+122px)] ${WING_SIZE}`,
   },
   {
-    className:
-      "top-[760px] right-2 h-8 w-8 md:top-[796px] md:right-auto md:left-[calc(50%+316px)] md:h-[64px] md:w-[64px]",
-    delayMs: 2800,
-    opacity: 0.92,
+    className: `top-[760px] right-2 md:top-[796px] md:right-auto md:left-[calc(50%+316px)] ${WING_SIZE}`,
   },
 ] as const;
 
@@ -54,7 +46,7 @@ const RIGHT_WING = [
  * Structs atmosphere.
  * Cannon sits left, under the Structs counter, and fires down-right.
  * A ship comes out of stealth, flipped toward the cannon, and takes the impact.
- * Five bombers decloak once inside the square on the right, facing left, then hold.
+ * After the impact finishes, five matching bombers decloak once in the square on the right, facing left, then hold.
  * After that hit, the command ship flies in lower left and stays.
  */
 export function StructsScene({ active }: { active: boolean }) {
@@ -137,13 +129,13 @@ export function StructsScene({ active }: { active: boolean }) {
               <FleetPiece
                 key={ship.className}
                 className={ship.className}
-                delayMs={ship.delayMs}
+                delayMs={WING_DELAY_MS}
               >
                 <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
                   <StealthCycle
                     className="h-full w-full"
-                    opacity={ship.opacity}
-                    delayMs={ship.delayMs}
+                    opacity={0.92}
+                    delayMs={WING_DELAY_MS}
                     once
                   />
                 </div>
