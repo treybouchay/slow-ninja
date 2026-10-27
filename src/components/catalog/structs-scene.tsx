@@ -41,12 +41,12 @@ const BOMBER_HIT = `top-[720px] right-1 z-10 md:top-[760px] md:right-auto md:lef
 /** A few fixed stars so the sky does not reshuffle between renders. */
 const STARS = makeStars(16, 20261027);
 /** Stationary glints. They stay put and flare in place. */
-const SPARKLES = makeStars(8, 8675309);
+const SPARKLES = makeStars(22, 8675309);
 
 /**
  * Two streaks, well apart. They mount only after the fleet clips have finished,
  * so these delays are measured from that moment, not from when Structs appears.
- * The flight itself is the first 2.2% of the cycle, about a third of a second.
+ * The flight itself is the first 6% of the cycle, about a second.
  */
 const METEORS = [
   { id: "a", left: "8%", top: "12%", x: "460px", y: "250px", angle: "29deg", delay: "0.8s", duration: "16s" },

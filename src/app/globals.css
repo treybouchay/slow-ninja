@@ -510,10 +510,10 @@
     opacity: 0;
     transform: translate3d(0, 0, 0) rotate(var(--meteor-angle));
   }
-  0.4% {
+  1.2% {
     opacity: 1;
   }
-  2.2% {
+  6% {
     opacity: 0;
     transform: translate3d(var(--meteor-x), var(--meteor-y), 0) rotate(var(--meteor-angle));
   }
