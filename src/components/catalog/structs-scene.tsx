@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
@@ -16,27 +16,32 @@ const SHIP_DELAY_MS = 2600;
 const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
 
 /**
- * Two bombers in the open square to the right of the Structs circle.
- * Same box as the ship taking the hit, noses left toward the cannon.
- * Tops are section-relative; horizontal offsets are from the page center.
+ * Two identical 2×2 grids, one on each side of the circle.
+ * Column 2 on the left and column 1 on the right are the inner files, so those
+ * units sit on the same rows and face each other.
  */
-const WING_SIZE = "h-[76px] w-[76px] md:h-[104px] md:w-[104px]";
-
-const RIGHT_WING = [
-  {
-    className: `top-[400px] right-1 md:top-[448px] md:right-auto md:left-[calc(50%+130px)] ${WING_SIZE}`,
-  },
-  {
-    className: `top-[460px] right-1 md:top-[488px] md:right-auto md:left-[calc(50%+328px)] ${WING_SIZE}`,
-  },
+const WINGS = [
+  { id: "inner", column: 1, row: 1 },
+  { id: "outer", column: 2, row: 1 },
 ] as const;
 
-/**
- * Open column left of the Structs circle. The battleship (cannon unit) sits at the top.
- * The bomber that takes the hit returns to the lower right of the circle.
- */
-const BATTLESHIP = "top-[320px] left-4 z-10 h-[90px] w-[80px] md:top-[436px] md:left-[calc(50%-360px)] md:h-[100px] md:w-[90px]";
-const BOMBER_HIT = `top-[720px] right-1 z-10 md:top-[760px] md:right-auto md:left-[calc(50%+160px)] ${WING_SIZE}`;
+const FLANK_EDGE = "calc(50% + clamp(84px, 9vw, 132px))";
+
+function flankStyle(side: "left" | "right"): CSSProperties {
+  return {
+    position: "absolute",
+    top: 488,
+    width: "clamp(156px, 40vw, 280px)",
+    height: "clamp(156px, 40vw, 280px)",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gridTemplateRows: "1fr 1fr",
+    pointerEvents: "none",
+    ...(side === "left" ? { right: FLANK_EDGE } : { left: FLANK_EDGE }),
+  };
+}
+
+const UNIT = "relative h-[68px] w-[68px] md:h-[104px] md:w-[104px]";
 
 /** A few fixed stars so the sky does not reshuffle between renders. */
 const STARS = makeStars(16, 20261027);
@@ -86,10 +91,9 @@ function makeStars(count: number, start: number) {
 
 /**
  * Structs atmosphere.
- * The battleship (cannon unit) sits at the top of the open column left of the circle and fires down-right.
- * The bomber taking that hit decloaks at the lower right of the circle.
- * After the impact finishes, two matching bombers decloak once above it, facing left, then hold.
- * The command ship flies in on the lower left and stays.
+ * Each side has the same invisible 2×2 grid. The battleship faces the inner bomber,
+ * and the command ship faces the bomber taking the hit.
+ * After the impact finishes, the right-hand bombers decloak once, facing left, then hold.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [cannonHover, setCannonHover] = useState(false);
@@ -129,82 +133,71 @@ export function StructsScene({ active }: { active: boolean }) {
                 `,
               }}
             />
-            <StructsSky meteors={settledWings >= RIGHT_WING.length} />
+            <StructsSky meteors={settledWings >= WINGS.length} />
 
-            {/* Battleship at the top of the column left of the circle. Fires down-right. */}
-            <FleetPiece className={BATTLESHIP} delayMs={CANNON_DELAY_MS}>
-              <div className={cn("h-full w-full", cannonHover && "structs-ship-hover")}>
-                <LottieClip
-                  src="/lottie/structs/canon_downwards"
-                  className="h-full w-full"
-                  loop={false}
-                  opacity={0.95}
-                  delayMs={CANNON_DELAY_MS}
-                  onComplete={() => setCannonHover(true)}
-                />
-              </div>
-            </FleetPiece>
-
-            {/* Command ship flies in on the lower left, then holds. */}
-            <FleetPiece
-              className="top-[590px] left-3 h-[92px] w-[104px] md:top-[680px] md:left-6 md:h-[112px] md:w-[124px]"
-              delayMs={SHIP_DELAY_MS}
-            >
-              <div
-                className={cn(
-                  "flex h-full w-full items-center justify-center",
-                  shipHover && "structs-ship-hover",
-                )}
-              >
-                <LottieClip
-                  src="/lottie/structs/move_arrive"
-                  className="h-full w-full"
-                  loop={false}
-                  opacity={0.92}
-                  speed={0.95}
-                  delayMs={SHIP_DELAY_MS}
-                  onComplete={() => setShipHover(true)}
-                />
-              </div>
-            </FleetPiece>
-
-            {/* Bomber at the lower right of the circle, facing left, taking the hit. */}
-            <FleetPiece className={BOMBER_HIT} delayMs={STEALTH_DELAY_MS}>
-              <div
-                className={cn(
-                  "relative h-full w-full",
-                  stealthHover && "structs-ship-hover",
-                )}
-              >
-                <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
+            <div style={flankStyle("left")}>
+              <FleetPiece column={2} row={1} delayMs={CANNON_DELAY_MS}>
+                <div className={cn(UNIT, cannonHover && "structs-ship-hover")}>
                   <LottieClip
-                    src="/lottie/structs/stealth_deactivate"
+                    src="/lottie/structs/canon_downwards"
                     className="h-full w-full"
                     loop={false}
                     opacity={0.95}
-                    delayMs={STEALTH_DELAY_MS}
+                    delayMs={CANNON_DELAY_MS}
+                    onComplete={() => setCannonHover(true)}
                   />
                 </div>
-                <div className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]">
+              </FleetPiece>
+
+              <FleetPiece column={2} row={2} delayMs={SHIP_DELAY_MS}>
+                <div className={cn(UNIT, "flex items-center justify-center", shipHover && "structs-ship-hover")}>
                   <LottieClip
-                    src="/lottie/structs/impact_angled_down_cannon"
+                    src="/lottie/structs/move_arrive"
                     className="h-full w-full"
                     loop={false}
-                    opacity={1}
-                    delayMs={IMPACT_DELAY_MS}
-                    onComplete={() => setStealthHover(true)}
+                    opacity={0.92}
+                    speed={0.95}
+                    delayMs={SHIP_DELAY_MS}
+                    onComplete={() => setShipHover(true)}
                   />
                 </div>
-              </div>
-            </FleetPiece>
+              </FleetPiece>
+            </div>
 
-            {RIGHT_WING.map((ship) => (
-              <WingBomber
-                key={ship.className}
-                className={ship.className}
-                onDone={() => setSettledWings((count) => count + 1)}
-              />
-            ))}
+            <div style={flankStyle("right")}>
+              <FleetPiece column={1} row={2} delayMs={STEALTH_DELAY_MS} className="z-10">
+                <div className={cn(UNIT, stealthHover && "structs-ship-hover")}>
+                  <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
+                    <LottieClip
+                      src="/lottie/structs/stealth_deactivate"
+                      className="h-full w-full"
+                      loop={false}
+                      opacity={0.95}
+                      delayMs={STEALTH_DELAY_MS}
+                    />
+                  </div>
+                  <div className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]">
+                    <LottieClip
+                      src="/lottie/structs/impact_angled_down_cannon"
+                      className="h-full w-full"
+                      loop={false}
+                      opacity={1}
+                      delayMs={IMPACT_DELAY_MS}
+                      onComplete={() => setStealthHover(true)}
+                    />
+                  </div>
+                </div>
+              </FleetPiece>
+
+              {WINGS.map((ship) => (
+                <WingBomber
+                  key={ship.id}
+                  column={ship.column}
+                  row={ship.row}
+                  onDone={() => setSettledWings((count) => count + 1)}
+                />
+              ))}
+            </div>
           </>
         ) : null}
       </div>
@@ -271,13 +264,21 @@ function StructsSky({ meteors }: { meteors: boolean }) {
   );
 }
 
-function WingBomber({ className, onDone }: { className: string; onDone: () => void }) {
+function WingBomber({
+  column,
+  row,
+  onDone,
+}: {
+  column: number;
+  row: number;
+  onDone: () => void;
+}) {
   const [hover, setHover] = useState(false);
   const reported = useRef(false);
 
   return (
-    <FleetPiece className={className} delayMs={WING_DELAY_MS}>
-      <div className={cn("h-full w-full", hover && "structs-ship-hover")}>
+    <FleetPiece column={column} row={row} delayMs={WING_DELAY_MS}>
+      <div className={cn(UNIT, hover && "structs-ship-hover")}>
         <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
           <StealthCycle
             className="h-full w-full"
@@ -298,22 +299,24 @@ function WingBomber({ className, onDone }: { className: string; onDone: () => vo
 }
 
 function FleetPiece({
+  column,
+  row,
   className,
   delayMs,
-  drift,
   children,
 }: {
+  column: number;
+  row: number;
   className?: string;
   delayMs: number;
-  drift?: string;
   children: React.ReactNode;
 }) {
   return (
     <div
-      className={cn("structs-fade-in pointer-events-none absolute", className)}
-      style={{ animationDelay: `${delayMs}ms` }}
+      className={cn("structs-fade-in pointer-events-none flex items-center justify-center", className)}
+      style={{ gridColumn: column, gridRow: row, animationDelay: `${delayMs}ms` }}
     >
-      {drift ? <div className={cn("h-full w-full", drift)}>{children}</div> : children}
+      {children}
     </div>
   );
 }
