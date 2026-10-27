@@ -16,8 +16,8 @@ const SHIP_DELAY_MS = 2600;
 const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
 
 /**
- * Three bombers inside the open square to the right of the Structs circle.
- * Same box as the ship taking the hit, noses left toward that ship.
+ * Two bombers in the open square to the right of the Structs circle.
+ * Same box as the ship taking the hit, noses left toward the cannon.
  * Tops are section-relative; horizontal offsets are from the page center.
  */
 const WING_SIZE = "h-[76px] w-[76px] md:h-[104px] md:w-[104px]";
@@ -29,17 +29,17 @@ const RIGHT_WING = [
   {
     className: `top-[460px] right-1 md:top-[488px] md:right-auto md:left-[calc(50%+328px)] ${WING_SIZE}`,
   },
-  {
-    className: `top-[720px] right-1 md:top-[760px] md:right-auto md:left-[calc(50%+160px)] ${WING_SIZE}`,
-  },
 ] as const;
+
+/** Where the lower-right bomber sat. The cannon impact lands here instead. */
+const IMPACT_SHIP = `top-[720px] right-1 z-10 md:top-[760px] md:right-auto md:left-[calc(50%+160px)] ${WING_SIZE}`;
 
 /**
  * Structs atmosphere.
  * Cannon sits left, under the Structs counter, and fires down-right.
- * The battleship comes out of stealth on the left, in front of the command ship, and takes the impact.
- * After the impact finishes, three matching bombers decloak once in the square on the right, facing left, then hold.
- * The command ship flies in behind the battleship and stays.
+ * The command ship flies in on the lower left and stays.
+ * The battleship decloaks in the lower-right slot and takes the cannon impact.
+ * After that impact finishes, two matching bombers decloak once above it, facing left, then hold.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [cannonHover, setCannonHover] = useState(false);
@@ -118,21 +118,15 @@ export function StructsScene({ active }: { active: boolean }) {
               </div>
             </FleetPiece>
 
-            {/* Battleship on the left, in front of the command ship, taking the hit. */}
-            <FleetPiece
-              className="top-[620px] left-1 z-10 h-[76px] w-[76px] md:top-[640px] md:left-4 md:h-[104px] md:w-[104px]"
-              delayMs={STEALTH_DELAY_MS}
-            >
+            {/* Battleship in the lower-right slot, facing the cannon, taking the hit. */}
+            <FleetPiece className={IMPACT_SHIP} delayMs={STEALTH_DELAY_MS}>
               <div
                 className={cn(
                   "relative h-full w-full",
                   stealthHover && "structs-ship-hover",
                 )}
               >
-                <div
-                  className="h-full w-full"
-                  style={{ transform: "translateY(72px) scaleX(-1)" }}
-                >
+                <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
                   <LottieClip
                     src="/lottie/structs/stealth_deactivate"
                     className="h-full w-full"
@@ -141,10 +135,7 @@ export function StructsScene({ active }: { active: boolean }) {
                     delayMs={STEALTH_DELAY_MS}
                   />
                 </div>
-                <div
-                  className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]"
-                  style={{ transform: "translateY(72px)" }}
-                >
+                <div className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]">
                   <LottieClip
                     src="/lottie/structs/impact_angled_down_cannon"
                     className="h-full w-full"
