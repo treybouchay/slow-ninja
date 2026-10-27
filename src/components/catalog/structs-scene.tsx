@@ -39,19 +39,22 @@ const BATTLESHIP = "top-[320px] left-4 z-10 h-[90px] w-[80px] md:top-[436px] md:
 const BOMBER_HIT = `top-[720px] right-1 z-10 md:top-[760px] md:right-auto md:left-[calc(50%+160px)] ${WING_SIZE}`;
 
 /** A few fixed stars so the sky does not reshuffle between renders. */
-const STARS = makeStars(16);
+const STARS = makeStars(16, 20261027);
+/** Stationary glints. They stay put and flare in place. */
+const SPARKLES = makeStars(8, 8675309);
 
 /**
  * Two streaks, well apart. They mount only after the fleet clips have finished,
  * so these delays are measured from that moment, not from when Structs appears.
+ * The flight itself is the first 2.2% of the cycle, about a third of a second.
  */
 const METEORS = [
-  { id: "a", left: "12%", top: "14%", x: "300px", y: "170px", angle: "30deg", delay: "1.2s", duration: "16s" },
-  { id: "b", left: "74%", top: "22%", x: "-260px", y: "150px", angle: "150deg", delay: "9s", duration: "18s" },
+  { id: "a", left: "8%", top: "12%", x: "460px", y: "250px", angle: "29deg", delay: "0.8s", duration: "16s" },
+  { id: "b", left: "78%", top: "16%", x: "-420px", y: "230px", angle: "151deg", delay: "9s", duration: "18s" },
 ] as const;
 
-function makeStars(count: number) {
-  let seed = 20261027;
+function makeStars(count: number, start: number) {
+  let seed = start;
   const next = () => {
     seed = (seed * 16807) % 2147483647;
     return (seed - 1) / 2147483646;
@@ -212,6 +215,22 @@ export function StructsScene({ active }: { active: boolean }) {
 function StructsSky({ meteors }: { meteors: boolean }) {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {SPARKLES.map((star) => (
+        <span
+          key={`spark-${star.id}`}
+          className="structs-sparkle absolute"
+          style={{
+            left: star.left,
+            top: star.top,
+            animationDelay: star.delay,
+            animationDuration: `${(3.4 + Number(star.dim) * 3).toFixed(2)}s`,
+            opacity: 0.4,
+          }}
+        >
+          <span className="structs-sparkle-arm" />
+          <span className="structs-sparkle-arm structs-sparkle-arm-y" />
+        </span>
+      ))}
       {STARS.map((star) => (
         <span
           key={star.id}

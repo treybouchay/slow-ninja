@@ -317,6 +317,28 @@
     animation-iteration-count: infinite;
   }
 
+  .structs-sparkle {
+    width: 9px;
+    height: 9px;
+    animation-name: structs-sparkle;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  .structs-sparkle-arm {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, white 42%, white 58%, transparent);
+    transform: translate(-50%, -50%);
+  }
+
+  .structs-sparkle-arm-y {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
   .structs-meteor {
     width: 110px;
     height: 1.5px;
@@ -466,15 +488,32 @@
   }
 }
 
+@keyframes structs-sparkle {
+  0%,
+  64%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.55);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  76% {
+    opacity: 0.35;
+    transform: scale(0.5);
+  }
+}
+
 @keyframes structs-meteor {
   0% {
     opacity: 0;
     transform: translate3d(0, 0, 0) rotate(var(--meteor-angle));
   }
-  2% {
+  0.4% {
     opacity: 1;
   }
-  8% {
+  2.2% {
     opacity: 0;
     transform: translate3d(var(--meteor-x), var(--meteor-y), 0) rotate(var(--meteor-angle));
   }
@@ -550,6 +589,7 @@
   .structs-sat-drift,
   .structs-fade-in,
   .structs-star,
+  .structs-sparkle,
   .structs-meteor,
   .pop-in,
   .pop-in-delay,
