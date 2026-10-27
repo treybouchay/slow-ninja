@@ -16,37 +16,30 @@ const SHIP_DELAY_MS = 2600;
 const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
 
 /**
- * Five bombers inside the open square to the right of the Structs circle
- * (about 430×440, from just above the year label to the dossier).
- * Same box as the bomber taking the hit, noses left toward that ship.
+ * Three bombers inside the open square to the right of the Structs circle.
+ * Same box as the ship taking the hit, noses left toward that ship.
  * Tops are section-relative; horizontal offsets are from the page center.
  */
 const WING_SIZE = "h-[76px] w-[76px] md:h-[104px] md:w-[104px]";
 
 const RIGHT_WING = [
   {
-    className: `top-[400px] right-1 md:top-[448px] md:right-auto md:left-[calc(50%+124px)] ${WING_SIZE}`,
+    className: `top-[400px] right-1 md:top-[448px] md:right-auto md:left-[calc(50%+130px)] ${WING_SIZE}`,
   },
   {
-    className: `top-[490px] right-1 md:top-[492px] md:right-auto md:left-[calc(50%+318px)] ${WING_SIZE}`,
+    className: `top-[460px] right-1 md:top-[488px] md:right-auto md:left-[calc(50%+328px)] ${WING_SIZE}`,
   },
   {
-    className: `top-[580px] right-1 md:top-[568px] md:right-auto md:left-[calc(50%+136px)] ${WING_SIZE}`,
-  },
-  {
-    className: `top-[680px] right-1 md:top-[740px] md:right-auto md:left-[calc(50%+124px)] ${WING_SIZE}`,
-  },
-  {
-    className: `top-[770px] right-1 md:top-[768px] md:right-auto md:left-[calc(50%+312px)] ${WING_SIZE}`,
+    className: `top-[720px] right-1 md:top-[760px] md:right-auto md:left-[calc(50%+160px)] ${WING_SIZE}`,
   },
 ] as const;
 
 /**
  * Structs atmosphere.
  * Cannon sits left, under the Structs counter, and fires down-right.
- * A ship comes out of stealth, flipped toward the cannon, and takes the impact.
- * After the impact finishes, five matching bombers decloak once in the square on the right, facing left, then hold.
- * After that hit, the command ship flies in lower left and stays.
+ * The battleship comes out of stealth on the left, in front of the command ship, and takes the impact.
+ * After the impact finishes, three matching bombers decloak once in the square on the right, facing left, then hold.
+ * The command ship flies in behind the battleship and stays.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [cannonHover, setCannonHover] = useState(false);
@@ -102,9 +95,32 @@ export function StructsScene({ active }: { active: boolean }) {
               </div>
             </FleetPiece>
 
-            {/* Comes out of stealth, flipped toward the cannon, and dropped onto the impact. */}
+            {/* Command ship flies in behind the battleship, then holds. */}
             <FleetPiece
-              className="top-[530px] left-[100px] h-[76px] w-[76px] md:top-[524px] md:left-[160px] md:h-[104px] md:w-[104px]"
+              className="top-[590px] left-3 h-[92px] w-[104px] md:top-[680px] md:left-6 md:h-[112px] md:w-[124px]"
+              delayMs={SHIP_DELAY_MS}
+            >
+              <div
+                className={cn(
+                  "flex h-full w-full items-center justify-center",
+                  shipHover && "structs-ship-hover",
+                )}
+              >
+                <LottieClip
+                  src="/lottie/structs/move_arrive"
+                  className="h-full w-full"
+                  loop={false}
+                  opacity={0.92}
+                  speed={0.95}
+                  delayMs={SHIP_DELAY_MS}
+                  onComplete={() => setShipHover(true)}
+                />
+              </div>
+            </FleetPiece>
+
+            {/* Battleship on the left, in front of the command ship, taking the hit. */}
+            <FleetPiece
+              className="top-[620px] left-1 z-10 h-[76px] w-[76px] md:top-[640px] md:left-4 md:h-[104px] md:w-[104px]"
               delayMs={STEALTH_DELAY_MS}
             >
               <div
@@ -144,29 +160,6 @@ export function StructsScene({ active }: { active: boolean }) {
             {RIGHT_WING.map((ship) => (
               <WingBomber key={ship.className} className={ship.className} />
             ))}
-
-            {/* Command ship flies in lower left, then holds. */}
-            <FleetPiece
-              className="top-[590px] left-3 h-[92px] w-[104px] md:top-[680px] md:left-6 md:h-[112px] md:w-[124px]"
-              delayMs={SHIP_DELAY_MS}
-            >
-              <div
-                className={cn(
-                  "flex h-full w-full items-center justify-center",
-                  shipHover && "structs-ship-hover",
-                )}
-              >
-                <LottieClip
-                  src="/lottie/structs/move_arrive"
-                  className="h-full w-full"
-                  loop={false}
-                  opacity={0.92}
-                  speed={0.95}
-                  delayMs={SHIP_DELAY_MS}
-                  onComplete={() => setShipHover(true)}
-                />
-              </div>
-            </FleetPiece>
           </>
         ) : null}
       </div>
