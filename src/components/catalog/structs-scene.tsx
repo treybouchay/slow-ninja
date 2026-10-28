@@ -15,13 +15,13 @@ const SHIP_DELAY_MS = 2600;
 const FADE_MS = 900;
 
 /**
- * Wide windows keep a single column and leave two ship-widths of room
- * between the units and the circle. The lane slot grows with that gap so
- * the ships stay clear of the next world.
+ * Wide windows drop the outer ship column and open a gap the width of one
+ * column between the remaining units and the circle. The lane slot grows
+ * with that gap so the ships stay clear of the next world.
  */
 export const WIDE_FLEET_QUERY = "(min-width: 1000px)";
-/** Desktop spacing that clears one ship column plus two columns of empty room. */
-export const SLOT_WIDE = 456;
+/** Desktop spacing that clears one ship column plus a column of empty room. */
+export const SLOT_WIDE = 372;
 
 export function useWideFleet() {
   return useSyncExternalStore(
@@ -37,8 +37,8 @@ export function useWideFleet() {
 
 /**
  * One column on each side: battleship, battleship, command — and bomber,
- * bomber, the ship taking the hit. Wide screens keep that column and leave
- * two ship-widths of space between it and the circle, the same on both sides.
+ * bomber, the ship taking the hit. Wide screens keep that column and add a
+ * ship-width of space between it and the circle, the same on both sides.
  */
 const UNIT = "relative h-full w-full";
 const INNER_WINGS = [
@@ -50,8 +50,8 @@ const INNER_WINGS = [
 const SHIP = "calc(var(--structs-r, 74px) * 0.81)";
 
 function flankStyle(side: "left" | "right", spaced: boolean): CSSProperties {
-  // 1.16 is a small pad. Wide screens add two ships (0.81 each) of empty room.
-  const inset = spaced ? "2.78" : "1.16";
+  // 1.16 is a small pad. Wide screens add one ship (0.81) so the gap matches a column.
+  const inset = spaced ? "1.97" : "1.16";
   return {
     position: "absolute",
     top: "calc(var(--structs-cy, 596px) - var(--structs-r, 74px) * 1.215)",
@@ -119,7 +119,7 @@ function makeStars(count: number, start: number) {
  * the hit sits on the bottom row. Only the top battleship beside the circle
  * fires; the others fade in and float. The bombers that are not being hit
  * fade in with the command ship. Wide windows keep a single column and
- * leave two ship-widths of space on both sides of the circle.
+ * leave a ship-width of space on both sides of the circle.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [stealthHover, setStealthHover] = useState(false);
