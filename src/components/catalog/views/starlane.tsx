@@ -114,6 +114,11 @@ export function StarlaneView() {
         ? Math.max(0, active - 1)
         : active;
 
+  const schemaverseIndex = games.findIndex((game) => game.slug === "schemaverse");
+  const schemaWeight = expanded
+    ? Math.max(0, 1 - Math.abs(schemaverseIndex - visualFocus))
+    : 0;
+
   const sizeFor = (index: number) => {
     if (!expanded) return inactiveSize;
     const blend = Math.max(0, 1 - Math.abs(index - visualFocus));
@@ -122,7 +127,7 @@ export function StarlaneView() {
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
-    if (!section || !mobile || dragging) return;
+    if (!section || dragging) return;
     const measure = () => {
       const circle = section.querySelector(
         'button[aria-pressed="true"] span.rounded-full',
@@ -219,7 +224,12 @@ export function StarlaneView() {
       id="games"
       className="relative scroll-mt-28 overflow-hidden bg-[#070d16] py-16 md:py-28"
     >
-      <UniverseAtmosphere active={active} lit={expanded} />
+      <UniverseAtmosphere
+        active={active}
+        lit={expanded}
+        focus={visualFocus}
+        immediate={dragging}
+      />
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 md:px-6">
         <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
@@ -296,9 +306,17 @@ export function StarlaneView() {
           </p>
         </div>
 
-        <SchemaverseSqlStage
-          active={expanded && current.slug === "schemaverse"}
-        />
+        {schemaWeight > 0.04 ? (
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              opacity: schemaWeight,
+              transition: dragging ? "none" : "opacity 700ms ease-out",
+            }}
+          >
+            <SchemaverseSqlStage active />
+          </div>
+        ) : null}
 
         <div
           className={cn(

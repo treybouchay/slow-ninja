@@ -30,13 +30,27 @@ const SCHEMAVERSE_SECONDARY = [
 type Props = {
   active: number;
   lit: boolean;
+  /** Fractional catalog index. During a drag this sits between two worlds. */
+  focus?: number;
+  /** Track the finger instead of easing the crossfade. */
+  immediate?: boolean;
 };
 
 function useTypewriter(lines: string[], active: boolean, msPerChar: number) {
   const [queryIndex, setQueryIndex] = useState(0);
   const [chars, setChars] = useState(0);
   const [phase, setPhase] = useState<"typing" | "hold" | "clear">("typing");
+  const [wasActive, setWasActive] = useState(active);
   const query = lines[queryIndex];
+
+  if (active !== wasActive) {
+    setWasActive(active);
+    if (!active) {
+      setChars(0);
+      setPhase("typing");
+      setQueryIndex(0);
+    }
+  }
 
   useEffect(() => {
     if (!active) return;
@@ -65,14 +79,6 @@ function useTypewriter(lines: string[], active: boolean, msPerChar: number) {
     }, 220);
     return () => window.clearTimeout(t);
   }, [active, chars, phase, query, lines, msPerChar]);
-
-  useEffect(() => {
-    if (!active) {
-      setChars(0);
-      setPhase("typing");
-      setQueryIndex(0);
-    }
-  }, [active]);
 
   return { query, chars, queryIndex };
 }
@@ -164,7 +170,7 @@ function CoindroidsField({ active }: { active: boolean }) {
       <div
         className={cn(
           "absolute top-[54%] -right-8 md:top-[610px] md:-right-[42px]",
-          active ? "coindroid-fade-in" : "opacity-0",
+          !active && "opacity-0",
         )}
       >
         <Image
@@ -194,18 +200,19 @@ function GameOverlay({ game, active }: { game: Game; active: boolean }) {
 }
 
 /** Color wash + per-game animated overlay for the catalog stage. */
-export function UniverseAtmosphere({ active, lit }: Props) {
+export function UniverseAtmosphere({ active, lit, focus = active, immediate = false }: Props) {
   return (
     <div className="pointer-events-none absolute inset-0" aria-hidden>
       {games.map((game, index) => {
-        const show = lit && index === active;
+        const weight = lit ? Math.max(0, 1 - Math.abs(index - focus)) : 0;
         return (
           <div
             key={`atmosphere-${game.slug}`}
             className={cn(
-              "absolute inset-0 transition-opacity duration-700 ease-out",
-              show ? "opacity-100" : "opacity-0",
+              "absolute inset-0",
+              !immediate && "transition-opacity duration-700 ease-out",
             )}
+            style={{ opacity: weight }}
           >
             <Image
               src={game.artwork}
@@ -226,7 +233,7 @@ export function UniverseAtmosphere({ active, lit }: Props) {
                 `,
               }}
             />
-            <GameOverlay game={game} active={show} />
+            <GameOverlay game={game} active={lit && weight > 0.04} />
           </div>
         );
       })}
