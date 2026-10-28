@@ -16,21 +16,20 @@ const SHIP_DELAY_MS = 2600;
 const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
 
 /**
- * Two identical 4×4 grids, one on each side of the circle.
- * Column 4 on the left and column 1 on the right are the inner files.
- * Row 1 is the highest rank.
+ * Desktop keeps the 4×4 flanks. Phones are too narrow for that grid: the next
+ * circle already fills the right gutter, so each side becomes one column of
+ * 60px ships parked in the gap beside the focused circle.
  */
-const WINGS = [
-  { id: "inner", column: 1, row: 3 },
-  { id: "outer", column: 2, row: 3 },
-] as const;
+type FleetLayout = {
+  desktop: boolean;
+  unit: string;
+  battleship: { column: number; row: number };
+  command: { column: number; row: number };
+  struck: { column: number; row: number };
+  wings: readonly { id: string; column: number; row: number }[];
+};
 
-/**
- * Inner edge of each grid, mirrored on both sides.
- * Desktop leaves sky around the 220px circle without landing the inner file
- * on the next circle. Phones use a shorter inset so the inner file stays on screen.
- */
-function useFlankEdge() {
+function useFleetLayout(): FleetLayout {
   const [desktop, setDesktop] = useState(true);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
@@ -39,10 +38,48 @@ function useFlankEdge() {
     mq.addEventListener("change", apply);
     return () => mq.removeEventListener("change", apply);
   }, []);
-  return desktop ? "calc(50% + 148px)" : "calc(50% + 96px)";
+  if (desktop) {
+    return {
+      desktop: true,
+      unit: "relative h-[104px] w-[104px]",
+      battleship: { column: 4, row: 1 },
+      command: { column: 4, row: 2 },
+      struck: { column: 1, row: 4 },
+      wings: [
+        { id: "inner", column: 1, row: 3 },
+        { id: "outer", column: 2, row: 3 },
+      ],
+    };
+  }
+  return {
+    desktop: false,
+    unit: "relative h-[60px] w-[60px]",
+    battleship: { column: 1, row: 1 },
+    command: { column: 1, row: 2 },
+    struck: { column: 1, row: 2 },
+    wings: [
+      { id: "inner", column: 1, row: 1 },
+      { id: "outer", column: 1, row: 3 },
+    ],
+  };
 }
 
-function flankStyle(side: "left" | "right", edge: string): CSSProperties {
+function flankStyle(side: "left" | "right", desktop: boolean): CSSProperties {
+  if (!desktop) {
+    return {
+      position: "absolute",
+      top: "calc(var(--structs-cy, 596px) - 90px)",
+      width: "60px",
+      height: "180px",
+      display: "grid",
+      gridTemplateColumns: "60px",
+      gridTemplateRows: "repeat(3, 60px)",
+      pointerEvents: "none",
+      ...(side === "left"
+        ? { right: "calc(100% - (var(--structs-cx, 50%) - var(--structs-r, 74px) - 12px))" }
+        : { left: "calc(var(--structs-cx, 50%) + var(--structs-r, 74px) + 12px)" }),
+    };
+  }
   return {
     position: "absolute",
     top: 460,
@@ -52,11 +89,9 @@ function flankStyle(side: "left" | "right", edge: string): CSSProperties {
     gridTemplateColumns: "repeat(4, 1fr)",
     gridTemplateRows: "repeat(4, 1fr)",
     pointerEvents: "none",
-    ...(side === "left" ? { right: edge } : { left: edge }),
+    ...(side === "left" ? { right: "calc(50% + 148px)" } : { left: "calc(50% + 148px)" }),
   };
 }
-
-const UNIT = "relative h-[68px] w-[68px] md:h-[104px] md:w-[104px]";
 
 /** A few fixed stars so the sky does not reshuffle between renders. */
 const STARS = makeStars(16, 20261027);
@@ -106,8 +141,9 @@ function makeStars(count: number, start: number) {
 
 /**
  * Structs atmosphere.
- * Each side has the same invisible 4×4 grid. The battleship sits on the highest
- * inner cell. The right-hand bombers sit two rows lower, clear of the next circle.
+ * Desktop keeps a 4×4 grid on each side, with the battleship on the highest
+ * inner cell and the bombers two rows lower. Phones use one column per side,
+ * lined up with the focused circle so nothing clips off the screen.
  * After the impact finishes, the right-hand bombers decloak once, facing left, then hold.
  */
 export function StructsScene({ active }: { active: boolean }) {
@@ -116,7 +152,7 @@ export function StructsScene({ active }: { active: boolean }) {
   const [shipHover, setShipHover] = useState(false);
   const [settledWings, setSettledWings] = useState(0);
   const [wasActive, setWasActive] = useState(active);
-  const flankEdge = useFlankEdge();
+  const layout = useFleetLayout();
 
   if (active !== wasActive) {
     setWasActive(active);
@@ -149,11 +185,11 @@ export function StructsScene({ active }: { active: boolean }) {
                 `,
               }}
             />
-            <StructsSky meteors={settledWings >= WINGS.length} />
+            <StructsSky meteors={settledWings >= layout.wings.length} />
 
-            <div style={flankStyle("left", flankEdge)}>
-              <FleetPiece column={4} row={1} delayMs={CANNON_DELAY_MS}>
-                <div className={cn(UNIT, cannonHover && "structs-ship-hover")}>
+            <div style={flankStyle("left", layout.desktop)}>
+              <FleetPiece column={layout.battleship.column} row={layout.battleship.row} delayMs={CANNON_DELAY_MS}>
+                <div className={cn(layout.unit, cannonHover && "structs-ship-hover")}>
                   <LottieClip
                     src="/lottie/structs/canon_downwards"
                     className="h-full w-full"
@@ -165,8 +201,8 @@ export function StructsScene({ active }: { active: boolean }) {
                 </div>
               </FleetPiece>
 
-              <FleetPiece column={4} row={2} delayMs={SHIP_DELAY_MS}>
-                <div className={cn(UNIT, "flex items-center justify-center", shipHover && "structs-ship-hover")}>
+              <FleetPiece column={layout.command.column} row={layout.command.row} delayMs={SHIP_DELAY_MS}>
+                <div className={cn(layout.unit, "flex items-center justify-center", shipHover && "structs-ship-hover")}>
                   <LottieClip
                     src="/lottie/structs/move_arrive"
                     className="h-full w-full"
@@ -180,9 +216,9 @@ export function StructsScene({ active }: { active: boolean }) {
               </FleetPiece>
             </div>
 
-            <div style={flankStyle("right", flankEdge)}>
-              <FleetPiece column={1} row={4} delayMs={STEALTH_DELAY_MS} className="z-10">
-                <div className={cn(UNIT, stealthHover && "structs-ship-hover")}>
+            <div style={flankStyle("right", layout.desktop)}>
+              <FleetPiece column={layout.struck.column} row={layout.struck.row} delayMs={STEALTH_DELAY_MS} className="z-10">
+                <div className={cn(layout.unit, stealthHover && "structs-ship-hover")}>
                   <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
                     <LottieClip
                       src="/lottie/structs/stealth_deactivate"
@@ -205,11 +241,12 @@ export function StructsScene({ active }: { active: boolean }) {
                 </div>
               </FleetPiece>
 
-              {WINGS.map((ship) => (
+              {layout.wings.map((ship) => (
                 <WingBomber
                   key={ship.id}
                   column={ship.column}
                   row={ship.row}
+                  unit={layout.unit}
                   onDone={() => setSettledWings((count) => count + 1)}
                 />
               ))}
@@ -283,10 +320,12 @@ function StructsSky({ meteors }: { meteors: boolean }) {
 function WingBomber({
   column,
   row,
+  unit,
   onDone,
 }: {
   column: number;
   row: number;
+  unit: string;
   onDone: () => void;
 }) {
   const [hover, setHover] = useState(false);
@@ -294,7 +333,7 @@ function WingBomber({
 
   return (
     <FleetPiece column={column} row={row} delayMs={WING_DELAY_MS}>
-      <div className={cn(UNIT, hover && "structs-ship-hover")}>
+      <div className={cn(unit, hover && "structs-ship-hover")}>
         <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
           <StealthCycle
             className="h-full w-full"

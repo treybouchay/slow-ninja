@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import {
   SchemaverseSqlStage,
   UniverseAtmosphere,
@@ -34,16 +34,6 @@ function useIsMobile() {
     return () => mq.removeEventListener("change", apply);
   }, []);
   return mobile;
-}
-
-function circleSize(
-  index: number,
-  active: number,
-  expanded: boolean,
-  activeSize: number,
-  inactiveSize: number,
-) {
-  return expanded && index === active ? activeSize : inactiveSize;
 }
 
 export function StarlaneView() {
@@ -103,6 +93,123 @@ export function StarlaneView() {
   };
 
   const travelSwipe = useTravelSwipe(active, games.length, select);
+  const drag = useRef<{
+    pointerId: number;
+    x: number;
+    y: number;
+    axis: "x" | "y" | null;
+    moved: boolean;
+    xOff: number;
+  } | null>(null);
+  const suppressClick = useRef(false);
+  const [dragX, setDragX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  /** Positive when the finger has moved toward the next universe. */
+  const dragShift = slot > 0 ? -dragX / slot : 0;
+  const visualFocus = Math.min(games.length - 1, Math.max(0, active + dragShift));
+  const emphasized =
+    dragShift >= 0.34
+      ? Math.min(games.length - 1, active + 1)
+      : dragShift <= -0.34
+        ? Math.max(0, active - 1)
+        : active;
+
+  const sizeFor = (index: number) => {
+    if (!expanded) return inactiveSize;
+    const blend = Math.max(0, 1 - Math.abs(index - visualFocus));
+    return inactiveSize + (activeSize - inactiveSize) * blend;
+  };
+
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    if (!section || !mobile || dragging) return;
+    const measure = () => {
+      const circle = section.querySelector(
+        'button[aria-pressed="true"] span.rounded-full',
+      );
+      if (!circle) return;
+      const s = section.getBoundingClientRect();
+      const c = circle.getBoundingClientRect();
+      section.style.setProperty("--structs-cx", `${c.left - s.left + c.width / 2}px`);
+      section.style.setProperty("--structs-cy", `${c.top - s.top + c.height / 2}px`);
+      section.style.setProperty("--structs-r", `${c.width / 2}px`);
+    };
+    measure();
+    const timer = window.setTimeout(measure, 560);
+    window.addEventListener("resize", measure);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("resize", measure);
+    };
+  }, [mobile, dragging, active, ready, offset, expanded]);
+
+  const onLanePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (!mobile) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    drag.current = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      axis: null,
+      moved: false,
+      xOff: 0,
+    };
+  };
+
+  const onLanePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const start = drag.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (!start.axis) {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      start.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+    }
+    if (start.axis !== "x") return;
+    start.moved = true;
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // The pointer can already be gone.
+    }
+    let x = dx;
+    const atStart = active === 0 && x > 0;
+    const atEnd = active === games.length - 1 && x < 0;
+    if (atStart || atEnd) x *= 0.32;
+    else x = Math.max(-slot, Math.min(slot, x));
+    start.xOff = x;
+    setDragging(true);
+    setDragX(x);
+  };
+
+  const onLanePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    const start = drag.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+    drag.current = null;
+    if (start.axis === "x" && start.moved) {
+      suppressClick.current = true;
+      const commit = slot * 0.34;
+      let next = active;
+      if (start.xOff <= -commit) next = Math.min(games.length - 1, active + 1);
+      else if (start.xOff >= commit) next = Math.max(0, active - 1);
+      if (next !== active) select(next);
+    }
+    setDragX(0);
+    setDragging(false);
+  };
+
+  const onLanePointerCancel = () => {
+    drag.current = null;
+    setDragX(0);
+    setDragging(false);
+  };
+
+  const onLaneClickCapture = (event: MouseEvent<HTMLDivElement>) => {
+    if (!suppressClick.current) return;
+    suppressClick.current = false;
+    event.preventDefault();
+    event.stopPropagation();
+  };
 
   const trackWidth = games.length * slot;
 
@@ -135,7 +242,15 @@ export function StarlaneView() {
           mobile && "touch-pan-y",
         )}
         style={{ height: mobile ? 420 : 500 }}
-        {...(mobile ? travelSwipe : {})}
+        {...(mobile
+          ? {
+              onPointerDown: onLanePointerDown,
+              onPointerMove: onLanePointerMove,
+              onPointerUp: onLanePointerUp,
+              onPointerCancel: onLanePointerCancel,
+              onClickCapture: onLaneClickCapture,
+            }
+          : {})}
       >
         {/* Travel dots — above the centered circle */}
         <div className="pointer-events-none absolute top-4 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2 md:top-6">
@@ -146,7 +261,7 @@ export function StarlaneView() {
             {...(mobile ? {} : travelSwipe)}
           >
             {games.map((game, index) => {
-              const selected = expanded && index === active;
+              const selected = expanded && index === emphasized;
               return (
                 <button
                   key={`dot-${game.slug}`}
@@ -177,7 +292,7 @@ export function StarlaneView() {
             })}
           </div>
           <p className="font-mono-label text-[8px] tracking-widest text-white/45 uppercase">
-            {current.name} · {active + 1} / {games.length}
+            {games[emphasized].name} · {emphasized + 1} / {games.length}
           </p>
         </div>
 
@@ -188,30 +303,18 @@ export function StarlaneView() {
         <div
           className={cn(
             "relative flex items-center will-change-transform",
-            ready && "camera-glide",
+            ready && !dragging && "camera-glide",
           )}
           style={{
             width: trackWidth,
-            transform: `translate3d(${offset}px, 0, 0)`,
+            transform: `translate3d(${offset + (mobile ? dragX : 0)}px, 0, 0)`,
             minHeight: activeSize + 180,
             marginTop: mobile ? 72 : 88,
           }}
         >
           {games.slice(0, -1).map((_, index) => {
-            const leftSize = circleSize(
-              index,
-              active,
-              expanded,
-              activeSize,
-              inactiveSize,
-            );
-            const rightSize = circleSize(
-              index + 1,
-              active,
-              expanded,
-              activeSize,
-              inactiveSize,
-            );
+            const leftSize = sizeFor(index);
+            const rightSize = sizeFor(index + 1);
             const leftEdge = (index + 0.5) * slot + leftSize / 2;
             const rightEdge = (index + 1.5) * slot - rightSize / 2;
             const width = Math.max(0, rightEdge - leftEdge);
@@ -220,15 +323,18 @@ export function StarlaneView() {
               <div
                 key={`lane-${index}`}
                 aria-hidden
-                className="pointer-events-none absolute top-1/2 z-0 h-px -translate-y-1/2 bg-white/40 transition-all duration-500"
+                className={cn(
+                  "pointer-events-none absolute top-1/2 z-0 h-px -translate-y-1/2 bg-white/40",
+                  !dragging && "transition-all duration-500",
+                )}
                 style={{ left: leftEdge, width }}
               />
             );
           })}
 
           {games.map((game, index) => {
-            const selected = expanded && index === active;
-            const size = selected ? activeSize : inactiveSize;
+            const selected = expanded && index === emphasized;
+            const size = sizeFor(index);
 
             return (
               <button
@@ -253,7 +359,11 @@ export function StarlaneView() {
                 </span>
 
                 <span
-                  className="relative z-20 block overflow-hidden rounded-full border-4 bg-[#070d16] transition-[width,height,box-shadow,border-color,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  className={cn(
+                    "relative z-20 block overflow-hidden rounded-full border-4 bg-[#070d16]",
+                    !dragging &&
+                      "transition-[width,height,box-shadow,border-color,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  )}
                   style={{
                     width: size,
                     height: size,
