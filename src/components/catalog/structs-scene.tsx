@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
@@ -15,30 +15,9 @@ const SHIP_DELAY_MS = 2600;
 const FADE_MS = 900;
 
 /**
- * Wide windows drop the outer ship column and open a gap the width of one
- * column between the remaining units and the circle. The lane slot grows
- * with that gap so the ships stay clear of the next world.
- */
-export const WIDE_FLEET_QUERY = "(min-width: 1000px)";
-/** Desktop spacing that clears one ship column plus a column of empty room. */
-export const SLOT_WIDE = 372;
-
-export function useWideFleet() {
-  return useSyncExternalStore(
-    (notify) => {
-      const query = window.matchMedia(WIDE_FLEET_QUERY);
-      query.addEventListener("change", notify);
-      return () => query.removeEventListener("change", notify);
-    },
-    () => window.matchMedia(WIDE_FLEET_QUERY).matches,
-    () => false,
-  );
-}
-
-/**
  * One column on each side: battleship, battleship, command — and bomber,
- * bomber, the ship taking the hit. Wide screens keep that column and add a
- * ship-width of space between it and the circle, the same on both sides.
+ * bomber, the ship taking the hit. A small pad sits between the column and
+ * the circle, the same on both sides.
  */
 const UNIT = "relative h-full w-full";
 const INNER_WINGS = [
@@ -49,9 +28,7 @@ const INNER_WINGS = [
 /** Ship is 0.81 of the circle radius, matching the phone column beside a 148px circle. */
 const SHIP = "calc(var(--structs-r, 74px) * 0.81)";
 
-function flankStyle(side: "left" | "right", spaced: boolean): CSSProperties {
-  // 1.16 is a small pad. Wide screens add one ship (0.81) so the gap matches a column.
-  const inset = spaced ? "1.97" : "1.16";
+function flankStyle(side: "left" | "right"): CSSProperties {
   return {
     position: "absolute",
     top: "calc(var(--structs-cy, 596px) - var(--structs-r, 74px) * 1.215)",
@@ -62,8 +39,8 @@ function flankStyle(side: "left" | "right", spaced: boolean): CSSProperties {
     gridTemplateRows: `repeat(3, ${SHIP})`,
     pointerEvents: "none",
     ...(side === "left"
-      ? { right: `calc(100% - (var(--structs-cx, 50%) - var(--structs-r, 74px) * ${inset}))` }
-      : { left: `calc(var(--structs-cx, 50%) + var(--structs-r, 74px) * ${inset})` }),
+      ? { right: "calc(100% - (var(--structs-cx, 50%) - var(--structs-r, 74px) * 1.16))" }
+      : { left: "calc(var(--structs-cx, 50%) + var(--structs-r, 74px) * 1.16)" }),
   };
 }
 
@@ -118,15 +95,13 @@ function makeStars(count: number, start: number) {
  * The inner column is two battleships over the command ship. The bomber taking
  * the hit sits on the bottom row. Only the top battleship beside the circle
  * fires; the others fade in and float. The bombers that are not being hit
- * fade in with the command ship. Wide windows keep a single column and
- * leave a ship-width of space on both sides of the circle.
+ * fade in with the command ship.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [stealthHover, setStealthHover] = useState(false);
   const [shipHover, setShipHover] = useState(false);
   const [settledWings, setSettledWings] = useState(0);
   const [wasActive, setWasActive] = useState(active);
-  const wide = useWideFleet();
   const wingCount = INNER_WINGS.length;
 
   useEffect(() => {
@@ -167,7 +142,7 @@ export function StructsScene({ active }: { active: boolean }) {
             />
             <StructsSky meteors={settledWings >= wingCount} />
 
-            <div style={flankStyle("left", wide)}>
+            <div style={flankStyle("left")}>
               <Battleship column={1} row={1} />
               <Battleship column={1} row={2} still />
               <FleetPiece column={1} row={3} delayMs={SHIP_DELAY_MS}>
@@ -185,7 +160,7 @@ export function StructsScene({ active }: { active: boolean }) {
               </FleetPiece>
             </div>
 
-            <div style={flankStyle("right", wide)}>
+            <div style={flankStyle("right")}>
               <FleetPiece column={1} row={3} delayMs={STEALTH_DELAY_MS} className="z-10">
                 <div className={cn(UNIT, stealthHover && "structs-ship-hover")}>
                   <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
