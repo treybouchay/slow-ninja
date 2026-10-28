@@ -38,13 +38,13 @@ export function useSecondFleetColumn() {
 /**
  * Narrow screens keep one column beside the circle. Wider screens add a
  * column of battleships on the left and a column of bombers on the right.
- * The inner column is battleship, battleship, command — and bomber, the
- * ship taking the hit, bomber.
+ * The inner column is battleship, battleship, command — and bomber, bomber,
+ * the ship taking the hit.
  */
 const UNIT = "relative h-full w-full";
 const INNER_WINGS = [
   { id: "top", row: 1 },
-  { id: "bottom", row: 3 },
+  { id: "middle", row: 2 },
 ] as const;
 const OUTER_ROWS = [1, 2, 3] as const;
 
@@ -117,10 +117,10 @@ function makeStars(count: number, start: number) {
 
 /**
  * Structs atmosphere.
- * The inner column is two battleships over the command ship, facing the bomber
- * that takes the hit. Wide windows add an outer column of battleships on the
- * left and an outer column of bombers on the right. After the impact finishes,
- * the bombers decloak once, facing left, then hold.
+ * The inner column is two battleships over the command ship. The bomber taking
+ * the hit sits on the bottom row. Wide windows add an outer column of
+ * battleships on the left and an outer column of bombers on the right.
+ * After the impact finishes, the bombers decloak once, facing left, then hold.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [stealthHover, setStealthHover] = useState(false);
@@ -193,7 +193,7 @@ export function StructsScene({ active }: { active: boolean }) {
             </div>
 
             <div style={flankStyle("right", columns)}>
-              <FleetPiece column={1} row={2} delayMs={STEALTH_DELAY_MS} className="z-10">
+              <FleetPiece column={1} row={3} delayMs={STEALTH_DELAY_MS} className="z-10">
                 <div className={cn(UNIT, stealthHover && "structs-ship-hover")}>
                   <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
                     <LottieClip
