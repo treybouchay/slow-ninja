@@ -119,7 +119,7 @@ function makeStars(count: number, start: number) {
 /**
  * Structs atmosphere.
  * The inner column is two battleships over the command ship. The bomber taking
- * the hit sits on the bottom row. Only the top battleship in the first column
+ * the hit sits on the bottom row. Only the top battleship beside the circle
  * fires; the others fade in and float. Wide windows add an outer column of
  * battleships on the left and an outer column of bombers on the right.
  * After the impact finishes, the bombers decloak once, facing left, then hold.
@@ -169,15 +169,10 @@ export function StructsScene({ active }: { active: boolean }) {
             <div style={flankStyle("left", columns)}>
               {wide
                 ? OUTER_ROWS.map((row) => (
-                    <Battleship
-                      key={`left-outer-${row}`}
-                      column={1}
-                      row={row}
-                      still={row !== 1}
-                    />
+                    <Battleship key={`left-outer-${row}`} column={1} row={row} still />
                   ))
                 : null}
-              <Battleship column={innerColumn} row={1} still={innerColumn !== 1} />
+              <Battleship column={innerColumn} row={1} />
               <Battleship column={innerColumn} row={2} still />
               <FleetPiece column={innerColumn} row={3} delayMs={SHIP_DELAY_MS}>
                 <div className={cn(UNIT, "flex items-center justify-center", shipHover && "structs-ship-hover")}>
@@ -313,7 +308,7 @@ function Battleship({
 }: {
   column: number;
   row: number;
-  /** Hold the resting frame and float. The top ship in column 1 still fires. */
+  /** Hold the resting frame and float. The top ship beside the circle still fires. */
   still?: boolean;
 }) {
   const [hover, setHover] = useState(still);
