@@ -3,8 +3,8 @@
 import { useRef, type MouseEvent, type PointerEvent } from "react";
 
 /**
- * Horizontal swipe on the travel dots. A leftward swipe advances to the
- * next universe; a rightward swipe returns to the previous one.
+ * Horizontal swipe between universes. A leftward swipe advances; a rightward
+ * swipe returns. A mostly vertical gesture is left alone so the page can scroll.
  */
 export function useTravelSwipe(
   active: number,
@@ -25,7 +25,7 @@ export function useTravelSwipe(
     },
     onPointerUp(event: PointerEvent<HTMLDivElement>) {
       const start = swipe.current;
-      if (!start) return;
+      if (!start || start.swiped) return;
       const dx = event.clientX - start.x;
       const dy = event.clientY - start.y;
       if (Math.abs(dx) >= 24 && Math.abs(dx) > Math.abs(dy)) {
@@ -33,6 +33,9 @@ export function useTravelSwipe(
         const next = Math.min(count - 1, Math.max(0, active + (dx < 0 ? 1 : -1)));
         if (next !== active) onIndex(next);
       }
+    },
+    onPointerCancel() {
+      swipe.current = null;
     },
     onClickCapture(event: MouseEvent<HTMLDivElement>) {
       if (!swipe.current?.swiped) return;

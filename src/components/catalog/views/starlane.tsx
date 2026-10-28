@@ -130,8 +130,12 @@ export function StarlaneView() {
 
       <div
         ref={viewportRef}
-        className="relative z-10 mx-auto mt-8 w-full max-w-6xl overflow-hidden md:mt-12"
+        className={cn(
+          "relative z-10 mx-auto mt-8 w-full max-w-6xl overflow-hidden md:mt-12",
+          mobile && "touch-pan-y",
+        )}
         style={{ height: mobile ? 420 : 500 }}
+        {...(mobile ? travelSwipe : {})}
       >
         {/* Travel dots — above the centered circle */}
         <div className="pointer-events-none absolute top-4 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2 md:top-6">
@@ -139,7 +143,7 @@ export function StarlaneView() {
             role="tablist"
             aria-label="Travel between universes"
             className="pointer-events-auto flex h-[43px] w-[98px] touch-none items-center justify-center gap-3"
-            {...travelSwipe}
+            {...(mobile ? {} : travelSwipe)}
           >
             {games.map((game, index) => {
               const selected = expanded && index === active;

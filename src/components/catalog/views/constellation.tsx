@@ -231,8 +231,12 @@ export function ConstellationView() {
 
       <div
         ref={viewportRef}
-        className="relative z-10 mx-auto mt-6 w-full max-w-6xl overflow-hidden md:mt-8"
+        className={cn(
+          "relative z-10 mx-auto mt-6 w-full max-w-6xl overflow-hidden md:mt-8",
+          mobile && "touch-pan-y",
+        )}
         style={{ height: mobile ? 500 : 680 }}
+        {...(mobile ? travelSwipe : {})}
         onClick={(e) => {
           if (!engaged && e.target === e.currentTarget) beginJourney();
         }}
@@ -249,7 +253,7 @@ export function ConstellationView() {
             role="tablist"
             aria-label="Travel between universes"
             className="pointer-events-auto flex h-[43px] w-[98px] touch-none items-center justify-center gap-3"
-            {...travelSwipe}
+            {...(mobile ? {} : travelSwipe)}
           >
             {games.map((game, index) => {
               const selected = engaged && index === active;
