@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type CSSProperties } from "react";
+import { useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
@@ -16,32 +16,52 @@ const SHIP_DELAY_MS = 2600;
 const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
 
 /**
- * One column on each side of the focused circle, at every screen size.
- * Ships scale with the circle so widening the window does not rebuild the fleet.
+ * A second column fits once the window is this wide. The lane slot opens up
+ * with it so the extra ships sit in the gutter instead of covering the next world.
  */
-const FLEET = {
-  unit: "relative h-full w-full",
-  battleship: { column: 1, row: 1 },
-  command: { column: 1, row: 2 },
-  struck: { column: 1, row: 2 },
-  wings: [
-    { id: "inner", column: 1, row: 1 },
-    { id: "outer", column: 1, row: 3 },
-  ],
-} as const;
+export const SECOND_COLUMN_QUERY = "(min-width: 1000px)";
+/** Desktop spacing that clears two ship columns beside a 220px circle. */
+export const SLOT_TWO_COLUMN = 372;
+
+export function useSecondFleetColumn() {
+  return useSyncExternalStore(
+    (notify) => {
+      const query = window.matchMedia(SECOND_COLUMN_QUERY);
+      query.addEventListener("change", notify);
+      return () => query.removeEventListener("change", notify);
+    },
+    () => window.matchMedia(SECOND_COLUMN_QUERY).matches,
+    () => false,
+  );
+}
+
+/**
+ * Narrow screens keep one column beside the circle. Wider screens add a
+ * column of battleships on the left and a column of bombers on the right.
+ * The inner column is battleship, battleship, command — and bomber, the
+ * ship taking the hit, bomber.
+ */
+const UNIT = "relative h-full w-full";
+const INNER_WINGS = [
+  { id: "top", row: 1 },
+  { id: "bottom", row: 3 },
+] as const;
+const OUTER_ROWS = [1, 2, 3] as const;
 
 /** Ship is 0.81 of the circle radius, matching the phone column beside a 148px circle. */
 const SHIP = "calc(var(--structs-r, 74px) * 0.81)";
+const COLUMN_GAP = "calc(var(--structs-r, 74px) * 0.1)";
 
-function flankStyle(side: "left" | "right"): CSSProperties {
+function flankStyle(side: "left" | "right", columns: 1 | 2): CSSProperties {
   return {
     position: "absolute",
     top: "calc(var(--structs-cy, 596px) - var(--structs-r, 74px) * 1.215)",
-    width: SHIP,
+    width: columns === 1 ? SHIP : `calc(${SHIP} * 2 + ${COLUMN_GAP})`,
     height: `calc(${SHIP} * 3)`,
     display: "grid",
-    gridTemplateColumns: SHIP,
+    gridTemplateColumns: columns === 1 ? SHIP : `${SHIP} ${SHIP}`,
     gridTemplateRows: `repeat(3, ${SHIP})`,
+    columnGap: columns === 1 ? 0 : COLUMN_GAP,
     pointerEvents: "none",
     ...(side === "left"
       ? { right: "calc(100% - (var(--structs-cx, 50%) - var(--structs-r, 74px) * 1.16))" }
@@ -97,21 +117,24 @@ function makeStars(count: number, start: number) {
 
 /**
  * Structs atmosphere.
- * Each side is one column beside the focused circle. The battleship and the
- * inner bomber share the top row. The command ship faces the bomber taking the hit.
- * After the impact finishes, the right-hand bombers decloak once, facing left, then hold.
+ * The inner column is two battleships over the command ship, facing the bomber
+ * that takes the hit. Wide windows add an outer column of battleships on the
+ * left and an outer column of bombers on the right. After the impact finishes,
+ * the bombers decloak once, facing left, then hold.
  */
 export function StructsScene({ active }: { active: boolean }) {
-  const [cannonHover, setCannonHover] = useState(false);
   const [stealthHover, setStealthHover] = useState(false);
   const [shipHover, setShipHover] = useState(false);
   const [settledWings, setSettledWings] = useState(0);
   const [wasActive, setWasActive] = useState(active);
+  const wide = useSecondFleetColumn();
+  const columns = wide ? 2 : 1;
+  const innerColumn = columns;
+  const wingCount = INNER_WINGS.length + (wide ? OUTER_ROWS.length : 0);
 
   if (active !== wasActive) {
     setWasActive(active);
     if (!active) {
-      setCannonHover(false);
       setStealthHover(false);
       setShipHover(false);
       setSettledWings(0);
@@ -139,24 +162,23 @@ export function StructsScene({ active }: { active: boolean }) {
                 `,
               }}
             />
-            <StructsSky meteors={settledWings >= FLEET.wings.length} />
+            <StructsSky meteors={settledWings >= wingCount} />
 
-            <div style={flankStyle("left")}>
-              <FleetPiece column={FLEET.battleship.column} row={FLEET.battleship.row} delayMs={CANNON_DELAY_MS}>
-                <div className={cn(FLEET.unit, cannonHover && "structs-ship-hover")}>
-                  <LottieClip
-                    src="/lottie/structs/canon_downwards"
-                    className="h-full w-full"
-                    loop={false}
-                    opacity={0.95}
-                    delayMs={CANNON_DELAY_MS}
-                    onComplete={() => setCannonHover(true)}
-                  />
-                </div>
-              </FleetPiece>
-
-              <FleetPiece column={FLEET.command.column} row={FLEET.command.row} delayMs={SHIP_DELAY_MS}>
-                <div className={cn(FLEET.unit, "flex items-center justify-center", shipHover && "structs-ship-hover")}>
+            <div style={flankStyle("left", columns)}>
+              {wide
+                ? OUTER_ROWS.map((row) => (
+                    <Battleship
+                      key={`left-outer-${row}`}
+                      column={1}
+                      row={row}
+                      delayMs={CANNON_DELAY_MS + (row - 1) * 140}
+                    />
+                  ))
+                : null}
+              <Battleship column={innerColumn} row={1} />
+              <Battleship column={innerColumn} row={2} delayMs={CANNON_DELAY_MS + 140} />
+              <FleetPiece column={innerColumn} row={3} delayMs={SHIP_DELAY_MS}>
+                <div className={cn(UNIT, "flex items-center justify-center", shipHover && "structs-ship-hover")}>
                   <LottieClip
                     src="/lottie/structs/move_arrive"
                     className="h-full w-full"
@@ -170,9 +192,9 @@ export function StructsScene({ active }: { active: boolean }) {
               </FleetPiece>
             </div>
 
-            <div style={flankStyle("right")}>
-              <FleetPiece column={FLEET.struck.column} row={FLEET.struck.row} delayMs={STEALTH_DELAY_MS} className="z-10">
-                <div className={cn(FLEET.unit, stealthHover && "structs-ship-hover")}>
+            <div style={flankStyle("right", columns)}>
+              <FleetPiece column={1} row={2} delayMs={STEALTH_DELAY_MS} className="z-10">
+                <div className={cn(UNIT, stealthHover && "structs-ship-hover")}>
                   <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
                     <LottieClip
                       src="/lottie/structs/stealth_deactivate"
@@ -195,15 +217,24 @@ export function StructsScene({ active }: { active: boolean }) {
                 </div>
               </FleetPiece>
 
-              {FLEET.wings.map((ship) => (
+              {INNER_WINGS.map((ship) => (
                 <WingBomber
                   key={ship.id}
-                  column={ship.column}
+                  column={1}
                   row={ship.row}
-                  unit={FLEET.unit}
                   onDone={() => setSettledWings((count) => count + 1)}
                 />
               ))}
+              {wide
+                ? OUTER_ROWS.map((row) => (
+                    <WingBomber
+                      key={`right-outer-${row}`}
+                      column={2}
+                      row={row}
+                      onDone={() => setSettledWings((count) => count + 1)}
+                    />
+                  ))
+                : null}
             </div>
           </>
         ) : null}
@@ -271,15 +302,40 @@ function StructsSky({ meteors }: { meteors: boolean }) {
   );
 }
 
+function Battleship({
+  column,
+  row,
+  delayMs = CANNON_DELAY_MS,
+}: {
+  column: number;
+  row: number;
+  delayMs?: number;
+}) {
+  const [hover, setHover] = useState(false);
+
+  return (
+    <FleetPiece column={column} row={row} delayMs={delayMs}>
+      <div className={cn(UNIT, hover && "structs-ship-hover")}>
+        <LottieClip
+          src="/lottie/structs/canon_downwards"
+          className="h-full w-full"
+          loop={false}
+          opacity={0.95}
+          delayMs={delayMs}
+          onComplete={() => setHover(true)}
+        />
+      </div>
+    </FleetPiece>
+  );
+}
+
 function WingBomber({
   column,
   row,
-  unit,
   onDone,
 }: {
   column: number;
   row: number;
-  unit: string;
   onDone: () => void;
 }) {
   const [hover, setHover] = useState(false);
@@ -287,7 +343,7 @@ function WingBomber({
 
   return (
     <FleetPiece column={column} row={row} delayMs={WING_DELAY_MS}>
-      <div className={cn(unit, hover && "structs-ship-hover")}>
+      <div className={cn(UNIT, hover && "structs-ship-hover")}>
         <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
           <StealthCycle
             className="h-full w-full"
