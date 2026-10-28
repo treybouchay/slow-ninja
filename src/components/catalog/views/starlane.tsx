@@ -135,6 +135,8 @@ export function StarlaneView() {
         'button[aria-pressed="true"] span.rounded-full',
       );
       if (!circle) return;
+      const viewport = viewportRef.current;
+      if (viewport) section.style.setProperty("--lane-top", `${viewport.offsetTop}px`);
       const s = section.getBoundingClientRect();
       const c = circle.getBoundingClientRect();
       section.style.setProperty("--structs-cx", `${c.left - s.left + c.width / 2}px`);
@@ -219,6 +221,29 @@ export function StarlaneView() {
   };
 
   const trackWidth = games.length * slot;
+  const laneHeight = mobile ? 420 : 500;
+  const trackMargin = mobile ? 72 : 88;
+  const trackShift = `translate3d(${offset + (mobile ? dragX : 0)}px, 0, 0)`;
+
+  const laneLines = games.slice(0, -1).map((_, index) => {
+    const leftSize = sizeFor(index);
+    const rightSize = sizeFor(index + 1);
+    const leftEdge = (index + 0.5) * slot + leftSize / 2;
+    const rightEdge = (index + 1.5) * slot - rightSize / 2;
+    const width = Math.max(0, rightEdge - leftEdge);
+
+    return (
+      <div
+        key={`lane-${index}`}
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute top-1/2 h-px -translate-y-1/2 bg-white/40",
+          !dragging && "transition-all duration-500",
+        )}
+        style={{ left: leftEdge, width }}
+      />
+    );
+  });
 
   return (
     <section
@@ -226,6 +251,29 @@ export function StarlaneView() {
       id="games"
       className="relative scroll-mt-28 overflow-hidden bg-[#070d16] py-16 md:py-28"
     >
+      {ready ? (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 z-0 mx-auto w-full max-w-6xl overflow-hidden"
+          style={{ top: "var(--lane-top, 0px)", height: laneHeight }}
+        >
+          <div
+            className={cn(
+              "relative flex items-center",
+              ready && !dragging && "camera-glide",
+            )}
+            style={{
+              width: trackWidth,
+              transform: trackShift,
+              minHeight: activeSize + 180,
+              marginTop: trackMargin,
+            }}
+          >
+            {laneLines}
+          </div>
+        </div>
+      ) : null}
+
       <UniverseAtmosphere
         active={active}
         lit={expanded}
@@ -250,10 +298,10 @@ export function StarlaneView() {
       <div
         ref={viewportRef}
         className={cn(
-          "relative z-10 mx-auto mt-8 w-full max-w-6xl overflow-hidden md:mt-12",
+          "relative z-20 mx-auto mt-8 w-full max-w-6xl overflow-hidden md:mt-12",
           mobile && "touch-pan-y",
         )}
-        style={{ height: mobile ? 420 : 500 }}
+        style={{ height: laneHeight }}
         {...(mobile
           ? {
               onPointerDown: onLanePointerDown,
@@ -327,31 +375,11 @@ export function StarlaneView() {
           )}
           style={{
             width: trackWidth,
-            transform: `translate3d(${offset + (mobile ? dragX : 0)}px, 0, 0)`,
+            transform: trackShift,
             minHeight: activeSize + 180,
-            marginTop: mobile ? 72 : 88,
+            marginTop: trackMargin,
           }}
         >
-          {games.slice(0, -1).map((_, index) => {
-            const leftSize = sizeFor(index);
-            const rightSize = sizeFor(index + 1);
-            const leftEdge = (index + 0.5) * slot + leftSize / 2;
-            const rightEdge = (index + 1.5) * slot - rightSize / 2;
-            const width = Math.max(0, rightEdge - leftEdge);
-
-            return (
-              <div
-                key={`lane-${index}`}
-                aria-hidden
-                className={cn(
-                  "pointer-events-none absolute top-1/2 z-0 h-px -translate-y-1/2 bg-white/40",
-                  !dragging && "transition-all duration-500",
-                )}
-                style={{ left: leftEdge, width }}
-              />
-            );
-          })}
-
           {games.map((game, index) => {
             const selected = expanded && index === emphasized;
             const size = sizeFor(index);

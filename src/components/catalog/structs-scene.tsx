@@ -1,20 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
-import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
+import { useEffect, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { LottieClip } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
 const CANNON_DELAY_MS = 700;
 const STEALTH_DELAY_MS = 250;
 /** Impact lands on the stealth ship after the shell leaves the cannon. */
 const IMPACT_DELAY_MS = 1150;
-/** Impact clip is 63 frames at 30fps. */
-const IMPACT_DURATION_MS = Math.round((63 / 30) * 1000);
 /** Command ship arrives after the stealth ship has taken the hit. */
 const SHIP_DELAY_MS = 2600;
-/** Wing decloaks only once that impact clip has finished. */
-const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
+/** Fade length used by the fleet pieces. The spare bombers share the command ship's entrance. */
+const FADE_MS = 900;
 
 /**
  * A second column fits once the window is this wide. The lane slot opens up
@@ -120,9 +118,9 @@ function makeStars(count: number, start: number) {
  * Structs atmosphere.
  * The inner column is two battleships over the command ship. The bomber taking
  * the hit sits on the bottom row. Only the top battleship beside the circle
- * fires; the others fade in and float. Wide windows add an outer column of
+ * fires; the others fade in and float. The bombers that are not being hit
+ * fade in with the command ship. Wide windows add an outer column of
  * battleships on the left and an outer column of bombers on the right.
- * After the impact finishes, the bombers decloak once, facing left, then hold.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [stealthHover, setStealthHover] = useState(false);
@@ -133,6 +131,12 @@ export function StructsScene({ active }: { active: boolean }) {
   const columns = wide ? 2 : 1;
   const innerColumn = columns;
   const wingCount = INNER_WINGS.length + (wide ? OUTER_ROWS.length : 0);
+
+  useEffect(() => {
+    if (!active) return;
+    const timer = window.setTimeout(() => setSettledWings(wingCount), SHIP_DELAY_MS + FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [active, wingCount]);
 
   if (active !== wasActive) {
     setWasActive(active);
@@ -215,21 +219,11 @@ export function StructsScene({ active }: { active: boolean }) {
               </FleetPiece>
 
               {INNER_WINGS.map((ship) => (
-                <WingBomber
-                  key={ship.id}
-                  column={1}
-                  row={ship.row}
-                  onDone={() => setSettledWings((count) => count + 1)}
-                />
+                <StillBomber key={ship.id} column={1} row={ship.row} />
               ))}
               {wide
                 ? OUTER_ROWS.map((row) => (
-                    <WingBomber
-                      key={`right-outer-${row}`}
-                      column={2}
-                      row={row}
-                      onDone={() => setSettledWings((count) => count + 1)}
-                    />
+                    <StillBomber key={`right-outer-${row}`} column={2} row={row} />
                   ))
                 : null}
             </div>
@@ -300,6 +294,8 @@ function StructsSky({ meteors }: { meteors: boolean }) {
 }
 
 const BATTLESHIP_STILL = "/lottie/structs/canon_downwards/images/img_0.png";
+/** Last frame of the decloak clip: the bomber in the open, facing the battleships once flipped. */
+const BOMBER_STILL = "/lottie/structs/stealth_deactivate/images/img_9.png";
 
 function Battleship({
   column,
@@ -342,33 +338,20 @@ function Battleship({
   );
 }
 
-function WingBomber({
-  column,
-  row,
-  onDone,
-}: {
-  column: number;
-  row: number;
-  onDone: () => void;
-}) {
-  const [hover, setHover] = useState(false);
-  const reported = useRef(false);
-
+function StillBomber({ column, row }: { column: number; row: number }) {
   return (
-    <FleetPiece column={column} row={row} delayMs={WING_DELAY_MS}>
-      <div className={cn(UNIT, hover && "structs-ship-hover")}>
+    <FleetPiece column={column} row={row} delayMs={SHIP_DELAY_MS}>
+      <div className={cn(UNIT, "structs-ship-hover")}>
         <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
-          <StealthCycle
-            className="h-full w-full"
-            opacity={0.92}
-            delayMs={WING_DELAY_MS}
-            once
-            onSettled={() => {
-              setHover(true);
-              if (reported.current) return;
-              reported.current = true;
-              onDone();
-            }}
+          <Image
+            src={BOMBER_STILL}
+            alt=""
+            width={128}
+            height={128}
+            unoptimized
+            draggable={false}
+            className="h-full w-full object-contain"
+            style={{ opacity: 0.92 }}
           />
         </div>
       </div>
