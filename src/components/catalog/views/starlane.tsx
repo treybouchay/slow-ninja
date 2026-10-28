@@ -280,7 +280,7 @@ export function StarlaneView() {
                     "font-display text-center font-bold transition-all duration-500",
                     selected
                       ? "mt-4 text-xl text-white md:text-2xl"
-                      : "mt-2 text-sm text-white/30",
+                      : "mt-2 text-sm text-white/10",
                   )}
                 >
                   {game.name}

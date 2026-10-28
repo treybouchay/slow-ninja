@@ -21,8 +21,8 @@ const WING_DELAY_MS = IMPACT_DELAY_MS + IMPACT_DURATION_MS;
  * Row 1 is the highest rank.
  */
 const WINGS = [
-  { id: "inner", column: 1, row: 1 },
-  { id: "outer", column: 2, row: 1 },
+  { id: "inner", column: 1, row: 3 },
+  { id: "outer", column: 2, row: 3 },
 ] as const;
 
 /**
@@ -107,7 +107,7 @@ function makeStars(count: number, start: number) {
 /**
  * Structs atmosphere.
  * Each side has the same invisible 4×4 grid. The battleship sits on the highest
- * inner cell and faces the inner bomber. The command ship faces the bomber taking the hit.
+ * inner cell. The right-hand bombers sit two rows lower, clear of the next circle.
  * After the impact finishes, the right-hand bombers decloak once, facing left, then hold.
  */
 export function StructsScene({ active }: { active: boolean }) {
@@ -181,7 +181,7 @@ export function StructsScene({ active }: { active: boolean }) {
             </div>
 
             <div style={flankStyle("right", flankEdge)}>
-              <FleetPiece column={1} row={2} delayMs={STEALTH_DELAY_MS} className="z-10">
+              <FleetPiece column={1} row={4} delayMs={STEALTH_DELAY_MS} className="z-10">
                 <div className={cn(UNIT, stealthHover && "structs-ship-hover")}>
                   <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
                     <LottieClip
