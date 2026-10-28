@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
@@ -118,7 +119,8 @@ function makeStars(count: number, start: number) {
 /**
  * Structs atmosphere.
  * The inner column is two battleships over the command ship. The bomber taking
- * the hit sits on the bottom row. Wide windows add an outer column of
+ * the hit sits on the bottom row. Only the top battleship in the first column
+ * fires; the others fade in and float. Wide windows add an outer column of
  * battleships on the left and an outer column of bombers on the right.
  * After the impact finishes, the bombers decloak once, facing left, then hold.
  */
@@ -171,12 +173,12 @@ export function StructsScene({ active }: { active: boolean }) {
                       key={`left-outer-${row}`}
                       column={1}
                       row={row}
-                      delayMs={CANNON_DELAY_MS + (row - 1) * 140}
+                      still={row !== 1}
                     />
                   ))
                 : null}
-              <Battleship column={innerColumn} row={1} />
-              <Battleship column={innerColumn} row={2} delayMs={CANNON_DELAY_MS + 140} />
+              <Battleship column={innerColumn} row={1} still={innerColumn !== 1} />
+              <Battleship column={innerColumn} row={2} still />
               <FleetPiece column={innerColumn} row={3} delayMs={SHIP_DELAY_MS}>
                 <div className={cn(UNIT, "flex items-center justify-center", shipHover && "structs-ship-hover")}>
                   <LottieClip
@@ -302,28 +304,44 @@ function StructsSky({ meteors }: { meteors: boolean }) {
   );
 }
 
+const BATTLESHIP_STILL = "/lottie/structs/canon_downwards/images/img_0.png";
+
 function Battleship({
   column,
   row,
-  delayMs = CANNON_DELAY_MS,
+  still = false,
 }: {
   column: number;
   row: number;
-  delayMs?: number;
+  /** Hold the resting frame and float. The top ship in column 1 still fires. */
+  still?: boolean;
 }) {
-  const [hover, setHover] = useState(false);
+  const [hover, setHover] = useState(still);
 
   return (
-    <FleetPiece column={column} row={row} delayMs={delayMs}>
+    <FleetPiece column={column} row={row} delayMs={still ? 0 : CANNON_DELAY_MS}>
       <div className={cn(UNIT, hover && "structs-ship-hover")}>
-        <LottieClip
-          src="/lottie/structs/canon_downwards"
-          className="h-full w-full"
-          loop={false}
-          opacity={0.95}
-          delayMs={delayMs}
-          onComplete={() => setHover(true)}
-        />
+        {still ? (
+          <Image
+            src={BATTLESHIP_STILL}
+            alt=""
+            width={128}
+            height={128}
+            unoptimized
+            draggable={false}
+            className="h-full w-full object-contain"
+            style={{ opacity: 0.95 }}
+          />
+        ) : (
+          <LottieClip
+            src="/lottie/structs/canon_downwards"
+            className="h-full w-full"
+            loop={false}
+            opacity={0.95}
+            delayMs={CANNON_DELAY_MS}
+            onComplete={() => setHover(true)}
+          />
+        )}
       </div>
     </FleetPiece>
   );
