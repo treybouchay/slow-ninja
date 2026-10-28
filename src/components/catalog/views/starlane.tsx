@@ -9,7 +9,7 @@ import {
 import { CatalogViewPicker } from "@/components/catalog/catalog-view-picker";
 import { useTravelSwipe } from "@/components/catalog/use-travel-swipe";
 import { UniverseDossier } from "@/components/catalog/universe-dossier";
-import { SLOT_TWO_COLUMN, useSecondFleetColumn } from "@/components/catalog/structs-scene";
+import { SLOT_WIDE, useWideFleet } from "@/components/catalog/structs-scene";
 import { featuredGameIndex, games } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -45,8 +45,8 @@ export function StarlaneView() {
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const mobile = useIsMobile();
-  const secondColumn = useSecondFleetColumn();
-  const slot = mobile ? SLOT_MOBILE : secondColumn ? SLOT_TWO_COLUMN : SLOT_DESKTOP;
+  const wideFleet = useWideFleet();
+  const slot = mobile ? SLOT_MOBILE : wideFleet ? SLOT_WIDE : SLOT_DESKTOP;
   const activeSize = mobile ? ACTIVE_MOBILE : ACTIVE_DESKTOP;
   const inactiveSize = mobile ? INACTIVE_MOBILE : INACTIVE_DESKTOP;
   const current = games[active];

@@ -15,56 +15,55 @@ const SHIP_DELAY_MS = 2600;
 const FADE_MS = 900;
 
 /**
- * A second column fits once the window is this wide. The lane slot opens up
- * with it so the extra ships sit in the gutter instead of covering the next world.
+ * Wide windows drop the outer ship column and open a gap the width of one
+ * column between the remaining units and the circle. The lane slot grows
+ * with that gap so the ships stay clear of the next world.
  */
-export const SECOND_COLUMN_QUERY = "(min-width: 1000px)";
-/** Desktop spacing that clears two ship columns beside a 220px circle. */
-export const SLOT_TWO_COLUMN = 372;
+export const WIDE_FLEET_QUERY = "(min-width: 1000px)";
+/** Desktop spacing that clears one ship column plus a column of empty room. */
+export const SLOT_WIDE = 372;
 
-export function useSecondFleetColumn() {
+export function useWideFleet() {
   return useSyncExternalStore(
     (notify) => {
-      const query = window.matchMedia(SECOND_COLUMN_QUERY);
+      const query = window.matchMedia(WIDE_FLEET_QUERY);
       query.addEventListener("change", notify);
       return () => query.removeEventListener("change", notify);
     },
-    () => window.matchMedia(SECOND_COLUMN_QUERY).matches,
+    () => window.matchMedia(WIDE_FLEET_QUERY).matches,
     () => false,
   );
 }
 
 /**
- * Narrow screens keep one column beside the circle. Wider screens add a
- * column of battleships on the left and a column of bombers on the right.
- * The inner column is battleship, battleship, command — and bomber, bomber,
- * the ship taking the hit.
+ * One column on each side: battleship, battleship, command — and bomber,
+ * bomber, the ship taking the hit. Wide screens keep that column and add a
+ * ship-width of space between it and the circle, the same on both sides.
  */
 const UNIT = "relative h-full w-full";
 const INNER_WINGS = [
   { id: "top", row: 1 },
   { id: "middle", row: 2 },
 ] as const;
-const OUTER_ROWS = [1, 2, 3] as const;
 
 /** Ship is 0.81 of the circle radius, matching the phone column beside a 148px circle. */
 const SHIP = "calc(var(--structs-r, 74px) * 0.81)";
-const COLUMN_GAP = "calc(var(--structs-r, 74px) * 0.1)";
 
-function flankStyle(side: "left" | "right", columns: 1 | 2): CSSProperties {
+function flankStyle(side: "left" | "right", spaced: boolean): CSSProperties {
+  // 1.16 is a small pad. Wide screens add one ship (0.81) so the gap matches a column.
+  const inset = spaced ? "1.97" : "1.16";
   return {
     position: "absolute",
     top: "calc(var(--structs-cy, 596px) - var(--structs-r, 74px) * 1.215)",
-    width: columns === 1 ? SHIP : `calc(${SHIP} * 2 + ${COLUMN_GAP})`,
+    width: SHIP,
     height: `calc(${SHIP} * 3)`,
     display: "grid",
-    gridTemplateColumns: columns === 1 ? SHIP : `${SHIP} ${SHIP}`,
+    gridTemplateColumns: SHIP,
     gridTemplateRows: `repeat(3, ${SHIP})`,
-    columnGap: columns === 1 ? 0 : COLUMN_GAP,
     pointerEvents: "none",
     ...(side === "left"
-      ? { right: "calc(100% - (var(--structs-cx, 50%) - var(--structs-r, 74px) * 1.16))" }
-      : { left: "calc(var(--structs-cx, 50%) + var(--structs-r, 74px) * 1.16)" }),
+      ? { right: `calc(100% - (var(--structs-cx, 50%) - var(--structs-r, 74px) * ${inset}))` }
+      : { left: `calc(var(--structs-cx, 50%) + var(--structs-r, 74px) * ${inset})` }),
   };
 }
 
@@ -119,18 +118,16 @@ function makeStars(count: number, start: number) {
  * The inner column is two battleships over the command ship. The bomber taking
  * the hit sits on the bottom row. Only the top battleship beside the circle
  * fires; the others fade in and float. The bombers that are not being hit
- * fade in with the command ship. Wide windows add an outer column of
- * battleships on the left and an outer column of bombers on the right.
+ * fade in with the command ship. Wide windows keep a single column and
+ * leave a ship-width of space on both sides of the circle.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [stealthHover, setStealthHover] = useState(false);
   const [shipHover, setShipHover] = useState(false);
   const [settledWings, setSettledWings] = useState(0);
   const [wasActive, setWasActive] = useState(active);
-  const wide = useSecondFleetColumn();
-  const columns = wide ? 2 : 1;
-  const innerColumn = columns;
-  const wingCount = INNER_WINGS.length + (wide ? OUTER_ROWS.length : 0);
+  const wide = useWideFleet();
+  const wingCount = INNER_WINGS.length;
 
   useEffect(() => {
     if (!active) return;
@@ -170,15 +167,10 @@ export function StructsScene({ active }: { active: boolean }) {
             />
             <StructsSky meteors={settledWings >= wingCount} />
 
-            <div style={flankStyle("left", columns)}>
-              {wide
-                ? OUTER_ROWS.map((row) => (
-                    <Battleship key={`left-outer-${row}`} column={1} row={row} still />
-                  ))
-                : null}
-              <Battleship column={innerColumn} row={1} />
-              <Battleship column={innerColumn} row={2} still />
-              <FleetPiece column={innerColumn} row={3} delayMs={SHIP_DELAY_MS}>
+            <div style={flankStyle("left", wide)}>
+              <Battleship column={1} row={1} />
+              <Battleship column={1} row={2} still />
+              <FleetPiece column={1} row={3} delayMs={SHIP_DELAY_MS}>
                 <div className={cn(UNIT, "flex items-center justify-center", shipHover && "structs-ship-hover")}>
                   <LottieClip
                     src="/lottie/structs/move_arrive"
@@ -193,7 +185,7 @@ export function StructsScene({ active }: { active: boolean }) {
               </FleetPiece>
             </div>
 
-            <div style={flankStyle("right", columns)}>
+            <div style={flankStyle("right", wide)}>
               <FleetPiece column={1} row={3} delayMs={STEALTH_DELAY_MS} className="z-10">
                 <div className={cn(UNIT, stealthHover && "structs-ship-hover")}>
                   <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
@@ -221,11 +213,6 @@ export function StructsScene({ active }: { active: boolean }) {
               {INNER_WINGS.map((ship) => (
                 <StillBomber key={ship.id} column={1} row={ship.row} />
               ))}
-              {wide
-                ? OUTER_ROWS.map((row) => (
-                    <StillBomber key={`right-outer-${row}`} column={2} row={row} />
-                  ))
-                : null}
             </div>
           </>
         ) : null}
