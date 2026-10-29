@@ -42,9 +42,10 @@ Use **App Platform** with the Node buildpack.
 3. Resource settings:
    - Type: **Web Service**
    - Environment: **Node.js** (not Docker)
-   - Build command: `npm ci && npm run build`
+   - Build command: `npm ci --include=dev && npm run build`
    - Run command: `npm start`
    - HTTP port: **`3000`** (must match `PORT`; do not use 43127)
+   - `NODE_ENV=production` at **run time only**. If it is set during the build, `npm ci` skips Tailwind and TypeScript and the build fails.
 4. (Optional) Health check path: `/api/health`
 5. Instance size: smallest / **1 container**
 6. Deploy, then open the `*.ondigitalocean.app` URL.
@@ -52,4 +53,4 @@ Use **App Platform** with the Node buildpack.
 
 No env secrets required. App Platform sets `PORT=3000`.
 
-If deploy fails with “connection refused on :3000”, the run command was still binding another port — ensure GitHub has the latest `package.json` start script.
+If deploy fails with “connection refused on :3000”, the build did not produce a server that listens. The usual cause is `npm ci` under `NODE_ENV=production` omitting Tailwind, so `next build` exits before `npm start`. Use the build command above, and keep Node.js **22**.

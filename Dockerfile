@@ -3,7 +3,8 @@ FROM node:22-alpine AS deps
 WORKDIR /app
 RUN apk add --no-cache libc6-compat
 COPY package.json package-lock.json ./
-RUN npm ci
+# Keep Tailwind and TypeScript even if the platform injects NODE_ENV=production.
+RUN npm ci --include=dev
 
 FROM node:22-alpine AS builder
 WORKDIR /app
@@ -31,6 +32,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./
 
 USER nextjs
+ENV HOME=/tmp
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["node", "node_modules/next/dist/bin/next", "start", "--hostname", "0.0.0.0", "--port", "3000"]
