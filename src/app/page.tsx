@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { BrandLogo } from "@/components/brand-logo";
 import { GamesTimeline } from "@/components/games-timeline";
+import { HeroLogo } from "@/components/hero-logo";
 import { HeroField } from "@/components/hero-field";
 import { HeroParallax } from "@/components/hero-parallax";
 import { journalPosts } from "@/lib/content";
@@ -17,10 +17,7 @@ export default function HomePage() {
             <p className="pop-in font-mono-label mb-6 rounded-full border border-[var(--cyan)]/35 bg-black/30 px-4 py-2 text-[8px] leading-none tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
               Sector 2014 · Toronto uplink
             </p>
-            <div className="pop-in-delay">
-              <BrandLogo size="hero" href={null} priority />
-              <h1 className="sr-only">Slow Ninja</h1>
-            </div>
+            <HeroLogo />
             <p className="pop-in-late mt-6 font-display text-[clamp(1.5rem,4.2vw,2.75rem)] font-extrabold tracking-tight text-[var(--lime)]">
               Building games for the sentient
             </p>

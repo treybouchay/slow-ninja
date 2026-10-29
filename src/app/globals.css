@@ -206,6 +206,22 @@
     animation: pop-in 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 0.24s both;
   }
 
+  .logo-word-in {
+    animation: logo-word-in 0.35s ease both;
+  }
+
+  .logo-word-out {
+    animation: logo-word-out 0.35s ease forwards;
+  }
+
+  .logo-arrive {
+    animation: logo-arrive 0.85s cubic-bezier(0.22, 1.4, 0.36, 1) both;
+  }
+
+  .logo-boot-dot {
+    animation: logo-boot-dot 0.9s steps(1) infinite;
+  }
+
   .dossier-spring {
     animation: dossier-spring 0.65s cubic-bezier(0.22, 1.4, 0.36, 1) both;
   }
@@ -562,6 +578,48 @@
   }
 }
 
+@keyframes logo-word-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes logo-word-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes logo-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.82);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes logo-boot-dot {
+  0%,
+  40% {
+    opacity: 0.2;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -594,6 +652,10 @@
   .pop-in,
   .pop-in-delay,
   .pop-in-late,
+  .logo-word-in,
+  .logo-word-out,
+  .logo-arrive,
+  .logo-boot-dot,
   .dossier-spring,
   .marquee {
     animation: none !important;
