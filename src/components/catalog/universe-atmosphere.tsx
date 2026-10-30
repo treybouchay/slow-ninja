@@ -202,7 +202,10 @@ function GameOverlay({ game, active }: { game: Game; active: boolean }) {
 /** Color wash + per-game animated overlay for the catalog stage. */
 export function UniverseAtmosphere({ active, lit, focus = active, immediate = false }: Props) {
   return (
-    <div className="pointer-events-none absolute inset-0 z-10" aria-hidden>
+    <div
+      className="pointer-events-none absolute inset-0 z-10 [mask-image:linear-gradient(to_bottom,transparent_0,transparent_2.5rem,black_8rem)]"
+      aria-hidden
+    >
       {games.map((game, index) => {
         const weight = lit ? Math.max(0, 1 - Math.abs(index - focus)) : 0;
         return (
