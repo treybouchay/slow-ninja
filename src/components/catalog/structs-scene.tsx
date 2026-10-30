@@ -23,11 +23,6 @@ const STEP = {
   bomber: 1,
   cannon: 2,
   second: 4,
-  command: 5,
-  wingTop: 6,
-  wingMiddle: 7,
-  replacement: 8,
-  done: 9,
 } as const;
 
 /**
@@ -107,9 +102,9 @@ function makeStars(count: number, start: number) {
  * The firing battleship appears, then the bomber plays stealth. The cannon
  * fires, the impact lands, and destroy_air plays out. The bomber leaves a
  * quarter of the way through that clip. When the blast finishes, the command
- * dialog plays, and then reinforcements arrive in order: the second
- * battleship, the command ship, the two spare bombers, and a new stealth
- * bomber in the empty slot. Each bomber hovers once its stealth clip settles.
+ * dialog plays. When that dialog has faded out, the second battleship, the
+ * command ship, the two spare bombers, and a new stealth bomber in the empty
+ * slot all arrive together. Each bomber hovers once its stealth clip settles.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [meteors, setMeteors] = useState(false);
@@ -165,9 +160,15 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
     setStep((current) => (current < STEP.second ? STEP.second : current));
   }, [openingDone, dialogDone]);
 
-  const advance = (next: number) => {
-    setStep((current) => (current < next ? next : current));
-  };
+  const arrived = step >= STEP.second;
+  const [settledBombers, setSettledBombers] = useState(0);
+  const reported = useRef(false);
+
+  useEffect(() => {
+    if (settledBombers < 3 || reported.current) return;
+    reported.current = true;
+    onSettled();
+  }, [settledBombers, onSettled]);
 
   return (
     <div className="absolute inset-0" data-fleet-step={step}>
@@ -175,25 +176,22 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
 
       <div style={flankStyle("left")}>
         <FiringBattleship firing={step >= STEP.cannon} />
-        {step >= STEP.second ? <RestingBattleship onDone={() => advance(STEP.command)} /> : null}
-        {step >= STEP.command ? <CommandShip onDone={() => advance(STEP.wingTop)} /> : null}
+        {arrived ? <RestingBattleship /> : null}
+        {arrived ? <CommandShip /> : null}
       </div>
 
       <div style={flankStyle("right")}>
-        {step >= STEP.replacement ? (
-          <HoverBomber row={3} onDone={() => {
-            advance(STEP.done);
-            onSettled();
-          }} />
+        {arrived ? (
+          <HoverBomber row={3} onDone={() => setSettledBombers((count) => count + 1)} />
         ) : step >= STEP.bomber ? (
           <StruckBomber
             cannon={step >= STEP.cannon}
-            onStealthDone={() => advance(STEP.cannon)}
+            onStealthDone={() => setStep((current) => (current < STEP.cannon ? STEP.cannon : current))}
             onDestroyDone={() => setOpeningDone(true)}
           />
         ) : null}
-        {step >= STEP.wingTop ? <HoverBomber row={1} onDone={() => advance(STEP.wingMiddle)} /> : null}
-        {step >= STEP.wingMiddle ? <HoverBomber row={2} onDone={() => advance(STEP.replacement)} /> : null}
+        {arrived ? <HoverBomber row={1} onDone={() => setSettledBombers((count) => count + 1)} /> : null}
+        {arrived ? <HoverBomber row={2} onDone={() => setSettledBombers((count) => count + 1)} /> : null}
       </div>
     </div>
   );
@@ -330,15 +328,7 @@ function FiringBattleship({ firing }: { firing: boolean }) {
   );
 }
 
-function RestingBattleship({ onDone }: { onDone: () => void }) {
-  const done = useRef(onDone);
-  done.current = onDone;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => done.current(), FADE_MS);
-    return () => window.clearTimeout(timer);
-  }, []);
-
+function RestingBattleship() {
   return (
     <FleetPiece column={1} row={2} delayMs={0}>
       <div className={cn(UNIT, "structs-ship-hover")}>
@@ -357,7 +347,7 @@ function RestingBattleship({ onDone }: { onDone: () => void }) {
   );
 }
 
-function CommandShip({ onDone }: { onDone: () => void }) {
+function CommandShip() {
   const [hover, setHover] = useState(false);
 
   return (
@@ -369,10 +359,7 @@ function CommandShip({ onDone }: { onDone: () => void }) {
           loop={false}
           opacity={0.92}
           speed={0.95}
-          onComplete={() => {
-            setHover(true);
-            onDone();
-          }}
+          onComplete={() => setHover(true)}
         />
       </div>
     </FleetPiece>
