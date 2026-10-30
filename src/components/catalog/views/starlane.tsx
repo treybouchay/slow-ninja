@@ -140,12 +140,21 @@ export function StarlaneView() {
       section.style.setProperty("--structs-cx", `${c.left - s.left + c.width / 2}px`);
       section.style.setProperty("--structs-cy", `${c.top - s.top + c.height / 2}px`);
       section.style.setProperty("--structs-r", `${c.width / 2}px`);
+      const name = section.querySelector('button[aria-pressed="true"] .font-display');
+      if (name) {
+        const title = name.getBoundingClientRect();
+        if (title.height > 0) {
+          section.style.setProperty("--dialog-anchor", `${title.bottom - s.top - 4}px`);
+        }
+      }
     };
     measure();
     const timer = window.setTimeout(measure, 560);
+    const settled = window.setTimeout(measure, 900);
     window.addEventListener("resize", measure);
     return () => {
       window.clearTimeout(timer);
+      window.clearTimeout(settled);
       window.removeEventListener("resize", measure);
     };
   }, [mobile, dragging, active, ready, offset, expanded]);

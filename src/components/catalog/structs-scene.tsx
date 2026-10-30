@@ -7,16 +7,23 @@ import { CommandDialog } from "@/components/catalog/command-dialog";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
-const CANNON_DELAY_MS = 700;
-const STEALTH_DELAY_MS = 250;
+/** The firing battleship and the bomber taking the hit fade in on this clock. */
+const APPEAR_BATTLESHIP_MS = 700;
+const APPEAR_BOMBER_MS = 250;
+/** Every animation after those two ships appear waits an extra second. */
+const AFTER_APPEAR_MS = 1000;
+const CANNON_DELAY_MS = APPEAR_BATTLESHIP_MS + AFTER_APPEAR_MS;
+const STEALTH_DELAY_MS = APPEAR_BOMBER_MS + AFTER_APPEAR_MS;
 /** Impact lands on the stealth ship after the shell leaves the cannon. */
-const IMPACT_DELAY_MS = 1150;
+const IMPACT_DELAY_MS = 1150 + AFTER_APPEAR_MS;
 /** destroy_air is 39 frames at 30fps. The bomber leaves a quarter of the way in. */
 const DESTROY_AIR_MS = 1300;
-/** Command ship, second battleship, and spare bombers. Four seconds after the original entrance, so the destroy clip finishes first. */
-const SHIP_DELAY_MS = 6600;
-/** The command dialog fills that four-second hold, then leaves as the next wave starts. */
-const REINFORCEMENT_GAP_MS = 4000;
+/** Command ship, second battleship, and spare bombers. */
+const SHIP_DELAY_MS = 6600 + AFTER_APPEAR_MS;
+/** The command line is up for three seconds and is gone before that second wave. */
+const DIALOG_MS = 3000;
+const DIALOG_LEAD_MS = 250;
+const DIALOG_OUT_MS = 600;
 /** Activate plus deactivate, so the spare bombers finish before the meteors. */
 const STEALTH_CYCLE_MS = 2300;
 
@@ -102,10 +109,11 @@ function makeStars(count: number, start: number) {
  * the hit sits on the bottom row. Only the top battleship beside the circle
  * fires. The second battleship fades in with the command ship. The bomber
  * on the bottom row takes the hit, then plays destroy_air and leaves a quarter
- * of the way through that clip. During the four-second hold a command dialog
- * says reinforcements have arrived. Then the command ship, the second
- * battleship, and the other bombers come in. Those bombers play one stealth
- * cycle and hold the last frame.
+ * of the way through that clip. Those two ships appear first. Their clips, and
+ * everything after them, wait one extra second. During the hold, a command
+ * dialog fades up from above the dossier for three seconds and is gone before
+ * the command ship, the second battleship, and the other bombers come in.
+ * Those bombers play one stealth cycle and hold the last frame.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [shipHover, setShipHover] = useState(false);
@@ -187,27 +195,31 @@ export function StructsScene({ active }: { active: boolean }) {
 }
 
 function ReinforcementsDialog() {
-  const [open, setOpen] = useState(false);
+  const [phase, setPhase] = useState<"wait" | "in" | "out">("wait");
   const [host, setHost] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     setHost(document.getElementById("games"));
-    const show = window.setTimeout(() => setOpen(true), SHIP_DELAY_MS - REINFORCEMENT_GAP_MS);
-    const hide = window.setTimeout(() => setOpen(false), SHIP_DELAY_MS);
+    const goneAt = SHIP_DELAY_MS - DIALOG_LEAD_MS;
+    const show = window.setTimeout(() => setPhase("in"), goneAt - DIALOG_MS);
+    const out = window.setTimeout(() => setPhase("out"), goneAt - DIALOG_OUT_MS);
+    const hide = window.setTimeout(() => setPhase("wait"), goneAt);
     return () => {
       window.clearTimeout(show);
+      window.clearTimeout(out);
       window.clearTimeout(hide);
     };
   }, []);
 
-  if (!open || !host) return null;
+  if (phase === "wait" || !host) return null;
 
   return createPortal(
     <div
-      className="command-dialog-in pointer-events-none absolute left-1/2 z-30 w-[315px] max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-full"
-      style={{
-        top: "calc(var(--structs-cy, 420px) - var(--structs-r, 74px) * 1.215 - 10px)",
-      }}
+      className={cn(
+        "pointer-events-none absolute left-1/2 z-30 w-[315px] max-w-[calc(100%-2rem)]",
+        phase === "out" ? "command-dialog-out" : "command-dialog-rise",
+      )}
+      style={{ top: "var(--dialog-anchor, 720px)" }}
       role="status"
     >
       <CommandDialog message="Reinforcements have arrived" />
@@ -276,6 +288,7 @@ function StructsSky({ meteors }: { meteors: boolean }) {
 }
 
 const BATTLESHIP_STILL = "/lottie/structs/canon_downwards/images/img_0.png";
+const BOMBER_STILL = "/lottie/structs/stealth_deactivate/images/img_9.png";
 
 function Battleship({
   column,
@@ -288,11 +301,18 @@ function Battleship({
   still?: boolean;
 }) {
   const [hover, setHover] = useState(still);
+  const [firing, setFiring] = useState(false);
+
+  useEffect(() => {
+    if (still) return;
+    const timer = window.setTimeout(() => setFiring(true), CANNON_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [still]);
 
   return (
-    <FleetPiece column={column} row={row} delayMs={still ? SHIP_DELAY_MS : CANNON_DELAY_MS}>
+    <FleetPiece column={column} row={row} delayMs={still ? SHIP_DELAY_MS : APPEAR_BATTLESHIP_MS}>
       <div className={cn(UNIT, hover && "structs-ship-hover")}>
-        {still ? (
+        {still || !firing ? (
           <Image
             src={BATTLESHIP_STILL}
             alt=""
@@ -309,7 +329,6 @@ function Battleship({
             className="h-full w-full"
             loop={false}
             opacity={0.95}
-            delayMs={CANNON_DELAY_MS}
             onComplete={() => setHover(true)}
           />
         )}
@@ -319,8 +338,14 @@ function Battleship({
 }
 
 function StruckBomber() {
+  const [decloaking, setDecloaking] = useState(false);
   const [destroying, setDestroying] = useState(false);
   const [shipGone, setShipGone] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDecloaking(true), STEALTH_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!destroying) return;
@@ -329,19 +354,30 @@ function StruckBomber() {
   }, [destroying]);
 
   return (
-    <FleetPiece column={1} row={3} delayMs={STEALTH_DELAY_MS} className="z-10">
+    <FleetPiece column={1} row={3} delayMs={APPEAR_BOMBER_MS} className="z-10">
       <div className={UNIT}>
         <div
           className="h-full w-full"
           style={{ transform: "scaleX(-1)", opacity: shipGone ? 0 : 0.95 }}
         >
-          <LottieClip
-            src="/lottie/structs/stealth_deactivate"
-            className="h-full w-full"
-            loop={false}
-            opacity={1}
-            delayMs={STEALTH_DELAY_MS}
-          />
+          {decloaking ? (
+            <LottieClip
+              src="/lottie/structs/stealth_deactivate"
+              className="h-full w-full"
+              loop={false}
+              opacity={1}
+            />
+          ) : (
+            <Image
+              src={BOMBER_STILL}
+              alt=""
+              width={128}
+              height={128}
+              unoptimized
+              draggable={false}
+              className="h-full w-full object-contain"
+            />
+          )}
         </div>
         <div
           className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]"

@@ -11,6 +11,7 @@ export function UniverseDossier({
 }) {
   return (
     <div
+      data-dossier
       className={cn(
         "pointer-events-none rounded-[1rem] border border-white/10 bg-[#0a1220]/95 p-3 backdrop-blur-md",
         className,

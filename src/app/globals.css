@@ -142,9 +142,38 @@
   -webkit-font-smoothing: none;
 }
 
-.command-dialog-in {
-  animation: structs-fade-in 0.35s ease-out both;
+.command-dialog-rise {
+  translate: -50% 0;
+  animation: command-dialog-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* Exit plays the rise backwards: down into the gap, fading out. */
+.command-dialog-out {
+  animation: command-dialog-leave 0.6s cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+@keyframes command-dialog-leave {
+  from {
+    opacity: 1;
+    translate: -50% 0;
+  }
+  to {
+    opacity: 0;
+    translate: -50% 28px;
+  }
+}
+
+@keyframes command-dialog-rise {
+  from {
+    opacity: 0;
+    translate: -50% 28px;
+  }
+  to {
+    opacity: 1;
+    translate: -50% 0;
+  }
+}
+
 
 @layer utilities {
   .font-display {
@@ -813,7 +842,8 @@
   .structs-ship-hover,
   .structs-sat-drift,
   .structs-fade-in,
-  .command-dialog-in,
+  .command-dialog-rise,
+  .command-dialog-out,
   .structs-star,
   .structs-sparkle,
   .structs-meteor,
@@ -830,6 +860,10 @@
   .dossier-spring,
   .marquee {
     animation: none !important;
+  }
+
+  .command-dialog-out {
+    opacity: 0 !important;
   }
 
   .camera-glide {
