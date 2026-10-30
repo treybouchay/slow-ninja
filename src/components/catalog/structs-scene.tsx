@@ -9,8 +9,10 @@ const CANNON_DELAY_MS = 700;
 const STEALTH_DELAY_MS = 250;
 /** Impact lands on the stealth ship after the shell leaves the cannon. */
 const IMPACT_DELAY_MS = 1150;
-/** Command ship arrives after the stealth ship has taken the hit. */
-const SHIP_DELAY_MS = 2600;
+/** destroy_air is 39 frames at 30fps. The bomber leaves a quarter of the way in. */
+const DESTROY_AIR_MS = 1300;
+/** Command ship, second battleship, and spare bombers. Four seconds after the original entrance, so the destroy clip finishes first. */
+const SHIP_DELAY_MS = 6600;
 /** Activate plus deactivate, so the spare bombers finish before the meteors. */
 const STEALTH_CYCLE_MS = 2300;
 
@@ -94,12 +96,13 @@ function makeStars(count: number, start: number) {
  * Structs atmosphere.
  * The inner column is two battleships over the command ship. The bomber taking
  * the hit sits on the bottom row. Only the top battleship beside the circle
- * fires. The second battleship fades in with the command ship. The bombers
- * that are not being hit play one stealth cycle with that entrance and hold
- * the last frame.
+ * fires. The second battleship fades in with the command ship. The bomber
+ * on the bottom row takes the hit, then plays destroy_air and leaves a quarter
+ * of the way through that clip. Four seconds later the command ship, the second
+ * battleship, and the other bombers come in. Those bombers play one stealth
+ * cycle and hold the last frame.
  */
 export function StructsScene({ active }: { active: boolean }) {
-  const [stealthHover, setStealthHover] = useState(false);
   const [shipHover, setShipHover] = useState(false);
   const [settledWings, setSettledWings] = useState(0);
   const [wasActive, setWasActive] = useState(active);
@@ -117,7 +120,6 @@ export function StructsScene({ active }: { active: boolean }) {
   if (active !== wasActive) {
     setWasActive(active);
     if (!active) {
-      setStealthHover(false);
       setShipHover(false);
       setSettledWings(0);
     }
@@ -165,29 +167,7 @@ export function StructsScene({ active }: { active: boolean }) {
             </div>
 
             <div style={flankStyle("right")}>
-              <FleetPiece column={1} row={3} delayMs={STEALTH_DELAY_MS} className="z-10">
-                <div className={cn(UNIT, stealthHover && "structs-ship-hover")}>
-                  <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
-                    <LottieClip
-                      src="/lottie/structs/stealth_deactivate"
-                      className="h-full w-full"
-                      loop={false}
-                      opacity={0.95}
-                      delayMs={STEALTH_DELAY_MS}
-                    />
-                  </div>
-                  <div className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]">
-                    <LottieClip
-                      src="/lottie/structs/impact_angled_down_cannon"
-                      className="h-full w-full"
-                      loop={false}
-                      opacity={1}
-                      delayMs={IMPACT_DELAY_MS}
-                      onComplete={() => setStealthHover(true)}
-                    />
-                  </div>
-                </div>
-              </FleetPiece>
+              <StruckBomber />
 
               {INNER_WINGS.map((ship) => (
                 <StillBomber key={ship.id} column={1} row={ship.row} />
@@ -297,6 +277,59 @@ function Battleship({
             onComplete={() => setHover(true)}
           />
         )}
+      </div>
+    </FleetPiece>
+  );
+}
+
+function StruckBomber() {
+  const [destroying, setDestroying] = useState(false);
+  const [shipGone, setShipGone] = useState(false);
+
+  useEffect(() => {
+    if (!destroying) return;
+    const timer = window.setTimeout(() => setShipGone(true), DESTROY_AIR_MS / 4);
+    return () => window.clearTimeout(timer);
+  }, [destroying]);
+
+  return (
+    <FleetPiece column={1} row={3} delayMs={STEALTH_DELAY_MS} className="z-10">
+      <div className={UNIT}>
+        <div
+          className="h-full w-full"
+          style={{ transform: "scaleX(-1)", opacity: shipGone ? 0 : 0.95 }}
+        >
+          <LottieClip
+            src="/lottie/structs/stealth_deactivate"
+            className="h-full w-full"
+            loop={false}
+            opacity={1}
+            delayMs={STEALTH_DELAY_MS}
+          />
+        </div>
+        <div
+          className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]"
+          style={{ opacity: destroying ? 0 : 1 }}
+        >
+          <LottieClip
+            src="/lottie/structs/impact_angled_down_cannon"
+            className="h-full w-full"
+            loop={false}
+            opacity={1}
+            delayMs={IMPACT_DELAY_MS}
+            onComplete={() => setDestroying(true)}
+          />
+        </div>
+        {destroying ? (
+          <div className="absolute inset-0">
+            <LottieClip
+              src="/lottie/structs/destroy_air"
+              className="h-full w-full"
+              loop={false}
+              opacity={1}
+            />
+          </div>
+        ) : null}
       </div>
     </FleetPiece>
   );
