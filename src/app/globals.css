@@ -214,12 +214,75 @@
     animation: logo-word-out 0.35s ease forwards;
   }
 
-  .logo-arrive {
-    animation: logo-arrive 0.85s cubic-bezier(0.22, 1.4, 0.36, 1) both;
-  }
-
   .logo-boot-dot {
     animation: logo-boot-dot 0.9s steps(1) infinite;
+  }
+
+  .logo-slice-letters {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0,
+      #000 39.583%,
+      transparent 39.583%,
+      transparent 46.875%,
+      #000 46.875%,
+      #000 92.708%,
+      transparent 92.708%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0,
+      #000 39.583%,
+      transparent 39.583%,
+      transparent 46.875%,
+      #000 46.875%,
+      #000 92.708%,
+      transparent 92.708%,
+      transparent 100%
+    );
+  }
+
+  .logo-slice-bar-top {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 39.583%,
+      #000 39.583%,
+      #000 46.875%,
+      transparent 46.875%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 39.583%,
+      #000 39.583%,
+      #000 46.875%,
+      transparent 46.875%,
+      transparent 100%
+    );
+  }
+
+  .logo-slice-bar-bottom {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 92.708%,
+      #000 92.708%,
+      #000 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 92.708%,
+      #000 92.708%,
+      #000 100%
+    );
+  }
+
+  .logo-line-fill {
+    animation: logo-line-fill 0.62s steps(16, end) both;
   }
 
   .dossier-spring {
@@ -594,18 +657,12 @@
   }
 }
 
-@keyframes logo-arrive {
-  0% {
-    opacity: 0;
-    transform: translateY(22px) scale(0.82);
+@keyframes logo-line-fill {
+  from {
+    clip-path: inset(0 100% 0 0);
   }
-  55% {
-    opacity: 1;
-    transform: translateY(-6px) scale(1.06);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -654,7 +711,7 @@
   .pop-in-late,
   .logo-word-in,
   .logo-word-out,
-  .logo-arrive,
+  .logo-line-fill,
   .logo-boot-dot,
   .dossier-spring,
   .marquee {
