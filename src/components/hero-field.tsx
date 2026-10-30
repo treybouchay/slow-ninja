@@ -6,7 +6,6 @@ export function HeroField() {
     >
       <div className="absolute inset-0 bg-[#070d16]" />
       <div className="space-grid hero-grid-fade absolute inset-0 opacity-25" />
-      <div className="page-seam-rise absolute inset-x-0 bottom-0 h-80" />
     </div>
   );
 }

@@ -203,7 +203,7 @@ function GameOverlay({ game, active }: { game: Game; active: boolean }) {
 export function UniverseAtmosphere({ active, lit, focus = active, immediate = false }: Props) {
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-10 [mask-image:linear-gradient(to_bottom,transparent_0,black_10rem)]"
+      className="pointer-events-none absolute inset-0 z-10 [mask-image:linear-gradient(to_bottom,transparent_0,transparent_2.5rem,black_8rem)]"
       aria-hidden
     >
       {games.map((game, index) => {

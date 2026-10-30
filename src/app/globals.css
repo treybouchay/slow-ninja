@@ -138,29 +138,6 @@
     line-height: 1.6;
   }
 
-  .page-seam-rise,
-  .page-seam-fall {
-    background-image:
-      radial-gradient(ellipse 90% 120% at 50% var(--seam-at), color-mix(in oklab, var(--violet) 34%, transparent), transparent 72%),
-      radial-gradient(ellipse 36% 80% at 14% var(--seam-at), color-mix(in oklab, var(--cyan) 30%, transparent), transparent 72%),
-      radial-gradient(ellipse 32% 70% at 86% var(--seam-at), color-mix(in oklab, var(--lime) 12%, transparent), transparent 70%),
-      radial-gradient(1.5px 1.5px at 18% 36%, white, transparent),
-      radial-gradient(1px 1px at 41% 22%, white, transparent),
-      radial-gradient(1.5px 1.5px at 63% 48%, white, transparent),
-      radial-gradient(1px 1px at 79% 28%, white, transparent),
-      radial-gradient(1px 1px at 88% 58%, white, transparent);
-  }
-
-  .page-seam-rise {
-    --seam-at: 100%;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
-  }
-
-  .page-seam-fall {
-    --seam-at: 0%;
-    mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
-  }
-
   .space-grid {
     background-image:
       linear-gradient(color-mix(in oklab, var(--cyan) 18%, transparent) 1px, transparent 1px),
@@ -171,7 +148,7 @@
   }
 
   .space-grid.hero-grid-fade {
-    mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
   }
 
   .starfield {
@@ -254,14 +231,14 @@
   }
 
   .logo-rise-in {
-    animation: logo-rise-in 4.8s cubic-bezier(0.33, 0.05, 0.2, 1) both;
+    animation: logo-rise-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   .logo-line-draw {
     animation-name: logo-line-draw;
-    animation-duration: 1.92s;
+    animation-duration: 0.64s;
     animation-timing-function: steps(8, end);
-    animation-delay: 2.88s;
+    animation-delay: 0.96s;
     animation-fill-mode: both;
   }
 
