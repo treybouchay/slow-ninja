@@ -12,6 +12,8 @@ const FADE_MS = 900;
 const BATTLESHIP_LEAD_MS = 400;
 /** Shell travel after the cannon clip starts. */
 const IMPACT_AFTER_CANNON_MS = 450;
+/** destroy_air is 39 frames at 30fps. The bomber leaves a quarter of the way in. */
+const DESTROY_AIR_MS = 1300;
 /** The command line is up for three seconds and leaves before the next wave. */
 const DIALOG_MS = 3000;
 const DIALOG_OUT_MS = 600;
@@ -103,8 +105,9 @@ function makeStars(count: number, start: number) {
 /**
  * Structs atmosphere.
  * The firing battleship appears, then the bomber plays stealth. The cannon
- * fires, the impact lands, and destroy_air plays out. The bomber leaves when
- * that clip finishes. Reinforcements then arrive in order: the second
+ * fires, the impact lands, and destroy_air plays out. The bomber leaves a
+ * quarter of the way through that clip. When the blast finishes, the command
+ * dialog plays, and then reinforcements arrive in order: the second
  * battleship, the command ship, the two spare bombers, and a new stealth
  * bomber in the empty slot. Each bomber hovers once its stealth clip settles.
  */
@@ -168,7 +171,7 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
 
   return (
     <div className="absolute inset-0" data-fleet-step={step}>
-      <ReinforcementsDialog play={step >= STEP.cannon} onDone={setDialogDone} />
+      <ReinforcementsDialog play={openingDone} onDone={setDialogDone} />
 
       <div style={flankStyle("left")}>
         <FiringBattleship firing={step >= STEP.cannon} />
@@ -388,10 +391,16 @@ function StruckBomber({
   const [destroying, setDestroying] = useState(false);
   const [shipGone, setShipGone] = useState(false);
 
+  useEffect(() => {
+    if (!destroying) return;
+    const timer = window.setTimeout(() => setShipGone(true), DESTROY_AIR_MS / 4);
+    return () => window.clearTimeout(timer);
+  }, [destroying]);
+
   return (
     <FleetPiece column={1} row={3} delayMs={0} className="z-10" data-bomber={shipGone ? "gone" : "live"}>
-      <div className={UNIT} style={{ opacity: shipGone ? 0 : 1 }}>
-        <div className="h-full w-full" style={{ transform: "scaleX(-1)", opacity: 0.95 }}>
+      <div className={UNIT}>
+        <div className="h-full w-full" style={{ transform: "scaleX(-1)", opacity: shipGone ? 0 : 0.95 }}>
           <StealthCycle className="h-full w-full" once opacity={1} onSettled={onStealthDone} />
         </div>
         {cannon ? (
@@ -416,10 +425,7 @@ function StruckBomber({
               className="h-full w-full"
               loop={false}
               opacity={1}
-              onComplete={() => {
-                setShipGone(true);
-                onDestroyDone();
-              }}
+              onComplete={onDestroyDone}
             />
           </div>
         ) : null}
