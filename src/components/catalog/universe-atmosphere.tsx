@@ -203,7 +203,7 @@ function GameOverlay({ game, active }: { game: Game; active: boolean }) {
 export function UniverseAtmosphere({ active, lit, focus = active, immediate = false }: Props) {
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-10 [mask-image:linear-gradient(to_bottom,transparent_0,black_10rem)]"
+      className="universe-fade-in pointer-events-none absolute inset-0 z-10"
       aria-hidden
     >
       {games.map((game, index) => {
@@ -232,7 +232,7 @@ export function UniverseAtmosphere({ active, lit, focus = active, immediate = fa
                 background: `
                   radial-gradient(ellipse 70% 55% at 18% 30%, color-mix(in oklab, ${game.accent} 28%, transparent), transparent 70%),
                   radial-gradient(ellipse 55% 45% at 88% 70%, color-mix(in oklab, ${game.accent} 18%, transparent), transparent 65%),
-                  linear-gradient(180deg, #070d16e6 0%, #070d16aa 45%, #070d16f2 100%)
+                  linear-gradient(180deg, transparent 0%, #070d1680 36%, #070d16e6 100%)
                 `,
               }}
             />

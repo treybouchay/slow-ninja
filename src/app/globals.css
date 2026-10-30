@@ -148,24 +148,60 @@
   }
 
   .space-grid.hero-grid-fade {
-    mask-image: linear-gradient(to bottom, black 84%, transparent 100%);
+    /* Dissolve the grid before the night color has fully shifted. */
+    mask-image: linear-gradient(to bottom, black 42%, transparent 78%);
   }
 
+  /* Stars arrive through the same lower stretch the grid leaves. */
+  .hero-sky {
+    mask-image: linear-gradient(to bottom, transparent 36%, black 92%);
+  }
+
+  /*
+    One ease from night into the catalog violet. The first half of the
+    band stays clear so the buttons sit on black; the curve then
+    accelerates and finishes at the same violet the catalog starts with.
+  */
   .page-seam-rise {
+    height: 24rem;
     background: linear-gradient(
       to bottom,
       transparent 0%,
-      color-mix(in oklab, var(--violet) 18%, transparent) 100%
+      transparent 48%,
+      rgba(155, 109, 255, 0.025) 60%,
+      rgba(155, 109, 255, 0.08) 72%,
+      rgba(155, 109, 255, 0.14) 84%,
+      rgba(155, 109, 255, 0.175) 94%,
+      rgba(155, 109, 255, 0.18) 100%
     );
   }
 
+  /* Holds that same violet, then hands off to the catalog sky. */
   .page-seam-fall {
+    height: 32rem;
     background: linear-gradient(
       to bottom,
-      color-mix(in oklab, var(--violet) 18%, transparent),
-      transparent
+      rgba(155, 109, 255, 0.18) 0%,
+      rgba(155, 109, 255, 0.17) 22%,
+      rgba(155, 109, 255, 0.14) 42%,
+      rgba(155, 109, 255, 0.07) 64%,
+      rgba(155, 109, 255, 0.02) 84%,
+      transparent 100%
     );
   }
+
+  /* Catalog sky fades in over the same distance the violet wash fades out. */
+  .universe-fade-in {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      rgba(0, 0, 0, 0.18) 4rem,
+      rgba(0, 0, 0, 0.45) 10rem,
+      rgba(0, 0, 0, 0.78) 18rem,
+      #000 26rem
+    );
+  }
+
 
   .starfield {
     background-image:

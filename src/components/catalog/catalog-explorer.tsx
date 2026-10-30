@@ -24,7 +24,7 @@ function CatalogStage() {
 
   return (
     <div className="relative">
-      <div aria-hidden className="page-seam-fall pointer-events-none absolute inset-x-0 top-0 z-30 h-24" />
+      <div aria-hidden className="page-seam-fall pointer-events-none absolute inset-x-0 top-0 z-30" />
       {view === "starlane" && <StarlaneView />}
       {view === "constellation" && <ConstellationView />}
       {view === "diagonal-lane" && <DiagonalLaneView />}
