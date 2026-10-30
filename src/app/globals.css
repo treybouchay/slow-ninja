@@ -124,6 +124,28 @@
   }
 }
 
+@font-face {
+  font-family: "DirectiveZeroWid";
+  src: url("/fonts/DirectiveZeroWid.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+.command-dialog-copy {
+  font-family: "DirectiveZeroWid", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0;
+  font-synthesis: none;
+  -webkit-font-smoothing: none;
+}
+
+.command-dialog-in {
+  animation: structs-fade-in 0.35s ease-out both;
+}
+
 @layer utilities {
   .font-display {
     font-family: var(--font-display), system-ui, sans-serif;
@@ -791,6 +813,7 @@
   .structs-ship-hover,
   .structs-sat-drift,
   .structs-fade-in,
+  .command-dialog-in,
   .structs-star,
   .structs-sparkle,
   .structs-meteor,

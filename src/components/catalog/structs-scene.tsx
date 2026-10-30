@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
+import { CommandDialog } from "@/components/catalog/command-dialog";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +15,8 @@ const IMPACT_DELAY_MS = 1150;
 const DESTROY_AIR_MS = 1300;
 /** Command ship, second battleship, and spare bombers. Four seconds after the original entrance, so the destroy clip finishes first. */
 const SHIP_DELAY_MS = 6600;
+/** The command dialog fills that four-second hold, then leaves as the next wave starts. */
+const REINFORCEMENT_GAP_MS = 4000;
 /** Activate plus deactivate, so the spare bombers finish before the meteors. */
 const STEALTH_CYCLE_MS = 2300;
 
@@ -98,7 +102,8 @@ function makeStars(count: number, start: number) {
  * the hit sits on the bottom row. Only the top battleship beside the circle
  * fires. The second battleship fades in with the command ship. The bomber
  * on the bottom row takes the hit, then plays destroy_air and leaves a quarter
- * of the way through that clip. Four seconds later the command ship, the second
+ * of the way through that clip. During the four-second hold a command dialog
+ * says reinforcements have arrived. Then the command ship, the second
  * battleship, and the other bombers come in. Those bombers play one stealth
  * cycle and hold the last frame.
  */
@@ -147,6 +152,7 @@ export function StructsScene({ active }: { active: boolean }) {
               }}
             />
             <StructsSky meteors={settledWings >= wingCount} />
+            <ReinforcementsDialog />
 
             <div style={flankStyle("left")}>
               <Battleship column={1} row={1} />
@@ -177,6 +183,36 @@ export function StructsScene({ active }: { active: boolean }) {
         ) : null}
       </div>
     </div>
+  );
+}
+
+function ReinforcementsDialog() {
+  const [open, setOpen] = useState(false);
+  const [host, setHost] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setHost(document.getElementById("games"));
+    const show = window.setTimeout(() => setOpen(true), SHIP_DELAY_MS - REINFORCEMENT_GAP_MS);
+    const hide = window.setTimeout(() => setOpen(false), SHIP_DELAY_MS);
+    return () => {
+      window.clearTimeout(show);
+      window.clearTimeout(hide);
+    };
+  }, []);
+
+  if (!open || !host) return null;
+
+  return createPortal(
+    <div
+      className="command-dialog-in pointer-events-none absolute left-1/2 z-30 w-[315px] max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-full"
+      style={{
+        top: "calc(var(--structs-cy, 420px) - var(--structs-r, 74px) * 1.215 - 10px)",
+      }}
+      role="status"
+    >
+      <CommandDialog message="Reinforcements have arrived" />
+    </div>,
+    host,
   );
 }
 
