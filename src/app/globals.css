@@ -147,6 +147,26 @@
     animation: grid-drift 40s linear infinite;
   }
 
+  .space-grid.hero-grid-fade {
+    mask-image: linear-gradient(to bottom, black 84%, transparent 100%);
+  }
+
+  .page-seam-rise {
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in oklab, var(--violet) 18%, transparent) 100%
+    );
+  }
+
+  .page-seam-fall {
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--violet) 18%, transparent),
+      transparent
+    );
+  }
+
   .starfield {
     background-image:
       radial-gradient(1.5px 1.5px at 12% 18%, white, transparent),
