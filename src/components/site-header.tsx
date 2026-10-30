@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -36,25 +35,7 @@ export function SiteHeader() {
             : "border border-transparent bg-transparent",
         )}
       >
-        <div className="flex items-center gap-3 md:gap-4">
-          <BrandLogo size="nav" priority />
-          <a
-            href="https://www.playstructs.com/"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center"
-          >
-            <Image
-              src="/structs-wordmark.png"
-              alt="Structs"
-              width={304}
-              height={49}
-              priority
-              unoptimized
-              className="h-5 w-auto md:h-6 [image-rendering:pixelated]"
-            />
-          </a>
-        </div>
+        <BrandLogo size="nav" priority />
 
         <nav className="hidden items-center gap-1 md:flex">
           {links.map((link) => {

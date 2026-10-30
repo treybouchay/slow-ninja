@@ -222,6 +222,85 @@
     animation: logo-boot-dot 0.9s steps(1) infinite;
   }
 
+  .logo-loading-flash {
+    animation: logo-retro-flash 0.32s linear infinite;
+  }
+
+  .logo-rise-in {
+    animation: logo-rise-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .logo-line-draw {
+    animation-name: logo-line-draw;
+    animation-duration: 0.64s;
+    animation-timing-function: steps(8, end);
+    animation-delay: 0.96s;
+    animation-fill-mode: both;
+  }
+
+  .logo-slice-letters {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0,
+      #000 33.333%,
+      transparent 33.333%,
+      transparent 53.125%,
+      #000 53.125%,
+      #000 87.5%,
+      transparent 87.5%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0,
+      #000 33.333%,
+      transparent 33.333%,
+      transparent 53.125%,
+      #000 53.125%,
+      #000 87.5%,
+      transparent 87.5%,
+      transparent 100%
+    );
+  }
+
+  .logo-slice-bar-top {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 39.583%,
+      #000 39.583%,
+      #000 46.875%,
+      transparent 46.875%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 39.583%,
+      #000 39.583%,
+      #000 46.875%,
+      transparent 46.875%,
+      transparent 100%
+    );
+  }
+
+  .logo-slice-bar-bottom {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 92.708%,
+      #000 92.708%,
+      #000 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 92.708%,
+      #000 92.708%,
+      #000 100%
+    );
+  }
+
   .dossier-spring {
     animation: dossier-spring 0.65s cubic-bezier(0.22, 1.4, 0.36, 1) both;
   }
@@ -620,6 +699,35 @@
   }
 }
 
+@keyframes logo-retro-flash {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes logo-rise-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes logo-line-draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -656,6 +764,9 @@
   .logo-word-out,
   .logo-arrive,
   .logo-boot-dot,
+  .logo-loading-flash,
+  .logo-rise-in,
+  .logo-line-draw,
   .dossier-spring,
   .marquee {
     animation: none !important;
