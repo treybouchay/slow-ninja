@@ -51,11 +51,11 @@ export function HeroLogo() {
         </p>
       )}
       <div className={cn("col-start-1 row-start-1 overflow-hidden", !arrived && "invisible")}>
-        <div className={cn("flex items-center justify-center gap-2.5 md:gap-4", draw && "logo-rise-in")}>
+        <div className={cn("flex flex-col items-center gap-1 md:gap-2", draw && "logo-rise-in")}>
           <Wordmark draw={draw} />
           <span
             aria-hidden
-            className="font-display text-2xl leading-none font-light text-white md:text-4xl"
+            className="font-display text-6xl leading-none font-light text-white md:text-8xl"
           >
             ×
           </span>
@@ -72,7 +72,7 @@ export function HeroLogo() {
               height={49}
               priority
               unoptimized
-              className="h-7 w-auto [image-rendering:pixelated] md:h-11"
+              className="h-10 w-auto [image-rendering:pixelated] md:h-14"
             />
           </a>
         </div>
