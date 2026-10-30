@@ -1,7 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
-import { BrandLogo } from "@/components/brand-logo";
 import { cn } from "@/lib/utils";
 
 const BOOT_MS = 1600;
@@ -19,10 +19,12 @@ const GLYPHS: Record<string, string[]> = {
 
 export function HeroLogo() {
   const [phase, setPhase] = useState<"loading" | "logo">("loading");
+  const [reduce, setReduce] = useState(false);
 
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (motion) {
+      setReduce(true);
       setPhase("logo");
       return;
     }
@@ -34,25 +36,63 @@ export function HeroLogo() {
 
   return (
     <div className="relative grid min-h-24 place-items-center">
-      <p
-        className={cn(
-          "col-start-1 row-start-1 flex items-end gap-3 text-white",
-          arrived ? "logo-word-out" : "logo-word-in",
-        )}
-        aria-hidden
-      >
-        <PixelWord text="loading" />
-        <span className="mb-0.5 flex gap-1.5">
-          <Dot delay="0s" />
-          <Dot delay="0.22s" />
-          <Dot delay="0.44s" />
-        </span>
-      </p>
-      <div className={cn("col-start-1 row-start-1", arrived ? "logo-arrive" : "opacity-0")}>
-        <BrandLogo size="hero" href={null} priority />
+      {arrived ? null : (
+        <p
+          className="logo-loading-flash col-start-1 row-start-1 flex items-end gap-3 text-white"
+          aria-hidden
+        >
+          <PixelWord text="loading" />
+          <span className="mb-0.5 flex gap-1.5">
+            <span className="size-1.5 bg-white" />
+            <span className="size-1.5 bg-white" />
+            <span className="size-1.5 bg-white" />
+          </span>
+        </p>
+      )}
+      <div className={cn("col-start-1 row-start-1 overflow-hidden", !arrived && "invisible")}>
+        <Wordmark draw={arrived && !reduce} />
         <h1 className="sr-only">Slow Ninja</h1>
       </div>
     </div>
+  );
+}
+
+/** Letters rise in from below. The two rules draw across as the rise finishes. */
+function Wordmark({ draw }: { draw: boolean }) {
+  return (
+    <div className={cn("relative h-24 w-32 md:h-[6.75rem] md:w-36", draw && "logo-rise-in")}>
+      <Slice part="letters" priority />
+      <Slice part="top" draw={draw} />
+      <Slice part="bottom" draw={draw} />
+    </div>
+  );
+}
+
+function Slice({
+  part,
+  draw = false,
+  priority = false,
+}: {
+  part: "letters" | "top" | "bottom";
+  draw?: boolean;
+  priority?: boolean;
+}) {
+  return (
+    <Image
+      src="/slow-ninja-mark.png"
+      alt=""
+      fill
+      priority={priority}
+      unoptimized
+      aria-hidden
+      className={cn(
+        "object-contain [image-rendering:pixelated]",
+        part === "letters" && "logo-slice-letters",
+        part === "top" && "logo-slice-bar-top",
+        part === "bottom" && "logo-slice-bar-bottom",
+        draw && part !== "letters" && "logo-line-draw",
+      )}
+    />
   );
 }
 
@@ -80,11 +120,3 @@ function PixelWord({ text }: { text: string }) {
   );
 }
 
-function Dot({ delay }: { delay: string }) {
-  return (
-    <span
-      className="logo-boot-dot size-1.5 bg-white"
-      style={{ animationDelay: delay }}
-    />
-  );
-}
