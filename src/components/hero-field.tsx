@@ -45,7 +45,6 @@ export function HeroField() {
         ))}
       </div>
       <div className="space-grid hero-grid-fade absolute inset-0 opacity-25" />
-      <div className="page-seam-rise pointer-events-none absolute inset-x-0 bottom-0" />
     </div>
   );
 }

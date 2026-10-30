@@ -23,14 +23,13 @@ function CatalogStage() {
   const { view } = useCatalogView();
 
   return (
-    <div className="relative">
-      <div aria-hidden className="page-seam-fall pointer-events-none absolute inset-x-0 top-0 z-30" />
+    <>
       {view === "starlane" && <StarlaneView />}
       {view === "constellation" && <ConstellationView />}
       {view === "diagonal-lane" && <DiagonalLaneView />}
       {view === "shelf" && <ShelfView />}
       {view === "diagonal-case" && <DiagonalCaseView />}
       {view === "file-case" && <FileCaseView />}
-    </div>
+    </>
   );
 }
