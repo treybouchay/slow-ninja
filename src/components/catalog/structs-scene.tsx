@@ -11,8 +11,8 @@ const STEALTH_DELAY_MS = 250;
 const IMPACT_DELAY_MS = 1150;
 /** Command ship arrives after the stealth ship has taken the hit. */
 const SHIP_DELAY_MS = 2600;
-/** Fade length used by the fleet pieces. The spare bombers share the command ship's entrance. */
-const FADE_MS = 900;
+/** Decloak clip length. Meteors wait until the arriving bombers have finished it. */
+const STEALTH_CLIP_MS = 1100;
 
 /**
  * One column on each side: battleship, battleship, command — and bomber,
@@ -95,7 +95,7 @@ function makeStars(count: number, start: number) {
  * The inner column is two battleships over the command ship. The bomber taking
  * the hit sits on the bottom row. Only the top battleship beside the circle
  * fires; the others fade in and float. The bombers that are not being hit
- * fade in with the command ship.
+ * play their decloak clip as they arrive with the command ship, then float.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [stealthHover, setStealthHover] = useState(false);
@@ -106,7 +106,10 @@ export function StructsScene({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (!active) return;
-    const timer = window.setTimeout(() => setSettledWings(wingCount), SHIP_DELAY_MS + FADE_MS);
+    const timer = window.setTimeout(
+      () => setSettledWings(wingCount),
+      SHIP_DELAY_MS + STEALTH_CLIP_MS,
+    );
     return () => window.clearTimeout(timer);
   }, [active, wingCount]);
 
@@ -186,7 +189,7 @@ export function StructsScene({ active }: { active: boolean }) {
               </FleetPiece>
 
               {INNER_WINGS.map((ship) => (
-                <StillBomber key={ship.id} column={1} row={ship.row} />
+                <ArrivingBomber key={ship.id} column={1} row={ship.row} />
               ))}
             </div>
           </>
@@ -256,8 +259,6 @@ function StructsSky({ meteors }: { meteors: boolean }) {
 }
 
 const BATTLESHIP_STILL = "/lottie/structs/canon_downwards/images/img_0.png";
-/** Last frame of the decloak clip: the bomber in the open, facing the battleships once flipped. */
-const BOMBER_STILL = "/lottie/structs/stealth_deactivate/images/img_9.png";
 
 function Battleship({
   column,
@@ -300,20 +301,20 @@ function Battleship({
   );
 }
 
-function StillBomber({ column, row }: { column: number; row: number }) {
+function ArrivingBomber({ column, row }: { column: number; row: number }) {
+  const [hover, setHover] = useState(false);
+
   return (
     <FleetPiece column={column} row={row} delayMs={SHIP_DELAY_MS}>
-      <div className={cn(UNIT, "structs-ship-hover")}>
+      <div className={cn(UNIT, hover && "structs-ship-hover")}>
         <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
-          <Image
-            src={BOMBER_STILL}
-            alt=""
-            width={128}
-            height={128}
-            unoptimized
-            draggable={false}
-            className="h-full w-full object-contain"
-            style={{ opacity: 0.92 }}
+          <LottieClip
+            src="/lottie/structs/stealth_deactivate"
+            className="h-full w-full"
+            loop={false}
+            opacity={0.92}
+            delayMs={SHIP_DELAY_MS}
+            onComplete={() => setHover(true)}
           />
         </div>
       </div>
