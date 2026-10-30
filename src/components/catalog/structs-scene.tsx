@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import type { LottieHandle } from "lottie-react";
 import { createPortal } from "react-dom";
 import { CommandDialog } from "@/components/catalog/command-dialog";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
@@ -295,23 +296,105 @@ function StructsSky({ meteors }: { meteors: boolean }) {
   );
 }
 
-const BATTLESHIP_STILL = "/lottie/structs/canon_downwards/images/img_0.png";
+const CANNON_SRC = "/lottie/structs/canon_downwards";
+const BATTLESHIP_STILL = `${CANNON_SRC}/images/img_0.png`;
+const CANNON_FRAMES = 12;
+
+type CannonItem = NonNullable<LottieHandle["animationItem"]> & {
+  imagePreloader?: { loadedImages?: () => boolean };
+};
 
 function FiringBattleship({ firing }: { firing: boolean }) {
   const [hover, setHover] = useState(false);
+  const [domReady, setDomReady] = useState(false);
+  const [framesReady, setFramesReady] = useState(false);
+  const [clipLive, setClipLive] = useState(false);
+  const [stillOn, setStillOn] = useState(true);
+  const clip = useRef<LottieHandle>(null);
+  const played = useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const pending = Array.from({ length: CANNON_FRAMES }, (_, index) => {
+      const img = new window.Image();
+      img.src = `${CANNON_SRC}/images/img_${index}.png`;
+      return img.decode().catch(() => undefined);
+    });
+    void Promise.all(pending).then(() => {
+      if (!cancelled) setFramesReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!domReady || !framesReady || clipLive) return;
+    let cancelled = false;
+    let wait = 0;
+    let unsubscribe = () => {};
+
+    const attach = () => {
+      const item = clip.current?.animationItem as CannonItem | null;
+      if (!item) {
+        wait = window.setTimeout(attach, 16);
+        return;
+      }
+      const reveal = () => {
+        if (cancelled) return;
+        cancelled = true;
+        unsubscribe();
+        window.clearTimeout(wait);
+        setClipLive(true);
+      };
+      unsubscribe = item.addEventListener("loaded_images", reveal);
+      if (item.imagePreloader?.loadedImages?.()) reveal();
+      else wait = window.setTimeout(reveal, 2000);
+    };
+    attach();
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+      window.clearTimeout(wait);
+    };
+  }, [domReady, framesReady, clipLive]);
+
+  useEffect(() => {
+    if (!clipLive) return;
+    let inner = 0;
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setStillOn(false));
+    });
+    return () => {
+      cancelAnimationFrame(outer);
+      cancelAnimationFrame(inner);
+    };
+  }, [clipLive]);
+
+  useEffect(() => {
+    if (!firing || !clipLive || played.current) return;
+    played.current = true;
+    clip.current?.play();
+  }, [firing, clipLive]);
 
   return (
     <FleetPiece column={1} row={1} delayMs={BATTLESHIP_LEAD_MS}>
-      <div className={cn(UNIT, hover && "structs-ship-hover")}>
-        {firing ? (
-          <LottieClip
-            src="/lottie/structs/canon_downwards"
-            className="h-full w-full"
-            loop={false}
-            opacity={0.95}
-            onComplete={() => setHover(true)}
-          />
-        ) : (
+      <div
+        className={cn(UNIT, hover && "structs-ship-hover")}
+        data-battleship={stillOn ? (clipLive ? "handoff" : "still") : "cannon"}
+      >
+        <LottieClip
+          lottieRef={clip}
+          src={CANNON_SRC}
+          className="absolute inset-0 h-full w-full"
+          loop={false}
+          autoplay={false}
+          opacity={clipLive ? 0.95 : 0}
+          onReady={() => setDomReady(true)}
+          onComplete={() => setHover(true)}
+        />
+        {stillOn ? (
           <Image
             src={BATTLESHIP_STILL}
             alt=""
@@ -319,10 +402,10 @@ function FiringBattleship({ firing }: { firing: boolean }) {
             height={128}
             unoptimized
             draggable={false}
-            className="h-full w-full object-contain"
+            className="absolute inset-0 h-full w-full object-contain"
             style={{ opacity: 0.95 }}
           />
-        )}
+        ) : null}
       </div>
     </FleetPiece>
   );
