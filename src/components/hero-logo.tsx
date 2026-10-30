@@ -51,33 +51,9 @@ export function HeroLogo() {
         </p>
       )}
       <div className={cn("col-start-1 row-start-1 overflow-hidden", !arrived && "invisible")}>
-        <div className={cn("flex flex-col items-center gap-1 md:gap-2", draw && "logo-rise-in")}>
-          <Wordmark draw={draw} />
-          <span
-            aria-hidden
-            className="font-display text-6xl leading-none font-light text-white md:text-8xl"
-          >
-            ×
-          </span>
-          <a
-            href="https://www.playstructs.com/"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center"
-          >
-            <Image
-              src="/structs-wordmark.png"
-              alt="Structs"
-              width={304}
-              height={49}
-              priority
-              unoptimized
-              className="h-10 w-auto [image-rendering:pixelated] md:h-14"
-            />
-          </a>
-        </div>
+        <Wordmark draw={draw} />
+        <h1 className="sr-only">Slow Ninja</h1>
       </div>
-      <h1 className="sr-only">Slow Ninja × Structs</h1>
     </div>
   );
 }
@@ -85,7 +61,7 @@ export function HeroLogo() {
 /** Letters rise in from below. The two rules draw across as the rise finishes. */
 function Wordmark({ draw }: { draw: boolean }) {
   return (
-    <div className="relative h-24 w-32 md:h-[6.75rem] md:w-36">
+    <div className={cn("relative h-24 w-32 md:h-[6.75rem] md:w-36", draw && "logo-rise-in")}>
       <Slice part="letters" priority />
       <Slice part="top" draw={draw} />
       <Slice part="bottom" draw={draw} />
