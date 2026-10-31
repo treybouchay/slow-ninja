@@ -5,15 +5,16 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const BOOT_MS = 1600;
-const STORAGE_KEY = "slow-ninja-logo-option";
+const STORAGE_KEY = "slow-ninja-logo-animation";
 
 const OPTIONS = [
   { id: "rise", label: "Rise" },
-  { id: "still", label: "Still" },
-  { id: "word", label: "Word" },
+  { id: "pop", label: "Pop" },
+  { id: "draw", label: "Draw" },
 ] as const;
 
 type LogoOption = (typeof OPTIONS)[number]["id"];
+type DrawTiming = false | "late" | "soon";
 
 function isLogoOption(value: string | null): value is LogoOption {
   return OPTIONS.some((option) => option.id === value);
@@ -21,15 +22,12 @@ function isLogoOption(value: string | null): value is LogoOption {
 
 /** Block letters in the same pixel construction as the Slow Ninja wordmark. */
 const GLYPHS: Record<string, string[]> = {
-  s: [".###", "#...", ".##.", "...#", "###."],
   l: ["#...", "#...", "#...", "#...", "####"],
   o: [".##.", "#..#", "#..#", "#..#", ".##."],
-  w: ["#...#", "#...#", "#.#.#", "##.##", "#...#"],
   a: [".##.", "#..#", "####", "#..#", "#..#"],
   d: ["###.", "#..#", "#..#", "#..#", "###."],
   i: ["#", "#", "#", "#", "#"],
   n: ["#..#", "##.#", "#.##", "#..#", "#..#"],
-  j: ["..#", "..#", "..#", "#.#", ".#."],
   g: [".###", "#...", "#..#", "#..#", ".###"],
 };
 
@@ -57,7 +55,7 @@ export function HeroLogo() {
   return (
     <div className="flex flex-col items-center">
       <LogoStage key={option} option={option} />
-      <div role="tablist" aria-label="Slow Ninja logo options" className="mt-4 flex gap-2">
+      <div role="tablist" aria-label="Slow Ninja logo animations" className="mt-4 flex gap-2">
         {OPTIONS.map((choice) => {
           const selected = choice.id === option;
           return (
@@ -101,7 +99,14 @@ function LogoStage({ option }: { option: LogoOption }) {
   }, [option]);
 
   const arrived = phase === "logo";
-  const draw = option === "rise" && arrived && !reduce;
+  const motion = !reduce;
+  const draw: DrawTiming = !motion
+    ? false
+    : option === "rise" && arrived
+      ? "late"
+      : option === "draw"
+        ? "soon"
+        : false;
 
   return (
     <div className="relative grid min-h-24 place-items-center">
@@ -118,26 +123,46 @@ function LogoStage({ option }: { option: LogoOption }) {
           </span>
         </p>
       ) : null}
-      {option === "word" ? (
-        <p className={cn("text-white", !reduce && "logo-word-in")}>
-          <PixelWord text="slow ninja" compact />
-          <span className="sr-only">Slow Ninja</span>
-        </p>
-      ) : (
-        <div className={cn("col-start-1 row-start-1 overflow-hidden", option === "rise" && !arrived && "invisible")}>
-          <Wordmark draw={draw} rise={option === "rise" && arrived && !reduce} />
-          <h1 className="sr-only">Slow Ninja</h1>
-        </div>
-      )}
+      <div
+        className={cn(
+          "col-start-1 row-start-1",
+          option === "rise" && "overflow-hidden",
+          option === "rise" && !arrived && "invisible",
+        )}
+      >
+        <Wordmark
+          rise={option === "rise" && arrived && motion}
+          pop={option === "pop" && motion}
+          fadeLetters={option === "draw" && motion}
+          draw={draw}
+        />
+        <h1 className="sr-only">Slow Ninja</h1>
+      </div>
     </div>
   );
 }
 
-/** Letters rise in from below. The two rules draw across as the rise finishes. */
-function Wordmark({ draw, rise }: { draw: boolean; rise: boolean }) {
+/** The stacked Slow Ninja mark. Rise, pop, and draw only change how it arrives. */
+function Wordmark({
+  draw,
+  rise,
+  pop,
+  fadeLetters,
+}: {
+  draw: DrawTiming;
+  rise: boolean;
+  pop: boolean;
+  fadeLetters: boolean;
+}) {
   return (
-    <div className={cn("relative h-24 w-32 md:h-[6.75rem] md:w-36", rise && "logo-rise-in")}>
-      <Slice part="letters" priority />
+    <div
+      className={cn(
+        "relative h-24 w-32 md:h-[6.75rem] md:w-36",
+        rise && "logo-rise-in",
+        pop && "logo-arrive",
+      )}
+    >
+      <Slice part="letters" priority fade={fadeLetters} />
       <Slice part="top" draw={draw} />
       <Slice part="bottom" draw={draw} />
     </div>
@@ -147,10 +172,12 @@ function Wordmark({ draw, rise }: { draw: boolean; rise: boolean }) {
 function Slice({
   part,
   draw = false,
+  fade = false,
   priority = false,
 }: {
   part: "letters" | "top" | "bottom";
-  draw?: boolean;
+  draw?: DrawTiming;
+  fade?: boolean;
   priority?: boolean;
 }) {
   return (
@@ -166,18 +193,18 @@ function Slice({
         part === "letters" && "logo-slice-letters",
         part === "top" && "logo-slice-bar-top",
         part === "bottom" && "logo-slice-bar-bottom",
-        draw && part !== "letters" && "logo-line-draw",
+        fade && part === "letters" && "logo-word-in",
+        draw === "late" && part !== "letters" && "logo-line-draw",
+        draw === "soon" && part !== "letters" && "logo-line-draw-soon",
       )}
     />
   );
 }
 
-function PixelWord({ text, compact = false }: { text: string; compact?: boolean }) {
-  const cell = compact ? "size-1 md:size-1.5" : "size-1.5";
+function PixelWord({ text }: { text: string }) {
   return (
     <span className="inline-flex items-end gap-1.5 md:gap-2">
       {text.split("").map((letter, index) => {
-        if (letter === " ") return <span key={index} className="w-2 md:w-3" />;
         const rows = GLYPHS[letter] ?? [];
         return (
           <span key={`${letter}-${index}`} className="inline-flex flex-col gap-px">
@@ -186,7 +213,7 @@ function PixelWord({ text, compact = false }: { text: string; compact?: boolean 
                 {row.split("").map((pixel, x) => (
                   <span
                     key={x}
-                    className={cn(cell, pixel === "#" ? "bg-white" : "bg-transparent")}
+                    className={cn("size-1.5", pixel === "#" ? "bg-white" : "bg-transparent")}
                   />
                 ))}
               </span>
