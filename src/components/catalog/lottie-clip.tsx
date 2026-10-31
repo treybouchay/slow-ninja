@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
-import { Lottie } from "lottie-react";
+import { useEffect, useState, type CSSProperties, type Ref } from "react";
+import { Lottie, type LottieHandle } from "lottie-react";
 import { cn } from "@/lib/utils";
 
 type ClipProps = {
@@ -18,6 +18,10 @@ type ClipProps = {
   delayMs?: number;
   /** Fires when a non-looping clip finishes */
   onComplete?: () => void;
+  /** Fires once the clip has loaded. Frames may still be decoding. */
+  onReady?: () => void;
+  /** Playback handle. Pair with autoplay={false} to warm a clip before it plays. */
+  lottieRef?: Ref<LottieHandle>;
 };
 
 export function LottieClip({
@@ -30,6 +34,8 @@ export function LottieClip({
   opacity = 1,
   delayMs = 0,
   onComplete,
+  onReady,
+  lottieRef,
 }: ClipProps) {
   const base = src.replace(/\/$/, "");
   const [ready, setReady] = useState(delayMs <= 0);
@@ -57,6 +63,7 @@ export function LottieClip({
       aria-hidden
     >
       <Lottie
+        lottieRef={lottieRef}
         src={`${base}/data.json`}
         assetsPath={`${base}/images/`}
         loop={loop}
@@ -64,6 +71,9 @@ export function LottieClip({
         speed={speed}
         className="h-full w-full"
         subscriptions={{
+          ready: () => {
+            onReady?.();
+          },
           complete: () => {
             onComplete?.();
           },

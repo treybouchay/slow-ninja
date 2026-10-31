@@ -40,8 +40,8 @@ export const games: Game[] = [
   {
     slug: "structs",
     name: "Structs",
-    years: "2022–present",
-    era: "2022",
+    years: "2026–present",
+    era: "2026",
     tagline: "A 5X space strategy game",
     summary:
       "Command sentient machines racing for Alpha Matter across a decentralized Cosmos galaxy. Explore, extract, expand, exterminate, and exchange—then leave the world running for as long as players keep the chain alive.",

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import type { LottieHandle } from "lottie-react";
 import { createPortal } from "react-dom";
 import { CommandDialog } from "@/components/catalog/command-dialog";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
@@ -12,6 +13,8 @@ const FADE_MS = 900;
 const BATTLESHIP_LEAD_MS = 400;
 /** Shell travel after the cannon clip starts. */
 const IMPACT_AFTER_CANNON_MS = 450;
+/** destroy_air is 39 frames at 30fps. The bomber leaves a quarter of the way in. */
+const DESTROY_AIR_MS = 1300;
 /** The command line is up for three seconds and leaves before the next wave. */
 const DIALOG_MS = 3000;
 const DIALOG_OUT_MS = 600;
@@ -21,11 +24,6 @@ const STEP = {
   bomber: 1,
   cannon: 2,
   second: 4,
-  command: 5,
-  wingTop: 6,
-  wingMiddle: 7,
-  replacement: 8,
-  done: 9,
 } as const;
 
 /**
@@ -103,10 +101,11 @@ function makeStars(count: number, start: number) {
 /**
  * Structs atmosphere.
  * The firing battleship appears, then the bomber plays stealth. The cannon
- * fires, the impact lands, and destroy_air plays out. The bomber leaves when
- * that clip finishes. Reinforcements then arrive in order: the second
- * battleship, the command ship, the two spare bombers, and a new stealth
- * bomber in the empty slot. Each bomber hovers once its stealth clip settles.
+ * fires, the impact lands, and destroy_air plays out. The bomber leaves a
+ * quarter of the way through that clip. When the blast finishes, the command
+ * dialog plays. When that dialog has faded out, the second battleship, the
+ * command ship, the two spare bombers, and a new stealth bomber in the empty
+ * slot all arrive together. Each bomber hovers once its stealth clip settles.
  */
 export function StructsScene({ active }: { active: boolean }) {
   const [meteors, setMeteors] = useState(false);
@@ -162,35 +161,38 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
     setStep((current) => (current < STEP.second ? STEP.second : current));
   }, [openingDone, dialogDone]);
 
-  const advance = (next: number) => {
-    setStep((current) => (current < next ? next : current));
-  };
+  const arrived = step >= STEP.second;
+  const [settledBombers, setSettledBombers] = useState(0);
+  const reported = useRef(false);
+
+  useEffect(() => {
+    if (settledBombers < 3 || reported.current) return;
+    reported.current = true;
+    onSettled();
+  }, [settledBombers, onSettled]);
 
   return (
     <div className="absolute inset-0" data-fleet-step={step}>
-      <ReinforcementsDialog play={step >= STEP.cannon} onDone={setDialogDone} />
+      <ReinforcementsDialog play={openingDone} onDone={setDialogDone} />
 
       <div style={flankStyle("left")}>
         <FiringBattleship firing={step >= STEP.cannon} />
-        {step >= STEP.second ? <RestingBattleship onDone={() => advance(STEP.command)} /> : null}
-        {step >= STEP.command ? <CommandShip onDone={() => advance(STEP.wingTop)} /> : null}
+        {arrived ? <RestingBattleship /> : null}
+        {arrived ? <CommandShip /> : null}
       </div>
 
       <div style={flankStyle("right")}>
-        {step >= STEP.replacement ? (
-          <HoverBomber row={3} onDone={() => {
-            advance(STEP.done);
-            onSettled();
-          }} />
+        {arrived ? (
+          <HoverBomber row={3} onDone={() => setSettledBombers((count) => count + 1)} />
         ) : step >= STEP.bomber ? (
           <StruckBomber
             cannon={step >= STEP.cannon}
-            onStealthDone={() => advance(STEP.cannon)}
+            onStealthDone={() => setStep((current) => (current < STEP.cannon ? STEP.cannon : current))}
             onDestroyDone={() => setOpeningDone(true)}
           />
         ) : null}
-        {step >= STEP.wingTop ? <HoverBomber row={1} onDone={() => advance(STEP.wingMiddle)} /> : null}
-        {step >= STEP.wingMiddle ? <HoverBomber row={2} onDone={() => advance(STEP.replacement)} /> : null}
+        {arrived ? <HoverBomber row={1} onDone={() => setSettledBombers((count) => count + 1)} /> : null}
+        {arrived ? <HoverBomber row={2} onDone={() => setSettledBombers((count) => count + 1)} /> : null}
       </div>
     </div>
   );
@@ -294,23 +296,105 @@ function StructsSky({ meteors }: { meteors: boolean }) {
   );
 }
 
-const BATTLESHIP_STILL = "/lottie/structs/canon_downwards/images/img_0.png";
+const CANNON_SRC = "/lottie/structs/canon_downwards";
+const BATTLESHIP_STILL = `${CANNON_SRC}/images/img_0.png`;
+const CANNON_FRAMES = 12;
+
+type CannonItem = NonNullable<LottieHandle["animationItem"]> & {
+  imagePreloader?: { loadedImages?: () => boolean };
+};
 
 function FiringBattleship({ firing }: { firing: boolean }) {
   const [hover, setHover] = useState(false);
+  const [domReady, setDomReady] = useState(false);
+  const [framesReady, setFramesReady] = useState(false);
+  const [clipLive, setClipLive] = useState(false);
+  const [stillOn, setStillOn] = useState(true);
+  const clip = useRef<LottieHandle>(null);
+  const played = useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const pending = Array.from({ length: CANNON_FRAMES }, (_, index) => {
+      const img = new window.Image();
+      img.src = `${CANNON_SRC}/images/img_${index}.png`;
+      return img.decode().catch(() => undefined);
+    });
+    void Promise.all(pending).then(() => {
+      if (!cancelled) setFramesReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!domReady || !framesReady || clipLive) return;
+    let cancelled = false;
+    let wait = 0;
+    let unsubscribe = () => {};
+
+    const attach = () => {
+      const item = clip.current?.animationItem as CannonItem | null;
+      if (!item) {
+        wait = window.setTimeout(attach, 16);
+        return;
+      }
+      const reveal = () => {
+        if (cancelled) return;
+        cancelled = true;
+        unsubscribe();
+        window.clearTimeout(wait);
+        setClipLive(true);
+      };
+      unsubscribe = item.addEventListener("loaded_images", reveal);
+      if (item.imagePreloader?.loadedImages?.()) reveal();
+      else wait = window.setTimeout(reveal, 2000);
+    };
+    attach();
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+      window.clearTimeout(wait);
+    };
+  }, [domReady, framesReady, clipLive]);
+
+  useEffect(() => {
+    if (!clipLive) return;
+    let inner = 0;
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setStillOn(false));
+    });
+    return () => {
+      cancelAnimationFrame(outer);
+      cancelAnimationFrame(inner);
+    };
+  }, [clipLive]);
+
+  useEffect(() => {
+    if (!firing || !clipLive || played.current) return;
+    played.current = true;
+    clip.current?.play();
+  }, [firing, clipLive]);
 
   return (
     <FleetPiece column={1} row={1} delayMs={BATTLESHIP_LEAD_MS}>
-      <div className={cn(UNIT, hover && "structs-ship-hover")}>
-        {firing ? (
-          <LottieClip
-            src="/lottie/structs/canon_downwards"
-            className="h-full w-full"
-            loop={false}
-            opacity={0.95}
-            onComplete={() => setHover(true)}
-          />
-        ) : (
+      <div
+        className={cn(UNIT, hover && "structs-ship-hover")}
+        data-battleship={stillOn ? (clipLive ? "handoff" : "still") : "cannon"}
+      >
+        <LottieClip
+          lottieRef={clip}
+          src={CANNON_SRC}
+          className="absolute inset-0 h-full w-full"
+          loop={false}
+          autoplay={false}
+          opacity={clipLive ? 0.95 : 0}
+          onReady={() => setDomReady(true)}
+          onComplete={() => setHover(true)}
+        />
+        {stillOn ? (
           <Image
             src={BATTLESHIP_STILL}
             alt=""
@@ -318,24 +402,16 @@ function FiringBattleship({ firing }: { firing: boolean }) {
             height={128}
             unoptimized
             draggable={false}
-            className="h-full w-full object-contain"
+            className="absolute inset-0 h-full w-full object-contain"
             style={{ opacity: 0.95 }}
           />
-        )}
+        ) : null}
       </div>
     </FleetPiece>
   );
 }
 
-function RestingBattleship({ onDone }: { onDone: () => void }) {
-  const done = useRef(onDone);
-  done.current = onDone;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => done.current(), FADE_MS);
-    return () => window.clearTimeout(timer);
-  }, []);
-
+function RestingBattleship() {
   return (
     <FleetPiece column={1} row={2} delayMs={0}>
       <div className={cn(UNIT, "structs-ship-hover")}>
@@ -354,7 +430,7 @@ function RestingBattleship({ onDone }: { onDone: () => void }) {
   );
 }
 
-function CommandShip({ onDone }: { onDone: () => void }) {
+function CommandShip() {
   const [hover, setHover] = useState(false);
 
   return (
@@ -366,10 +442,7 @@ function CommandShip({ onDone }: { onDone: () => void }) {
           loop={false}
           opacity={0.92}
           speed={0.95}
-          onComplete={() => {
-            setHover(true);
-            onDone();
-          }}
+          onComplete={() => setHover(true)}
         />
       </div>
     </FleetPiece>
@@ -388,10 +461,16 @@ function StruckBomber({
   const [destroying, setDestroying] = useState(false);
   const [shipGone, setShipGone] = useState(false);
 
+  useEffect(() => {
+    if (!destroying) return;
+    const timer = window.setTimeout(() => setShipGone(true), DESTROY_AIR_MS / 4);
+    return () => window.clearTimeout(timer);
+  }, [destroying]);
+
   return (
     <FleetPiece column={1} row={3} delayMs={0} className="z-10" data-bomber={shipGone ? "gone" : "live"}>
-      <div className={UNIT} style={{ opacity: shipGone ? 0 : 1 }}>
-        <div className="h-full w-full" style={{ transform: "scaleX(-1)", opacity: 0.95 }}>
+      <div className={UNIT}>
+        <div className="h-full w-full" style={{ transform: "scaleX(-1)", opacity: shipGone ? 0 : 0.95 }}>
           <StealthCycle className="h-full w-full" once opacity={1} onSettled={onStealthDone} />
         </div>
         {cannon ? (
@@ -416,10 +495,7 @@ function StruckBomber({
               className="h-full w-full"
               loop={false}
               opacity={1}
-              onComplete={() => {
-                setShipGone(true);
-                onDestroyDone();
-              }}
+              onComplete={onDestroyDone}
             />
           </div>
         ) : null}
