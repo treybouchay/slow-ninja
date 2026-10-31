@@ -438,7 +438,6 @@ export function StarlaneView() {
                     sizes={`${Math.ceil(activeSize)}px`}
                     className={cn(
                       "pointer-events-none object-cover transition-all duration-500",
-                      game.slug === "structs" && "scale-[0.85]",
                       selected ? "grayscale-0" : "grayscale-[80%]",
                     )}
                     draggable={false}
