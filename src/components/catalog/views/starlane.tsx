@@ -144,7 +144,7 @@ export function StarlaneView() {
       if (name) {
         const title = name.getBoundingClientRect();
         if (title.height > 0) {
-          section.style.setProperty("--dialog-anchor", `${title.bottom - s.top - 12}px`);
+          section.style.setProperty("--dialog-anchor", `${title.top - s.top}px`);
         }
       }
     };
