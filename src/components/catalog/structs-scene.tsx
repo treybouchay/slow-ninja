@@ -12,8 +12,8 @@ const FADE_MS = 900;
 const BATTLESHIP_LEAD_MS = 400;
 /** Shell travel after the cannon clip starts. */
 const IMPACT_AFTER_CANNON_MS = 450;
-/** The command line pops in once the impact clip has finished. */
-const DIALOG_IN_MS = 600;
+/** Rise is 0.6s. If that animation never reports an end, the fleet still continues. */
+const DIALOG_IN_FALLBACK_MS = 800;
 /** The command line stays up for three seconds, then leaves. */
 const DIALOG_MS = 3000;
 const DIALOG_OUT_MS = 600;
@@ -100,8 +100,8 @@ function makeStars(count: number, start: number) {
  * Structs atmosphere.
  * The firing battleship appears, then the bomber plays stealth. The cannon
  * fires and the impact lands. When that impact clip finishes, the command
- * dialog pops up. Once the dialog is in, the struck bomber leaves and the
- * rest of the fleet arrives together: the second battleship, the command
+ * dialog pops up. After that entrance animation finishes, the struck bomber
+ * leaves and the rest of the fleet arrives together: the second battleship, the command
  * ship, and the two spare bombers. The bottom slot keeps the revealed bomber
  * and does not play stealth again.
  */
@@ -156,12 +156,6 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
     return () => window.clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    if (!impactDone) return;
-    const timer = window.setTimeout(() => setWave(true), DIALOG_IN_MS);
-    return () => window.clearTimeout(timer);
-  }, [impactDone]);
-
   const markBomber = (row: number) => {
     settledRows.current.add(row);
     if (settledRows.current.size < 3 || reported.current) return;
@@ -171,7 +165,7 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
 
   return (
     <div className="absolute inset-0" data-fleet-step={step} data-fleet-wave={wave ? "in" : "wait"}>
-      <ReinforcementsDialog play={impactDone} />
+      <ReinforcementsDialog play={impactDone} onShown={() => setWave(true)} />
 
       <div style={flankStyle("left")}>
         <FiringBattleship firing={step >= STEP.cannon} />
@@ -200,20 +194,32 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
   );
 }
 
-function ReinforcementsDialog({ play }: { play: boolean }) {
+function ReinforcementsDialog({ play, onShown }: { play: boolean; onShown: () => void }) {
   const [phase, setPhase] = useState<"wait" | "in" | "out">("wait");
   const [host, setHost] = useState<HTMLElement | null>(null);
+  const shown = useRef(onShown);
+  const fired = useRef(false);
+  shown.current = onShown;
 
   useEffect(() => {
     setHost(document.getElementById("games"));
   }, []);
 
+  const finishRise = () => {
+    if (fired.current) return;
+    fired.current = true;
+    shown.current();
+  };
+
   useEffect(() => {
     if (!play) return;
     setPhase("in");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const backup = window.setTimeout(finishRise, reduce ? 0 : DIALOG_IN_FALLBACK_MS);
     const out = window.setTimeout(() => setPhase("out"), DIALOG_MS - DIALOG_OUT_MS);
     const hide = window.setTimeout(() => setPhase("wait"), DIALOG_MS);
     return () => {
+      window.clearTimeout(backup);
       window.clearTimeout(out);
       window.clearTimeout(hide);
     };
@@ -229,6 +235,11 @@ function ReinforcementsDialog({ play }: { play: boolean }) {
       )}
       style={{ top: "var(--dialog-anchor, 720px)" }}
       role="status"
+      onAnimationEnd={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (event.animationName !== "command-dialog-rise") return;
+        finishRise();
+      }}
     >
       <CommandDialog message="Reinforcements have arrived" />
     </div>,
