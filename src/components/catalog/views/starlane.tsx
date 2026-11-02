@@ -464,7 +464,7 @@ export function StarlaneView() {
       <div className="relative z-10 mx-auto mt-2 w-full max-w-6xl px-4 md:px-6">
         <div
           className={cn(
-            "mx-auto w-full max-w-[340px]",
+            "mx-auto w-full max-w-[425px]",
             expanded ? "" : "hidden",
           )}
         >
