@@ -12,9 +12,7 @@ const FADE_MS = 900;
 const BATTLESHIP_LEAD_MS = 400;
 /** Shell travel after the cannon clip starts. */
 const IMPACT_AFTER_CANNON_MS = 450;
-/** Rise is 0.6s. If that animation never reports an end, the fleet still continues. */
-const DIALOG_IN_FALLBACK_MS = 800;
-/** The command line stays up for three seconds, then leaves. */
+/** The command line stays up for three seconds, then leaves. The fleet waits until it is gone. */
 const DIALOG_MS = 3000;
 const DIALOG_OUT_MS = 600;
 
@@ -100,7 +98,7 @@ function makeStars(count: number, start: number) {
  * Structs atmosphere.
  * The firing battleship appears, then the bomber plays stealth. The cannon
  * fires and the impact lands. When that impact clip finishes, the command
- * dialog pops up. After that entrance animation finishes, the struck bomber
+ * dialog pops up and plays out. After that dialog has left, the struck bomber
  * leaves and the rest of the fleet arrives together: the second battleship, the command
  * ship, and the two spare bombers. The bottom slot keeps the revealed bomber
  * and does not play stealth again.
@@ -205,7 +203,7 @@ function ReinforcementsDialog({ play, onShown }: { play: boolean; onShown: () =>
     setHost(document.getElementById("games"));
   }, []);
 
-  const finishRise = () => {
+  const finishDialog = () => {
     if (fired.current) return;
     fired.current = true;
     shown.current();
@@ -214,12 +212,12 @@ function ReinforcementsDialog({ play, onShown }: { play: boolean; onShown: () =>
   useEffect(() => {
     if (!play) return;
     setPhase("in");
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const backup = window.setTimeout(finishRise, reduce ? 0 : DIALOG_IN_FALLBACK_MS);
     const out = window.setTimeout(() => setPhase("out"), DIALOG_MS - DIALOG_OUT_MS);
-    const hide = window.setTimeout(() => setPhase("wait"), DIALOG_MS);
+    const hide = window.setTimeout(() => {
+      finishDialog();
+      setPhase("wait");
+    }, DIALOG_MS);
     return () => {
-      window.clearTimeout(backup);
       window.clearTimeout(out);
       window.clearTimeout(hide);
     };
@@ -237,8 +235,8 @@ function ReinforcementsDialog({ play, onShown }: { play: boolean; onShown: () =>
       role="status"
       onAnimationEnd={(event) => {
         if (event.target !== event.currentTarget) return;
-        if (event.animationName !== "command-dialog-rise") return;
-        finishRise();
+        if (event.animationName !== "command-dialog-leave") return;
+        finishDialog();
       }}
     >
       <CommandDialog message="Reinforcements have arrived" />
