@@ -326,6 +326,14 @@
     animation-fill-mode: both;
   }
 
+  .logo-line-draw-soon {
+    animation-name: logo-line-draw;
+    animation-duration: 0.7s;
+    animation-timing-function: steps(8, end);
+    animation-delay: 0.28s;
+    animation-fill-mode: both;
+  }
+
   .logo-slice-letters {
     -webkit-mask-image: linear-gradient(
       to bottom,
@@ -857,6 +865,7 @@
   .logo-loading-flash,
   .logo-rise-in,
   .logo-line-draw,
+  .logo-line-draw-soon,
   .dossier-spring,
   .marquee {
     animation: none !important;
