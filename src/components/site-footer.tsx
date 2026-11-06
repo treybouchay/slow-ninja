@@ -19,8 +19,11 @@ export function SiteFooter() {
               <Link href="/games" className="hover:text-[var(--lime)]">
                 Games
               </Link>
-              <Link href="/#studio" className="hover:text-[var(--lime)]">
-                Studio
+              <Link href="/#about" className="hover:text-[var(--lime)]">
+                About
+              </Link>
+              <Link href="/#contact" className="hover:text-[var(--lime)]">
+                Contact
               </Link>
               <Link href="/journal" className="hover:text-[var(--lime)]">
                 Journal

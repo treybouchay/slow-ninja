@@ -7,8 +7,9 @@ import { BrandLogo } from "@/components/brand-logo";
 import { cn } from "@/lib/utils";
 
 const links = [
+  { href: "/#about", label: "About" },
+  { href: "/#contact", label: "Contact" },
   { href: "/games", label: "Games" },
-  { href: "/#studio", label: "Studio" },
   { href: "/team", label: "Team" },
   { href: "/journal", label: "Journal" },
 ];
