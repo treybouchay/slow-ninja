@@ -57,18 +57,10 @@ export default async function HomePage() {
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/55 md:text-base">
               {structs.summary}
             </p>
-            <a
-              href={structs.href}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-bounce mt-8 inline-flex rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]"
-            >
-              Launch Structs
-            </a>
           </div>
           <div
             data-fleet-anchor
-            className="pointer-events-none order-1 h-[320px] w-full md:order-2 md:h-[460px]"
+            className="pointer-events-none order-1 h-[400px] w-full md:order-2 md:h-[460px]"
           />
         </div>
       </section>

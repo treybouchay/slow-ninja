@@ -40,6 +40,8 @@ export function StructsLottieStage() {
       root.style.setProperty("--dialog-x", `${cx}px`);
       root.style.setProperty("--dialog-anchor", `${(shipBottom + anchorBottom) / 2}px`);
       root.style.setProperty("--dialog-shift", "-50%");
+      root.style.setProperty("--fleet-launch-x", `${cx}px`);
+      root.style.setProperty("--fleet-launch-y", `${anchorBottom - 12}px`);
     };
     place();
     const observer = new ResizeObserver(place);
@@ -62,10 +64,10 @@ export function StructsLottieStage() {
           target="_blank"
           rel="noreferrer"
           data-fleet-launch
-          className="btn-bounce structs-fade-in pointer-events-auto absolute z-40 inline-flex -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]"
-          style={{ left: "var(--structs-cx)", top: "var(--structs-cy)" }}
+          className="btn-bounce structs-fade-in pointer-events-auto absolute z-40 inline-flex -translate-x-1/2 -translate-y-full rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]"
+          style={{ left: "var(--fleet-launch-x)", top: "var(--fleet-launch-y)" }}
         >
-          Launch Structs
+          Play Structs
         </a>
       ) : null}
     </div>
