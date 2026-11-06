@@ -25,11 +25,11 @@ const pixel = Press_Start_2P({
 
 export const metadata: Metadata = {
   title: {
-    default: "Slow Ninja — Building games for the sentient",
+    default: "Structs — A 5X space strategy game",
     template: "%s · Slow Ninja",
   },
   description:
-    "Slow Ninja makes skill-based games with serious systems and a playful streak—Structs, Coindroids, Schemaverse, and a technical journal.",
+    "Structs is Slow Ninja’s 5X space strategy game. Command sentient machines racing for Alpha Matter across a decentralized Cosmos galaxy.",
   metadataBase: new URL("https://slow.ninja"),
 };
 

@@ -1,8 +1,5 @@
 import Link from "next/link";
-import { GamesTimeline } from "@/components/games-timeline";
-import { HeroLogo } from "@/components/hero-logo";
-import { HeroField } from "@/components/hero-field";
-import { HeroParallax } from "@/components/hero-parallax";
+import { StarlaneView } from "@/components/catalog/views/starlane";
 import { journalPosts } from "@/lib/content";
 
 export default function HomePage() {
@@ -10,42 +7,7 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative isolate min-h-[min(88vh,860px)] overflow-hidden bg-[#070d16] px-4 pb-12 pt-8 md:px-6 md:pb-16 md:pt-10">
-        <HeroField />
-        <HeroParallax>
-          <div className="relative mx-auto flex min-h-[min(72vh,700px)] max-w-6xl flex-col items-center justify-center text-center">
-            <p className="pop-in font-mono-label mb-6 rounded-full border border-[var(--cyan)]/35 bg-black/30 px-4 py-2 text-[8px] leading-none tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
-              Sector 2014 · Toronto uplink
-            </p>
-            <HeroLogo />
-            <p className="pop-in-late mt-6 font-display text-[clamp(1.5rem,4.2vw,2.75rem)] font-extrabold tracking-tight text-[var(--lime)]">
-              Building games for the sentient
-            </p>
-            <p className="pop-in-late mx-auto mt-6 max-w-xl text-lg leading-relaxed text-white/75 md:text-xl">
-              Sci-fi playgrounds with serious systems—skill-based battles, SQL
-              fleets, and on-chain galaxies built for curious commanders.
-            </p>
-            <div className="pop-in-late mt-10 flex flex-wrap items-center justify-center gap-3">
-              <a
-                href="https://www.playstructs.com/"
-                target="_blank"
-                rel="noreferrer"
-                className="btn-bounce rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]"
-              >
-                Launch Structs
-              </a>
-              <a
-                href="#games"
-                className="btn-bounce rounded-full border-2 border-white/40 bg-white/10 px-6 py-3.5 text-sm font-bold text-white backdrop-blur hover:bg-white/20"
-              >
-                Explore universes
-              </a>
-            </div>
-          </div>
-        </HeroParallax>
-      </section>
-
-      <GamesTimeline />
+      <StarlaneView home />
 
       <section id="studio" className="scroll-mt-28 px-4 py-20 md:px-6 md:py-28">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border-2 border-[var(--ink)] bg-[var(--hull)] text-white shadow-[10px_10px_0_var(--lime)]">

@@ -36,11 +36,11 @@ function useIsMobile() {
   return mobile;
 }
 
-export function StarlaneView() {
+export function StarlaneView({ home = false }: { home?: boolean }) {
   const [active, setActive] = useState(featuredGameIndex);
   const [offset, setOffset] = useState(0);
   const [ready, setReady] = useState(false);
-  const [inView, setInView] = useState(false);
+  const [inView, setInView] = useState(home);
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const mobile = useIsMobile();
@@ -256,7 +256,10 @@ export function StarlaneView() {
     <section
       ref={sectionRef}
       id="games"
-      className="relative scroll-mt-28 overflow-hidden bg-[#070d16] py-16 md:py-28"
+      className={cn(
+        "relative scroll-mt-28 overflow-hidden bg-[#070d16]",
+        home ? "pt-2 pb-16 md:pt-4 md:pb-24" : "py-16 md:py-28",
+      )}
     >
       {ready ? (
         <div
@@ -289,23 +292,48 @@ export function StarlaneView() {
       />
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 md:px-6">
-        <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
-          Project timeline · starlane
-        </p>
-        <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
-          Explore our universes
-        </h2>
-        <p className="mt-3 max-w-xl text-white/60">
-          Use the dots above the focused world to travel the lane—each jump
-          opens its dossier under the circle.
-        </p>
-        <CatalogViewPicker />
+        {home ? (
+          <>
+            <p
+              className="font-mono-label text-[8px] tracking-widest uppercase md:text-[9px]"
+              style={{ color: current.accent }}
+            >
+              {current.status}
+            </p>
+            <h1 className="font-display mt-3 max-w-3xl text-4xl font-extrabold tracking-tight text-white md:text-6xl">
+              {current.tagline}
+            </h1>
+            <a
+              href={current.href}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-bounce mt-6 inline-flex rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]"
+            >
+              {current.slug === "structs" ? "Launch Structs" : `Open ${current.name}`}
+            </a>
+          </>
+        ) : (
+          <>
+            <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
+              Project timeline · starlane
+            </p>
+            <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
+              Explore our universes
+            </h2>
+            <p className="mt-3 max-w-xl text-white/60">
+              Use the dots above the focused world to travel the lane—each jump
+              opens its dossier under the circle.
+            </p>
+            <CatalogViewPicker />
+          </>
+        )}
       </div>
 
       <div
         ref={viewportRef}
         className={cn(
-          "relative z-20 mx-auto mt-8 w-full max-w-6xl overflow-hidden md:mt-12",
+          "relative z-20 mx-auto w-full max-w-6xl overflow-hidden",
+          home ? "mt-4 md:mt-6" : "mt-8 md:mt-12",
           mobile && "touch-pan-y",
         )}
         style={{ height: laneHeight }}
