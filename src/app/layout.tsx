@@ -40,6 +40,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${display.variable} ${body.variable} ${pixel.variable} h-full`}
     >
       <body className="font-body flex min-h-full flex-col">
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var m={gold:['#f3c15b','#e08a3c'],lilac:['#e4d4ff','#ff7a59']};var p=localStorage.getItem('slow-ninja-palette');if(m[p]){document.documentElement.dataset.palette=p;document.documentElement.style.setProperty('--lime',m[p][0]);document.documentElement.style.setProperty('--cyan',m[p][1])}}catch(e){}",
+          }}
+        />
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />

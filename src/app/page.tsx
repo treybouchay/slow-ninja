@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { StructsLottieStage } from "@/components/structs-lottie-stage";
 import { games } from "@/lib/content";
 import { getLatestStructsPost } from "@/lib/structs-blog";
 
@@ -20,8 +21,29 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="px-4 pt-10 pb-16 md:px-6 md:pt-16 md:pb-24">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[1.15fr_0.85fr]">
+      <section className="relative overflow-hidden bg-[#070d16] px-4 pt-10 pb-16 md:px-6 md:pt-16 md:pb-24">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <Image
+            src={structs.artwork}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="scale-110 object-cover opacity-40 blur-2xl saturate-125"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `
+                radial-gradient(ellipse 70% 55% at 72% 42%, color-mix(in oklab, ${structs.accent} 34%, transparent), transparent 70%),
+                radial-gradient(ellipse 45% 40% at 18% 80%, color-mix(in oklab, var(--cyan) 16%, transparent), transparent 65%),
+                linear-gradient(180deg, #070d1690 0%, #070d164d 46%, #070d16ee 100%)
+              `,
+            }}
+          />
+        </div>
+        <StructsLottieStage />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[1.15fr_0.85fr]">
           <div>
             <p className="font-mono-label text-[8px] tracking-widest text-[var(--violet)] uppercase md:text-[9px]">
               {structs.status}
@@ -43,59 +65,38 @@ export default async function HomePage() {
             >
               Launch Structs
             </a>
-            {latest ? (
-              <a
-                href={latest.href}
-                target="_blank"
-                rel="noreferrer"
-                className="group mt-4 flex max-w-xl items-center gap-4 rounded-2xl border border-white/15 bg-[#0a1220]/80 p-2 pr-4 text-left backdrop-blur transition hover:border-white/30"
-              >
-                {latest.image ? (
-                  <span className="relative size-24 shrink-0 overflow-hidden rounded-xl border border-white/10 md:size-28">
-                    <Image
-                      src={latest.image}
-                      alt=""
-                      fill
-                      sizes="112px"
-                      className="object-cover [image-rendering:pixelated]"
-                    />
-                  </span>
-                ) : null}
-                <span className="min-w-0">
-                  <span className="font-mono-label block text-[8px] tracking-widest text-white/45 uppercase">
-                    Latest from Structs
-                  </span>
-                  <span className="mt-1 block font-display text-base font-bold leading-snug text-white group-hover:text-[var(--lime)] md:text-lg">
-                    {latest.title}
-                  </span>
-                  {latest.date ? (
-                    <span className="mt-1 block text-xs text-white/45">
-                      {latest.date}
-                    </span>
-                  ) : null}
-                </span>
-              </a>
-            ) : null}
           </div>
-          <div className="flex justify-center">
-            <span
-              className="relative block size-64 overflow-hidden rounded-full border-4 bg-[#070d16] md:size-80"
-              style={{
-                borderColor: structs.accent,
-                boxShadow: `0 0 64px ${structs.accent}55`,
-              }}
-            >
-              <Image
-                src={structs.artwork}
-                alt=""
-                fill
-                priority
-                sizes="320px"
-                className="object-cover"
-              />
-            </span>
-          </div>
+          <div data-fleet-anchor className="h-[360px] w-full md:h-[460px]" />
         </div>
+        {latest ? (
+          <a
+            href={latest.href}
+            target="_blank"
+            rel="noreferrer"
+            className="group relative mx-auto mt-10 flex max-w-6xl flex-col gap-4 rounded-2xl border border-white/15 bg-[#070d16]/75 p-4 backdrop-blur transition hover:border-white/30 sm:flex-row sm:items-center sm:gap-6 sm:p-5"
+          >
+            {latest.image ? (
+              <span className="relative h-36 w-full shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-28 sm:w-44">
+                <Image
+                  src={latest.image}
+                  alt=""
+                  fill
+                  sizes="176px"
+                  className="object-cover [image-rendering:pixelated]"
+                />
+              </span>
+            ) : null}
+            <span className="min-w-0">
+              <span className="font-mono-label block text-[8px] tracking-widest text-white/45 uppercase">
+                Latest from Structs
+                {latest.date ? ` · ${latest.date}` : ""}
+              </span>
+              <span className="mt-2 block font-display text-2xl font-bold leading-tight text-white group-hover:text-[var(--lime)] md:text-3xl">
+                {latest.title}
+              </span>
+            </span>
+          </a>
+        ) : null}
       </section>
 
       <section id="about" className="scroll-mt-28 px-4 py-16 md:px-6 md:py-24">

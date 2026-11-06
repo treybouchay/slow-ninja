@@ -4,13 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
+import { PaletteSwitch } from "@/components/palette-switch";
 import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/#about", label: "About" },
   { href: "/#contact", label: "Contact" },
   { href: "/games", label: "Games" },
-  { href: "/team", label: "Team" },
   { href: "/journal", label: "Journal" },
 ];
 
@@ -78,6 +78,10 @@ export function SiteHeader() {
         </button>
       </div>
 
+      <div className="mx-auto mt-3 hidden max-w-6xl justify-end md:flex">
+        <PaletteSwitch />
+      </div>
+
       {open ? (
         <nav className="mx-auto mt-2 flex max-w-6xl flex-col gap-2 rounded-2xl border border-white/10 bg-[#070d16]/90 p-4 backdrop-blur-md md:hidden">
           {links.map((link) => (
@@ -98,6 +102,7 @@ export function SiteHeader() {
           >
             Launch Structs
           </a>
+          <PaletteSwitch />
         </nav>
       ) : null}
     </header>

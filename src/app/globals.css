@@ -97,6 +97,17 @@
   --sidebar-ring: var(--cyan);
 }
 
+/* Selectable pairs. --lime is the primary action color; --cyan is the secondary. */
+html[data-palette="gold"] {
+  --lime: #f3c15b;
+  --cyan: #e08a3c;
+}
+
+html[data-palette="lilac"] {
+  --lime: #e4d4ff;
+  --cyan: #ff7a59;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
