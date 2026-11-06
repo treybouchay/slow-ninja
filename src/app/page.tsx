@@ -65,38 +65,39 @@ export default async function HomePage() {
             >
               Launch Structs
             </a>
+            {latest ? (
+              <a
+                href={latest.href}
+                target="_blank"
+                rel="noreferrer"
+                className="group relative mt-8 block max-w-sm overflow-hidden rounded-2xl border border-white/15"
+              >
+                <span className="relative block h-48">
+                  {latest.image ? (
+                    <Image
+                      src={latest.image}
+                      alt=""
+                      fill
+                      sizes="384px"
+                      className="object-cover [image-rendering:pixelated] transition duration-500 group-hover:scale-105"
+                    />
+                  ) : null}
+                  <span className="absolute inset-0 bg-gradient-to-t from-[#070d16] via-[#070d16]/70 to-transparent" />
+                  <span className="absolute inset-x-0 bottom-0 p-4">
+                    <span className="font-mono-label block text-[8px] tracking-widest text-white/70 uppercase">
+                      Latest from Structs
+                      {latest.date ? ` · ${latest.date}` : ""}
+                    </span>
+                    <span className="mt-1 block font-display text-xl font-bold leading-tight text-white group-hover:text-[var(--lime)]">
+                      {latest.title}
+                    </span>
+                  </span>
+                </span>
+              </a>
+            ) : null}
           </div>
           <div data-fleet-anchor className="h-[360px] w-full md:h-[460px]" />
         </div>
-        {latest ? (
-          <a
-            href={latest.href}
-            target="_blank"
-            rel="noreferrer"
-            className="group relative mx-auto mt-10 flex max-w-6xl flex-col gap-4 rounded-2xl border border-white/15 bg-[#070d16]/75 p-4 backdrop-blur transition hover:border-white/30 sm:flex-row sm:items-center sm:gap-6 sm:p-5"
-          >
-            {latest.image ? (
-              <span className="relative h-36 w-full shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-28 sm:w-44">
-                <Image
-                  src={latest.image}
-                  alt=""
-                  fill
-                  sizes="176px"
-                  className="object-cover [image-rendering:pixelated]"
-                />
-              </span>
-            ) : null}
-            <span className="min-w-0">
-              <span className="font-mono-label block text-[8px] tracking-widest text-white/45 uppercase">
-                Latest from Structs
-                {latest.date ? ` · ${latest.date}` : ""}
-              </span>
-              <span className="mt-2 block font-display text-2xl font-bold leading-tight text-white group-hover:text-[var(--lime)] md:text-3xl">
-                {latest.title}
-              </span>
-            </span>
-          </a>
-        ) : null}
       </section>
 
       <section id="about" className="scroll-mt-28 px-4 py-16 md:px-6 md:py-24">

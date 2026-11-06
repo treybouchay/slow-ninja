@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
-import { PaletteSwitch } from "@/components/palette-switch";
+import { PaletteMenu, PaletteSwitch } from "@/components/palette-switch";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -58,11 +58,12 @@ export function SiteHeader() {
               </Link>
             );
           })}
+          <PaletteMenu />
           <a
             href="https://www.playstructs.com/"
             target="_blank"
             rel="noreferrer"
-            className="btn-bounce ml-2 rounded-full bg-[var(--lime)] px-4 py-2 text-sm font-bold text-[var(--ink)] shadow-[3px_3px_0_var(--cyan)]"
+            className="btn-bounce ml-1 rounded-full bg-[var(--lime)] px-4 py-2 text-sm font-bold text-[var(--ink)] shadow-[3px_3px_0_var(--cyan)]"
           >
             Launch Structs
           </a>
@@ -76,10 +77,6 @@ export function SiteHeader() {
         >
           {open ? "Close" : "Menu"}
         </button>
-      </div>
-
-      <div className="mx-auto mt-3 hidden max-w-6xl justify-end md:flex">
-        <PaletteSwitch />
       </div>
 
       {open ? (
