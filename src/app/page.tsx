@@ -21,7 +21,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-[#070d16] px-4 pt-10 pb-16 md:px-6 md:pt-16 md:pb-24">
+      <section className="relative overflow-hidden bg-[#070d16] px-4 pt-10 pb-16 md:flex md:min-h-[calc(100svh-4.5rem)] md:flex-col md:justify-center md:px-6 md:py-16">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <Image
             src={structs.artwork}
@@ -43,8 +43,8 @@ export default async function HomePage() {
           />
         </div>
         <StructsLottieStage />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[1.15fr_0.85fr]">
-          <div>
+        <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-12">
+          <div className="order-2 md:order-1">
             <p className="font-mono-label text-[8px] tracking-widest text-[var(--violet)] uppercase md:text-[9px]">
               {structs.status}
             </p>
@@ -65,40 +65,46 @@ export default async function HomePage() {
             >
               Launch Structs
             </a>
-            {latest ? (
-              <a
-                href={latest.href}
-                target="_blank"
-                rel="noreferrer"
-                className="group relative mt-8 block max-w-sm overflow-hidden rounded-2xl border border-white/15"
-              >
-                <span className="relative block h-48">
-                  {latest.image ? (
-                    <Image
-                      src={latest.image}
-                      alt=""
-                      fill
-                      sizes="384px"
-                      className="object-cover [image-rendering:pixelated] transition duration-500 group-hover:scale-105"
-                    />
-                  ) : null}
-                  <span className="absolute inset-0 bg-gradient-to-t from-[#070d16] via-[#070d16]/70 to-transparent" />
-                  <span className="absolute inset-x-0 bottom-0 p-4">
-                    <span className="font-mono-label block text-[8px] tracking-widest text-white/70 uppercase">
-                      Latest from Structs
-                      {latest.date ? ` · ${latest.date}` : ""}
-                    </span>
-                    <span className="mt-1 block font-display text-xl font-bold leading-tight text-white group-hover:text-[var(--lime)]">
-                      {latest.title}
-                    </span>
-                  </span>
-                </span>
-              </a>
-            ) : null}
           </div>
-          <div data-fleet-anchor className="h-[360px] w-full md:h-[460px]" />
+          <div
+            data-fleet-anchor
+            className="order-1 h-[320px] w-full md:order-2 md:h-[460px]"
+          />
         </div>
       </section>
+      {latest ? (
+        <div className="bg-[#070d16] px-4 pt-2 pb-6 md:px-6 md:pt-10 md:pb-4">
+          <div className="mx-auto max-w-6xl">
+            <a
+              href={latest.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group relative block w-48 overflow-hidden rounded-xl border border-white/15"
+            >
+              <span className="relative block h-24">
+                {latest.image ? (
+                  <Image
+                    src={latest.image}
+                    alt=""
+                    fill
+                    sizes="192px"
+                    className="object-cover [image-rendering:pixelated]"
+                  />
+                ) : null}
+                <span className="absolute inset-0 bg-gradient-to-t from-[#070d16] via-[#070d16]/75 to-transparent" />
+                <span className="absolute inset-x-0 bottom-0 p-2">
+                  <span className="block text-[9px] text-white/60">
+                    {latest.date || "Latest"}
+                  </span>
+                  <span className="mt-0.5 line-clamp-2 block font-display text-xs font-bold leading-tight text-white group-hover:text-[var(--lime)]">
+                    {latest.title}
+                  </span>
+                </span>
+              </span>
+            </a>
+          </div>
+        </div>
+      ) : null}
 
       <section id="about" className="scroll-mt-28 px-4 py-16 md:px-6 md:py-24">
         <div className="mx-auto max-w-6xl">
