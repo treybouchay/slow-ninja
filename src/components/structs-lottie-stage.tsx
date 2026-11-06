@@ -1,7 +1,10 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { StructsScene } from "@/components/catalog/structs-scene";
+import { games } from "@/lib/content";
+
+const structsHref = games.find((game) => game.slug === "structs")?.href ?? "https://www.playstructs.com/";
 
 /**
  * Planet-constellation fleet, on the same full-bleed sky as the original page.
@@ -10,6 +13,7 @@ import { StructsScene } from "@/components/catalog/structs-scene";
  */
 export function StructsLottieStage() {
   const ref = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
 
   useLayoutEffect(() => {
     const root = ref.current;
@@ -51,7 +55,19 @@ export function StructsLottieStage() {
       id="games"
       className="pointer-events-none absolute inset-0"
     >
-      <StructsScene active />
+      <StructsScene active onSettled={() => setReady(true)} />
+      {ready ? (
+        <a
+          href={structsHref}
+          target="_blank"
+          rel="noreferrer"
+          data-fleet-launch
+          className="btn-bounce structs-fade-in pointer-events-auto absolute z-40 inline-flex -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]"
+          style={{ left: "var(--structs-cx)", top: "var(--structs-cy)" }}
+        >
+          Launch Structs
+        </a>
+      ) : null}
     </div>
   );
 }

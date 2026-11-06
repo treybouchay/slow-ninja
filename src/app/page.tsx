@@ -68,7 +68,7 @@ export default async function HomePage() {
           </div>
           <div
             data-fleet-anchor
-            className="order-1 h-[320px] w-full md:order-2 md:h-[460px]"
+            className="pointer-events-none order-1 h-[320px] w-full md:order-2 md:h-[460px]"
           />
         </div>
       </section>

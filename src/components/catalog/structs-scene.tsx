@@ -112,7 +112,14 @@ function makeStars(count: number, start: number) {
  * ship, and the two spare bombers. The bottom slot keeps the revealed bomber
  * and does not play stealth again.
  */
-export function StructsScene({ active }: { active: boolean }) {
+export function StructsScene({
+  active,
+  onSettled,
+}: {
+  active: boolean;
+  /** Fires once the reinforcement clips have finished and the fleet is holding. */
+  onSettled?: () => void;
+}) {
   const [meteors, setMeteors] = useState(false);
   const [wasActive, setWasActive] = useState(active);
 
@@ -143,7 +150,12 @@ export function StructsScene({ active }: { active: boolean }) {
               }}
             />
             <StructsSky meteors={meteors} />
-            <StructsFleet onSettled={() => setMeteors(true)} />
+            <StructsFleet
+              onSettled={() => {
+                setMeteors(true);
+                onSettled?.();
+              }}
+            />
           </>
         ) : null}
       </div>
