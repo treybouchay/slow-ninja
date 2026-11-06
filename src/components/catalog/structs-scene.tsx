@@ -29,13 +29,17 @@ const STEP = {
  */
 const UNIT = "relative h-full w-full";
 
-/** Ship is 0.81 of the circle radius, matching the phone column beside a 148px circle. */
-const SHIP = "calc(var(--structs-r, 74px) * 0.81)";
+/**
+ * Ship is 0.81 of the circle radius, matching the phone column beside a 148px circle.
+ * The homepage overrides --structs-ship and the flank edges so the columns can sit
+ * closer once the planet circle is gone.
+ */
+const SHIP = "var(--structs-ship, calc(var(--structs-r, 74px) * 0.81))";
 
 function flankStyle(side: "left" | "right"): CSSProperties {
   return {
     position: "absolute",
-    top: "calc(var(--structs-cy, 596px) - var(--structs-r, 74px) * 1.215)",
+    top: "var(--structs-col-top, calc(var(--structs-cy, 596px) - var(--structs-r, 74px) * 1.215))",
     width: SHIP,
     height: `calc(${SHIP} * 3)`,
     display: "grid",
@@ -43,8 +47,13 @@ function flankStyle(side: "left" | "right"): CSSProperties {
     gridTemplateRows: `repeat(3, ${SHIP})`,
     pointerEvents: "none",
     ...(side === "left"
-      ? { right: "calc(100% - (var(--structs-cx, 50%) - var(--structs-r, 74px) * 1.16))" }
-      : { left: "calc(var(--structs-cx, 50%) + var(--structs-r, 74px) * 1.16)" }),
+      ? {
+          right:
+            "var(--structs-left, calc(100% - (var(--structs-cx, 50%) - var(--structs-r, 74px) * 1.16)))",
+        }
+      : {
+          left: "var(--structs-right, calc(var(--structs-cx, 50%) + var(--structs-r, 74px) * 1.16))",
+        }),
   };
 }
 
@@ -228,10 +237,14 @@ function ReinforcementsDialog({ play, onShown }: { play: boolean; onShown: () =>
   return createPortal(
     <div
       className={cn(
-        "pointer-events-none absolute left-1/2 z-30 w-[315px] max-w-[calc(100%-2rem)]",
+        "pointer-events-none absolute z-30 w-[315px] max-w-[calc(100%-2rem)]",
         phase === "out" ? "command-dialog-out" : "command-dialog-rise",
       )}
-      style={{ top: "var(--dialog-anchor, 720px)" }}
+      style={{
+        top: "var(--dialog-anchor, 720px)",
+        left: "var(--dialog-x, 50%)",
+        transform: "translateY(var(--dialog-shift, 0px))",
+      }}
       role="status"
       onAnimationEnd={(event) => {
         if (event.target !== event.currentTarget) return;

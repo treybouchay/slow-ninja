@@ -108,6 +108,26 @@ html[data-palette="lilac"] {
   --cyan: #ff7a59;
 }
 
+html[data-palette="mint"] {
+  --lime: #9af0c8;
+  --cyan: #1aa58a;
+}
+
+html[data-palette="sky"] {
+  --lime: #c5e4ff;
+  --cyan: #3d7dff;
+}
+
+html[data-palette="rose"] {
+  --lime: #ffc0d4;
+  --cyan: #ff4d7a;
+}
+
+html[data-palette="ember"] {
+  --lime: #ffc48c;
+  --cyan: #ff5a36;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

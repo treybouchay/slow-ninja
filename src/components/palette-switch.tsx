@@ -1,30 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PALETTES, type PaletteId } from "@/lib/palettes";
 import { cn } from "@/lib/utils";
 
-export const PALETTES = [
-  {
-    id: "signal",
-    label: "Signal",
-    primary: "#c8f542",
-    secondary: "#4de2e8",
-  },
-  {
-    id: "gold",
-    label: "Gold",
-    primary: "#f3c15b",
-    secondary: "#e08a3c",
-  },
-  {
-    id: "lilac",
-    label: "Lilac",
-    primary: "#e4d4ff",
-    secondary: "#ff7a59",
-  },
-] as const;
-
-export type PaletteId = (typeof PALETTES)[number]["id"];
+export { PALETTES, type PaletteId };
 
 const STORAGE_KEY = "slow-ninja-palette";
 
