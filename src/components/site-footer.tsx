@@ -16,7 +16,7 @@ export function SiteFooter() {
           </div>
           <div className="grid grid-cols-2 gap-6 text-sm font-semibold">
             <div className="flex flex-col gap-3">
-              <Link href="/#games" className="hover:text-[var(--lime)]">
+              <Link href="/games" className="hover:text-[var(--lime)]">
                 Games
               </Link>
               <Link href="/#studio" className="hover:text-[var(--lime)]">

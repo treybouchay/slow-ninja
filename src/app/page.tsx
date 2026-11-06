@@ -1,13 +1,18 @@
 import Link from "next/link";
-import { StarlaneView } from "@/components/catalog/views/starlane";
+import { StructsHome } from "@/components/structs-home";
 import { journalPosts } from "@/lib/content";
 
 export default function HomePage() {
-  const posts = journalPosts.slice(0, 3);
+  const posts = journalPosts.filter(
+    (post) =>
+      post.tags.includes("structs") &&
+      !post.tags.includes("coindroids") &&
+      !post.tags.includes("schemaverse"),
+  );
 
   return (
     <>
-      <StarlaneView home />
+      <StructsHome />
 
       <section id="studio" className="scroll-mt-28 px-4 py-20 md:px-6 md:py-28">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border-2 border-[var(--ink)] bg-[var(--hull)] text-white shadow-[10px_10px_0_var(--lime)]">
