@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { StructsLottieStage } from "@/components/structs-lottie-stage";
 import { games } from "@/lib/content";
-import { getLatestStructsPost } from "@/lib/structs-blog";
+import { getStructsPosts } from "@/lib/structs-blog";
 
 const structs = games.find((game) => game.slug === "structs")!;
 
@@ -17,7 +17,7 @@ const pastBrief: Record<string, string> = {
 };
 
 export default async function HomePage() {
-  const latest = await getLatestStructsPost();
+  const posts = await getStructsPosts();
 
   return (
     <>
@@ -63,35 +63,38 @@ export default async function HomePage() {
             className="pointer-events-none h-[400px] w-full md:h-[460px]"
           />
         </div>
-        {latest ? (
-          <div className="relative mx-auto mt-8 w-full max-w-6xl translate-y-[10vh] md:mt-10">
-            <a
-              href={latest.href}
-              target="_blank"
-              rel="noreferrer"
-              className="group relative block w-36 overflow-hidden rounded-lg border border-white/15"
-            >
-              <span className="relative block h-[4.5rem]">
-                {latest.image ? (
-                  <Image
-                    src={latest.image}
-                    alt=""
-                    fill
-                    sizes="144px"
-                    className="object-cover [image-rendering:pixelated]"
-                  />
-                ) : null}
-                <span className="absolute inset-0 bg-gradient-to-t from-[#070d16]/90 via-[#070d16]/45 to-transparent" />
-                <span className="absolute inset-x-0 bottom-0 p-1.5">
-                  <span className="block text-[8px] text-white/60">
-                    {latest.date || "Latest"}
-                  </span>
-                  <span className="mt-0.5 line-clamp-2 block font-display text-[11px] font-bold leading-tight text-white group-hover:text-[var(--lime)]">
-                    {latest.title}
+        {posts.length ? (
+          <div className="relative mx-auto mt-8 flex w-full max-w-6xl translate-y-[10vh] flex-wrap gap-3 md:mt-10">
+            {posts.map((post) => (
+              <a
+                key={post.href}
+                href={post.href}
+                target="_blank"
+                rel="noreferrer"
+                className="group relative block w-36 overflow-hidden rounded-lg border border-white/15"
+              >
+                <span className="relative block h-[4.5rem]">
+                  {post.image ? (
+                    <Image
+                      src={post.image}
+                      alt=""
+                      fill
+                      sizes="144px"
+                      className="object-cover [image-rendering:pixelated]"
+                    />
+                  ) : null}
+                  <span className="absolute inset-0 bg-gradient-to-t from-[#070d16]/90 via-[#070d16]/45 to-transparent" />
+                  <span className="absolute inset-x-0 bottom-0 p-1.5">
+                    <span className="block text-[8px] text-white/60">
+                      {post.date || "Latest"}
+                    </span>
+                    <span className="mt-0.5 line-clamp-2 block font-display text-[11px] font-bold leading-tight text-white group-hover:text-[var(--lime)]">
+                      {post.title}
+                    </span>
                   </span>
                 </span>
-              </span>
-            </a>
+              </a>
+            ))}
           </div>
         ) : null}
       </section>
