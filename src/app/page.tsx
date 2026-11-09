@@ -63,40 +63,38 @@ export default async function HomePage() {
             className="pointer-events-none h-[400px] w-full md:h-[460px]"
           />
         </div>
-      </section>
-      {latest ? (
-        <div className="bg-[#070d16] px-4 pt-2 pb-6 md:px-6 md:pt-10 md:pb-4">
-          <div className="mx-auto max-w-6xl">
+        {latest ? (
+          <div className="relative mx-auto mt-8 w-full max-w-6xl md:mt-10">
             <a
               href={latest.href}
               target="_blank"
               rel="noreferrer"
-              className="group relative block w-48 overflow-hidden rounded-xl border border-white/15"
+              className="group relative block w-36 overflow-hidden rounded-lg border border-white/15"
             >
-              <span className="relative block h-24">
+              <span className="relative block h-[4.5rem]">
                 {latest.image ? (
                   <Image
                     src={latest.image}
                     alt=""
                     fill
-                    sizes="192px"
+                    sizes="144px"
                     className="object-cover [image-rendering:pixelated]"
                   />
                 ) : null}
-                <span className="absolute inset-0 bg-gradient-to-t from-[#070d16] via-[#070d16]/75 to-transparent" />
-                <span className="absolute inset-x-0 bottom-0 p-2">
-                  <span className="block text-[9px] text-white/60">
+                <span className="absolute inset-0 bg-gradient-to-t from-[#070d16]/90 via-[#070d16]/45 to-transparent" />
+                <span className="absolute inset-x-0 bottom-0 p-1.5">
+                  <span className="block text-[8px] text-white/60">
                     {latest.date || "Latest"}
                   </span>
-                  <span className="mt-0.5 line-clamp-2 block font-display text-xs font-bold leading-tight text-white group-hover:text-[var(--lime)]">
+                  <span className="mt-0.5 line-clamp-2 block font-display text-[11px] font-bold leading-tight text-white group-hover:text-[var(--lime)]">
                     {latest.title}
                   </span>
                 </span>
               </span>
             </a>
           </div>
-        </div>
-      ) : null}
+        ) : null}
+      </section>
 
       <section id="about" className="scroll-mt-28 px-4 py-16 md:px-6 md:py-24">
         <div className="mx-auto max-w-6xl">
