@@ -7,14 +7,18 @@ import { CommandDialog } from "@/components/catalog/command-dialog";
 import { LottieClip, StealthCycle } from "@/components/catalog/lottie-clip";
 import { cn } from "@/lib/utils";
 
+/** Playback rate for every Structs fleet clip and the beats timed to those clips. */
+const FLEET_RATE = 1.3;
+const atFleetRate = (ms: number) => Math.round(ms / FLEET_RATE);
+
 /** Matches the fleet fade, so the next ship starts once this one is on screen. */
-const FADE_MS = 900;
-const BATTLESHIP_LEAD_MS = 400;
+const FADE_MS = atFleetRate(900);
+const BATTLESHIP_LEAD_MS = atFleetRate(400);
 /** Shell travel after the cannon clip starts. */
-const IMPACT_AFTER_CANNON_MS = 450;
-/** The command line stays up for three seconds, then leaves. The fleet waits until it is gone. */
-const DIALOG_MS = 3000;
-const DIALOG_OUT_MS = 600;
+const IMPACT_AFTER_CANNON_MS = atFleetRate(450);
+/** The command line stays up, then leaves. The fleet waits until it is gone. */
+const DIALOG_MS = atFleetRate(3000);
+const DIALOG_OUT_MS = atFleetRate(600);
 
 const STEP = {
   battleship: 0,
@@ -343,6 +347,7 @@ function FiringBattleship({ firing }: { firing: boolean }) {
             className="h-full w-full"
             loop={false}
             opacity={0.95}
+            speed={FLEET_RATE}
             onComplete={() => setHover(true)}
           />
         ) : (
@@ -392,7 +397,7 @@ function CommandShip() {
           className="h-full w-full"
           loop={false}
           opacity={0.92}
-          speed={0.95}
+          speed={0.95 * FLEET_RATE}
           onComplete={() => setHover(true)}
         />
       </div>
@@ -415,7 +420,13 @@ function StruckBomber({
     <FleetPiece column={1} row={3} delayMs={0} className="z-10" data-bomber="live">
       <div className={UNIT}>
         <div className="h-full w-full" style={{ transform: "scaleX(-1)", opacity: 0.95 }}>
-          <StealthCycle className="h-full w-full" once opacity={1} onSettled={onStealthDone} />
+          <StealthCycle
+            className="h-full w-full"
+            once
+            opacity={1}
+            speed={FLEET_RATE}
+            onSettled={onStealthDone}
+          />
         </div>
         {cannon ? (
           <div className="absolute -top-[18%] -left-[12%] h-[140%] w-[140%]" data-impact="live">
@@ -424,6 +435,7 @@ function StruckBomber({
               className="h-full w-full"
               loop={false}
               opacity={1}
+              speed={FLEET_RATE}
               delayMs={IMPACT_AFTER_CANNON_MS}
               onComplete={() => {
                 if (impactReported.current) return;
@@ -468,6 +480,7 @@ function HoverBomber({
               className="h-full w-full"
               once
               opacity={0.95}
+              speed={FLEET_RATE}
               onSettled={() => {
                 setHover(true);
                 onDone();

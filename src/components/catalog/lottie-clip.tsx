@@ -83,6 +83,7 @@ export function StealthCycle({
   opacity = 1,
   delayMs = 0,
   once = false,
+  speed = 1,
   onSettled,
 }: {
   className?: string;
@@ -92,6 +93,8 @@ export function StealthCycle({
   delayMs?: number;
   /** Play activate → deactivate a single time, then hold the last frame */
   once?: boolean;
+  /** Playback rate for both cloak clips */
+  speed?: number;
   /** Fires when a one-shot cycle is holding its last frame */
   onSettled?: () => void;
 }) {
@@ -110,9 +113,9 @@ export function StealthCycle({
     const t = window.setTimeout(() => {
       setPhase((p) => (p === "activate" ? "deactivate" : "activate"));
       setTick((n) => n + 1);
-    }, 2200);
+    }, 2200 / speed);
     return () => window.clearTimeout(t);
-  }, [phase, tick, ready, once]);
+  }, [phase, tick, ready, once, speed]);
 
   if (!ready) {
     return (
@@ -136,6 +139,7 @@ export function StealthCycle({
         loop={false}
         className="absolute inset-0"
         opacity={1}
+        speed={speed}
         onComplete={() => {
           if (!once) return;
           if (phase === "activate") {
