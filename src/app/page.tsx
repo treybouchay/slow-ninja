@@ -44,7 +44,7 @@ export default async function HomePage() {
         </div>
         <StructsLottieStage />
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-12">
-          <div className="order-2 md:order-1">
+          <div>
             <p className="font-mono-label text-[8px] tracking-widest text-[var(--violet)] uppercase md:text-[9px]">
               {structs.status}
             </p>
@@ -60,7 +60,7 @@ export default async function HomePage() {
           </div>
           <div
             data-fleet-anchor
-            className="pointer-events-none order-1 h-[400px] w-full md:order-2 md:h-[460px]"
+            className="pointer-events-none h-[400px] w-full md:h-[460px]"
           />
         </div>
       </section>
