@@ -342,7 +342,7 @@ html[data-palette="ember"] {
   }
 
   .logo-loading-flash {
-    animation: logo-retro-flash 0.32s linear infinite;
+    animation: logo-retro-flash 0.96s linear infinite;
   }
 
   .logo-rise-in {
