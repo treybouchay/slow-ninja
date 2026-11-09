@@ -64,7 +64,7 @@ export default async function HomePage() {
           />
         </div>
         {latest ? (
-          <div className="relative mx-auto mt-8 w-full max-w-6xl md:mt-10">
+          <div className="relative mx-auto mt-8 w-full max-w-6xl translate-y-[10vh] md:mt-10">
             <a
               href={latest.href}
               target="_blank"
