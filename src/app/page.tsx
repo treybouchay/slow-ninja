@@ -21,7 +21,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-[#070d16] px-4 pt-10 pb-[calc(4rem+10vh)] md:flex md:min-h-[calc(100svh-4.5rem)] md:flex-col md:justify-center md:px-6 md:pt-16 md:pb-16">
+      <section className="relative overflow-hidden bg-[#070d16] px-4 pt-10 pb-[calc(4rem+10vh)] md:flex md:min-h-[calc(100svh-4.5rem)] md:flex-col md:justify-start md:px-6 md:pt-[124px] md:pb-[calc(4rem+10vh)]">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <Image
             src={structs.artwork}
