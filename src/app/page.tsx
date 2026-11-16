@@ -71,25 +71,25 @@ export default async function HomePage() {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="group relative block w-40 shrink-0 overflow-hidden rounded-lg border border-white/15 bg-[#0a1220]/85 transition-transform duration-300 ease-out hover:z-10 hover:scale-110 hover:border-white/35"
+                className="group relative block w-36 shrink-0 overflow-hidden rounded-lg border border-white/15 bg-[#0a1220]/85 transition-transform duration-300 ease-out hover:z-10 hover:scale-105 hover:border-white/35"
               >
-                <span className="relative block h-24">
+                <span className="relative block h-[4.5rem]">
                   {post.image ? (
                     <Image
                       src={post.image}
                       alt=""
                       fill
-                      sizes="160px"
+                      sizes="144px"
                       className="object-cover [image-rendering:pixelated]"
                     />
                   ) : null}
-                  <span className="absolute inset-0 bg-gradient-to-t from-[#070d16] via-[#070d16]/50 to-transparent" />
+                  <span className="absolute inset-0 bg-gradient-to-t from-[#070d16] via-[#070d16]/55 to-transparent" />
                 </span>
-                <span className="flex h-[4.25rem] flex-col justify-between gap-1 px-2.5 pt-1.5 pb-2">
-                  <span className="font-mono-label block truncate text-[9px] tracking-[0.14em] text-[var(--lime)] uppercase">
+                <span className="flex h-[3.6rem] flex-col justify-between gap-0.5 px-1.5 pt-1 pb-1.5">
+                  <span className="font-mono-label block truncate text-[8px] tracking-[0.14em] text-[var(--lime)] uppercase">
                     {post.date || "Latest"}
                   </span>
-                  <span className="line-clamp-2 min-h-[2.2em] font-display text-[12px] font-bold leading-snug text-white group-hover:text-[var(--lime)]">
+                  <span className="line-clamp-2 min-h-[2em] font-display text-[11px] font-bold leading-tight text-white group-hover:text-[var(--lime)]">
                     {post.title}
                   </span>
                 </span>
