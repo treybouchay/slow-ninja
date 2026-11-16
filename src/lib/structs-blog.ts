@@ -8,6 +8,21 @@ export type StructsPost = {
 
 const SITE = "https://www.playstructs.com/";
 
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+] as const;
+
 function decode(text: string) {
   return text
     .replace(/<[^>]+>/g, "")
@@ -16,6 +31,34 @@ function decode(text: string) {
     .replace(/&amp;/g, "&")
     .replace(/&nbsp;/g, " ")
     .trim();
+}
+
+/** Normalize scraped dates to a short, fixed-width style: "27 Oct 2026". */
+export function formatPostDate(raw: string): string {
+  const text = raw.trim();
+  if (!text) return "";
+
+  // Prefer the leading calendar date when a range is present.
+  const leading = text.match(
+    /^([A-Za-z]+)\s+(\d{1,2})(?:,)?\s+(\d{4})/,
+  );
+  if (leading) {
+    const [, monthName, day, year] = leading;
+    const monthIndex = MONTHS.findIndex(
+      (m) => monthName.toLowerCase().startsWith(m.toLowerCase()),
+    );
+    if (monthIndex >= 0) {
+      return `${Number(day)} ${MONTHS[monthIndex]} ${year}`;
+    }
+  }
+
+  const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) {
+    const [, year, month, day] = iso;
+    return `${Number(day)} ${MONTHS[Number(month) - 1]} ${year}`;
+  }
+
+  return text;
 }
 
 function readPost(item: string): StructsPost | null {
@@ -35,7 +78,7 @@ function readPost(item: string): StructsPost | null {
     title: decode(title),
     href: new URL(href, SITE).toString(),
     image: image ?? "",
-    date: date ? decode(date) : "",
+    date: date ? formatPostDate(decode(date)) : "",
     summary: summary ? decode(summary) : "",
   };
 }

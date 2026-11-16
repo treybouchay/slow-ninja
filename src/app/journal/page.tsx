@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { journalPosts } from "@/lib/content";
+import { formatPostDate } from "@/lib/structs-blog";
 
 export const metadata: Metadata = {
   title: "Journal",
@@ -28,15 +29,15 @@ export default function JournalPage() {
           <li key={post.slug}>
             <Link
               href={`/journal/${post.slug}`}
-              className={`tilt-hover block h-full rounded-[1.75rem] border-2 border-[var(--ink)] p-6 shadow-[6px_6px_0_var(--ink)] md:p-8 ${accents[i % accents.length]}`}
+              className={`tilt-hover block h-full rounded-[1.75rem] border-2 border-[var(--ink)] p-6 shadow-[6px_6px_0_var(--ink)] transition-transform duration-300 ease-out hover:z-10 hover:scale-[1.03] md:p-8 ${accents[i % accents.length]}`}
             >
-              <p className="font-mono-label text-[8px] tracking-wide uppercase opacity-70">
-                {post.date} · {post.readingTime}
+              <p className="font-mono-label text-[8px] tracking-[0.14em] uppercase opacity-70">
+                {formatPostDate(post.date)} · {post.readingTime}
               </p>
-              <h2 className="font-display mt-3 text-2xl font-bold text-[var(--ink)]">
+              <h2 className="font-display mt-3 line-clamp-2 min-h-[2.6em] text-2xl font-bold leading-snug text-[var(--ink)]">
                 {post.title}
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--ink)]/70">
+              <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-[var(--ink)]/70">
                 {post.excerpt}
               </p>
             </Link>
