@@ -41,10 +41,14 @@ export function StructsLottieStage() {
       root.style.setProperty("--dialog-anchor", `${(shipBottom + anchorBottom) / 2}px`);
       root.style.setProperty("--dialog-shift", "-50%");
       root.style.setProperty("--fleet-launch-x", `${cx}px`);
-      // Sit under the fleet, then nudge 25% farther down the stage.
+      // Previous spot was 25% below the fleet floor; raise 15%, then clamp
+      // so the button bottom stays inside the hero (never over the blog).
+      const overshot = (anchorBottom - 12) * 1.25;
+      const raised = overshot * 0.85;
+      const maxY = s.height - 8;
       root.style.setProperty(
         "--fleet-launch-y",
-        `${(anchorBottom - 12) * 1.25}px`,
+        `${Math.min(raised, maxY)}px`,
       );
     };
     place();

@@ -44,7 +44,7 @@ export default async function HomePage() {
           />
         </div>
 
-        <section className="relative px-4 pt-10 pb-8 md:px-6 md:pt-[124px] md:pb-10">
+        <section className="relative overflow-hidden px-4 pt-10 pb-8 md:px-6 md:pt-[124px] md:pb-10">
           <StructsLottieStage />
           <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-12">
             <div>
