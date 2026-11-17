@@ -11,9 +11,9 @@ const pastProjects = ["schemaverse", "coindroids"]
 
 const pastBrief: Record<string, string> = {
   schemaverse:
-    "A space war played in SQL. Every player is a database role—buy ships with INSERT, steer with a function, and read the battle in a view.",
+    "A space war you play by writing SQL. Players are database roles; the map lives in tables.",
   coindroids:
-    "Skill-based combat played with coins. Every move was a transaction in the ruins of 20X5. Archived in 2021; the lessons carried into Structs.",
+    "Robot combat where every attack was a crypto transaction. Ran 2014–2021.",
 };
 
 export default async function HomePage() {
@@ -75,11 +75,14 @@ export default async function HomePage() {
           >
             <div className="mx-auto max-w-6xl">
               <p className="font-mono-label text-[8px] tracking-widest text-[var(--lime)] uppercase md:text-[9px]">
-                Latest from Structs
+                Updates
               </p>
               <h2 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
                 Blog
               </h2>
+              <p className="mt-3 max-w-xl text-white/60">
+                Short notes from the Structs playtest.
+              </p>
               <div className="mt-8 flex flex-wrap gap-3 md:mt-10">
                 {posts.map((post) => (
                   <a
@@ -120,15 +123,14 @@ export default async function HomePage() {
       <section id="about" className="scroll-mt-28 px-4 py-16 md:px-6 md:py-24">
         <div className="mx-auto max-w-6xl">
           <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
-            About us
+            About
           </p>
           <h2 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
             Past projects
           </h2>
           <p className="mt-4 max-w-2xl text-white/65">
-            Slow Ninja has been building readable game systems since 2014.
-            Before Structs, two worlds taught us how play and machinery fit
-            together.
+            Before Structs, we built two games that put the rules in plain
+            sight.
           </p>
           <div className="mt-10 grid gap-5 md:grid-cols-2">
             {pastProjects.map((game) => (
@@ -168,13 +170,13 @@ export default async function HomePage() {
       <section id="contact" className="scroll-mt-28 px-4 pt-4 pb-24 md:px-6">
         <div className="mx-auto max-w-6xl rounded-[2rem] border border-white/10 bg-[#0a1220]/80 px-6 py-12 md:px-12 md:py-16">
           <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
-            Contact us
+            Contact
           </p>
           <h2 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
-            Write the studio
+            Get in touch
           </h2>
           <p className="mt-4 max-w-xl text-white/65">
-            Questions, playtest notes, and collaboration go to one address.
+            Playtest notes, press, or just hello.
           </p>
           <a
             href="mailto:info@slow.ninja"

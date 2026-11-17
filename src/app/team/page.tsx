@@ -4,26 +4,26 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Our Team",
   description:
-    "Slow Ninja is a small studio building skill-based worlds you can inspect—Schemaverse, Coindroids, and Structs.",
+    "Slow Ninja is a small studio behind Schemaverse, Coindroids, and Structs.",
 };
 
 const seats = [
   {
     label: "Systems",
     title: "The machine room",
-    body: "PostgreSQL roles, signed transactions, Cosmos state. The people who put the rules where a curious player can open them.",
+    body: "Databases, transactions, and chain state—putting the rules where players can open them.",
     bg: "bg-[var(--lime)]",
   },
   {
     label: "Worlds",
     title: "The slow read",
-    body: "Galaxies that reward patience. Mastery is comprehension—reading a view, a block, or a guild permission—not a hidden stat.",
+    body: "Games that reward patience. Mastery means understanding the system, not chasing hidden stats.",
     bg: "bg-[var(--sun)]",
   },
   {
     label: "Players",
     title: "The long crew",
-    body: "Structs stays online because players keep the chain alive. The people who reverse-engineer our systems for fun are part of the team.",
+    body: "Structs stays online because players keep the chain alive. Curious breakers are part of the team.",
     bg: "bg-[var(--cyan)]",
   },
 ];
@@ -35,12 +35,11 @@ export default function TeamPage() {
         Our team
       </p>
       <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold text-white md:text-6xl">
-        A small crew. Worlds you can read.
+        A small crew
       </h1>
       <p className="mt-5 max-w-2xl text-lg text-white/70">
-        Slow Ninja is a studio, not a crowd. Since Schemaverse in 2010 and the
-        studio&apos;s founding in 2014, the same bias has held: skill first,
-        inspectable systems, and a playful streak.
+        Slow Ninja has been a small studio since 2014. Same bias the whole
+        way: skill first, readable systems, a little playfulness.
       </p>
 
       <ul className="mt-14 grid gap-5 md:grid-cols-3">
@@ -64,20 +63,12 @@ export default function TeamPage() {
 
       <div className="mt-16 max-w-3xl space-y-5 text-base leading-relaxed text-white/80 md:text-lg">
         <p>
-          There is no separate marketing desk. The people who ship the games
-          also explain them. If a combat tick, a guild permission, or a SQL
-          view is worth playing, it is worth saying in public.
+          The people who ship the games also explain them. If a rule is worth
+          playing, it is worth saying in public.
         </p>
         <p>
-          Toronto is the uplink. The work is the three worlds: Schemaverse,
-          still a space war played in SQL; Coindroids, the skill-based combat
-          that taught us what chain UX should not be; and Structs, the 5X
-          galaxy the community can keep running.
-        </p>
-        <p>
-          If you want to see how the crew plays, join the Structs playtest and
-          try to break something—or look back at the past projects that got
-          us here.
+          Based in Toronto. Three worlds: Schemaverse (SQL space war),
+          Coindroids (transaction combat), and Structs (living-chain strategy).
         </p>
       </div>
 
@@ -86,8 +77,7 @@ export default function TeamPage() {
           Come play with us
         </h2>
         <p className="mt-3 max-w-xl text-white/70">
-          The longest members of this team are the players who stay. Take a
-          fleet out, or revisit the worlds that came before.
+          Join the Structs playtest, or revisit the projects that got us here.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
@@ -100,7 +90,7 @@ export default function TeamPage() {
             href="/studio"
             className="rounded-full border-2 border-white/30 px-5 py-3 text-sm font-bold text-white"
           >
-            Studio brief
+            Studio
           </Link>
           <a
             href="https://www.playstructs.com/"

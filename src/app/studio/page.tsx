@@ -3,21 +3,21 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Studio",
-  description: "Slow Ninja — building games for the sentient since 2014.",
+  description: "Slow Ninja — skill-based games with systems you can inspect.",
 };
 
 export default function StudioPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-      <p className="font-mono-label text-[8px] tracking-widest md:text-[9px] text-[var(--coral)] uppercase">
+      <p className="font-mono-label text-[8px] tracking-widest text-[var(--coral)] uppercase md:text-[9px]">
         Studio
       </p>
       <h1 className="font-display mt-4 max-w-3xl text-4xl font-bold text-white md:text-6xl">
-        Building games for the sentient
+        Games you can read
       </h1>
       <p className="mt-5 max-w-2xl text-lg text-white/70">
-        We build skill-based worlds with inspectable systems—and we refuse to
-        make them boring while we&apos;re at it.
+        Slow Ninja builds skill-based games where the rules are inspectable—not
+        hidden behind a black box.
       </p>
       <Link
         href="/team"
@@ -29,13 +29,13 @@ export default function StudioPage() {
       <div className="mt-14 grid gap-5 md:grid-cols-3">
         {[
           {
-            title: "Skill over spectacle",
-            body: "Wins come from reading the system, not buying a shortcut.",
+            title: "Skill first",
+            body: "Wins come from understanding the system, not buying a shortcut.",
             bg: "bg-[var(--lime)]",
           },
           {
-            title: "Readable rules",
-            body: "SQL views, signed transactions, on-chain state—truth you can peek at.",
+            title: "Open rules",
+            body: "SQL, signed transactions, on-chain state—truth you can check.",
             bg: "bg-[var(--sun)]",
           },
           {
@@ -58,7 +58,7 @@ export default function StudioPage() {
 
       <ol className="mt-16 space-y-6 border-l-4 border-white/25 pl-6">
         <li>
-          <p className="font-mono-label text-[8px] uppercase md:text-[9px] text-[var(--coral)]">
+          <p className="font-mono-label text-[8px] text-[var(--coral)] uppercase md:text-[9px]">
             2010
           </p>
           <p className="mt-1 font-semibold text-white">
@@ -66,30 +66,29 @@ export default function StudioPage() {
           </p>
         </li>
         <li>
-          <p className="font-mono-label text-[8px] uppercase md:text-[9px] text-[var(--coral)]">
+          <p className="font-mono-label text-[8px] text-[var(--coral)] uppercase md:text-[9px]">
             2014
           </p>
           <p className="mt-1 font-semibold text-white">
-            Coindroids — skill-based crypto combat that helped kick off the
-            genre.
+            Coindroids — robot combat where every move was a transaction.
           </p>
         </li>
         <li>
-          <p className="font-mono-label text-[8px] uppercase md:text-[9px] text-[var(--coral)]">
+          <p className="font-mono-label text-[8px] text-[var(--coral)] uppercase md:text-[9px]">
             Now
           </p>
           <p className="mt-1 font-semibold text-white">
-            Structs — decentralized 5X strategy in the Cosmos ecosystem.
+            Structs — space strategy on a chain players can keep running.
           </p>
         </li>
       </ol>
 
       <div className="mt-16 rounded-[2rem] border-2 border-[var(--ink)] bg-[var(--night)] p-8 text-white md:p-10">
         <h2 className="font-display text-2xl font-bold md:text-3xl">
-          Come break our stuff
+          Come try Structs
         </h2>
         <p className="mt-3 max-w-xl text-white/70">
-          Structs beta needs sharp players. Come try the fleet.
+          The playtest is open. Bring a sharp eye.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <a
@@ -98,7 +97,7 @@ export default function StudioPage() {
             rel="noreferrer"
             className="btn-bounce rounded-full bg-[var(--lime)] px-5 py-3 text-sm font-bold text-[var(--ink)] shadow-[3px_3px_0_var(--coral)]"
           >
-            Join Structs playtest
+            Join the playtest
           </a>
           <Link
             href="/#about"

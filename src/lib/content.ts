@@ -30,9 +30,9 @@ export const studio = {
   name: "Slow Ninja",
   url: "https://slow.ninja/",
   founded: "2014",
-  tagline: "Building games for the sentient",
+  tagline: "Games you can read",
   pitch:
-    "We build games as systems you can read—transactions as moves, SQL as a controller, on-chain state as truth.",
+    "Skill-based games with rules you can inspect—SQL, transactions, and on-chain state.",
 };
 
 /** Circle order: Structs, Coindroids, Schemaverse. */
@@ -42,30 +42,30 @@ export const games: Game[] = [
     name: "Structs",
     years: "2026–present",
     era: "2026",
-    tagline: "A 5X space strategy game",
+    tagline: "Space strategy on a living chain",
     summary:
-      "Command sentient machines racing for Alpha Matter across a decentralized Cosmos galaxy. Explore, extract, expand, exterminate, and exchange—then leave the world running for as long as players keep the chain alive.",
-    status: "Beta playtest live",
+      "Lead a guild of machines racing for Alpha Matter. Explore, build, fight, and trade—then keep the galaxy running as long as players stay.",
+    status: "Playtest live",
     href: "https://www.playstructs.com/",
-    mechanic: "On-chain guild strategy · Cosmos SDK",
+    mechanic: "On-chain guild strategy",
     artwork: "/games/structs.png",
     accent: "var(--violet)",
-    atmosphere: "Alpha Matter · guild fleets on-chain",
+    atmosphere: "Guild fleets on-chain",
   },
   {
     slug: "coindroids",
     name: "Coindroids",
     years: "2014–2021",
     era: "2014",
-    tagline: "Skill-based combat played with coins, for coins",
+    tagline: "Robot combat paid in coins",
     summary:
-      "The cult classic that helped kick off blockchain gaming. Your actions were transactions—choose carefully. Money was power, literally, in the ruins of 20X5.",
-    status: "Archived · lessons live on in Structs",
+      "Fight in the ruins of 20X5. Every move was a real crypto transaction. Archived in 2021—its lessons shaped Structs.",
+    status: "Archived",
     href: "https://blog.coindroids.com/",
-    mechanic: "Transaction-as-action · multi-chain",
+    mechanic: "Every move a transaction",
     artwork: "/games/coindroids.jpg",
     accent: "var(--coral)",
-    atmosphere: "Ruins of 20X5 · every move a signed tx",
+    atmosphere: "Ruins of 20X5",
   },
   {
     slug: "schemaverse",
@@ -74,13 +74,13 @@ export const games: Game[] = [
     era: "2010",
     tagline: "A space war played in SQL",
     summary:
-      "Every player is a PostgreSQL role. Buy ships with INSERT, steer with a function call, read the battle in a view. Write PL/pgSQL and the database flies your fleet—or click the map and watch the query it wrote.",
-    status: "Ongoing · DEF CON favorite",
+      "You are a database role. Buy ships with INSERT, steer with a function, scout with a view. The database is the game.",
+    status: "Still online",
     href: "https://schemaverse.com/",
-    mechanic: "PostgreSQL as game engine",
+    mechanic: "PostgreSQL as the game engine",
     artwork: "/games/schemaverse.png",
     accent: "var(--cyan)",
-    atmosphere: "SELECT * FROM ships WHERE fleet = you",
+    atmosphere: "The database is the arena",
   },
 ];
 

@@ -8,12 +8,11 @@ export function SiteFooter() {
         <div className="relative">
           <BrandLogo size="footer" />
           <p className="mt-4 max-w-md text-white/65">
-            Building games for the sentient since 2014. Skill first, galaxies
-            you can peek into, vibes included.
+            Skill-based games with systems you can inspect. Est. 2014.
           </p>
         </div>
         <p className="font-mono-label relative mt-10 text-[8px] leading-relaxed tracking-wide text-white/40 md:text-[9px]">
-          © 2026 Slow Ninja Inc. · Built with deliberate haste
+          © 2026 Slow Ninja Inc.
         </p>
       </div>
     </footer>
