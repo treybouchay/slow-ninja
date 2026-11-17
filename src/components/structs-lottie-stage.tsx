@@ -41,7 +41,11 @@ export function StructsLottieStage() {
       root.style.setProperty("--dialog-anchor", `${(shipBottom + anchorBottom) / 2}px`);
       root.style.setProperty("--dialog-shift", "-50%");
       root.style.setProperty("--fleet-launch-x", `${cx}px`);
-      root.style.setProperty("--fleet-launch-y", `${anchorBottom - 12}px`);
+      // Sit under the fleet, then nudge 25% farther down the stage.
+      root.style.setProperty(
+        "--fleet-launch-y",
+        `${(anchorBottom - 12) * 1.25}px`,
+      );
     };
     place();
     const observer = new ResizeObserver(place);
