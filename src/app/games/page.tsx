@@ -1,15 +1,6 @@
-import type { Metadata } from "next";
-import { GamesTimeline } from "@/components/games-timeline";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Games",
-  description: "Structs, Coindroids, and Schemaverse from Slow Ninja.",
-};
-
+/** Games now lives on the homepage Past projects section. */
 export default function GamesPage() {
-  return (
-    <div className="bg-[#070d16] pb-8">
-      <GamesTimeline />
-    </div>
-  );
+  redirect("/#about");
 }

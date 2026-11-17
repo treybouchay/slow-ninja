@@ -10,8 +10,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/#about", label: "About" },
   { href: "/#contact", label: "Contact" },
-  { href: "/games", label: "Games" },
-  { href: "/journal", label: "Journal" },
+  { href: "/#about", label: "Games" },
 ];
 
 export function SiteHeader() {
@@ -45,7 +44,7 @@ export function SiteHeader() {
               (pathname === link.href || pathname.startsWith(`${link.href}/`));
             return (
               <Link
-                key={link.href}
+                key={link.label}
                 href={link.href}
                 className={cn(
                   "rounded-full px-3 py-2 text-sm font-semibold transition-colors",
@@ -83,7 +82,7 @@ export function SiteHeader() {
         <nav className="mx-auto mt-2 flex max-w-6xl flex-col gap-2 rounded-2xl border border-white/10 bg-[#070d16]/90 p-4 backdrop-blur-md md:hidden">
           {links.map((link) => (
             <Link
-              key={link.href}
+              key={link.label}
               href={link.href}
               onClick={() => setOpen(false)}
               className="rounded-xl px-4 py-3 font-semibold text-white hover:bg-white/10"

@@ -89,7 +89,7 @@ export default function StudioPage() {
           Come break our stuff
         </h2>
         <p className="mt-3 max-w-xl text-white/70">
-          Structs beta needs sharp players. The journal needs curious readers.
+          Structs beta needs sharp players. Come try the fleet.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <a
@@ -101,10 +101,10 @@ export default function StudioPage() {
             Join Structs playtest
           </a>
           <Link
-            href="/journal"
+            href="/#about"
             className="rounded-full border-2 border-white/30 px-5 py-3 text-sm font-bold text-white"
           >
-            Browse journal
+            Past projects
           </Link>
         </div>
       </div>

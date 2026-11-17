@@ -11,7 +11,7 @@ export default function NotFound() {
           Whoops—ninja missed that page
         </h1>
         <p className="mt-4 text-[var(--ink)]/70">
-          That URL isn&apos;t in our catalog. Try home or the journal.
+          That URL isn&apos;t in our catalog. Try home or past projects.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
@@ -21,10 +21,10 @@ export default function NotFound() {
             Back home
           </Link>
           <Link
-            href="/journal"
+            href="/#about"
             className="rounded-full border-2 border-[var(--ink)] bg-white px-5 py-3 text-sm font-bold text-[var(--ink)]"
           >
-            Journal
+            Past projects
           </Link>
         </div>
       </div>

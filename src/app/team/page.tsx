@@ -64,9 +64,9 @@ export default function TeamPage() {
 
       <div className="mt-16 max-w-3xl space-y-5 text-base leading-relaxed text-white/80 md:text-lg">
         <p>
-          There is no separate marketing desk. The journal is written by the
-          people who ship the games. If a combat tick, a guild permission, or
-          a SQL view is worth playing, it is worth explaining in public.
+          There is no separate marketing desk. The people who ship the games
+          also explain them. If a combat tick, a guild permission, or a SQL
+          view is worth playing, it is worth saying in public.
         </p>
         <p>
           Toronto is the uplink. The work is the three worlds: Schemaverse,
@@ -75,26 +75,26 @@ export default function TeamPage() {
           galaxy the community can keep running.
         </p>
         <p>
-          If you want to see how the crew thinks, read the field notes. If you
-          want to see how the crew plays, join the Structs playtest and try to
-          break something.
+          If you want to see how the crew plays, join the Structs playtest and
+          try to break something—or look back at the past projects that got
+          us here.
         </p>
       </div>
 
       <div className="mt-16 rounded-[2rem] border-2 border-[var(--ink)] bg-[var(--night)] p-8 text-white md:p-10">
         <h2 className="font-display text-2xl font-bold md:text-3xl">
-          Come read with us
+          Come play with us
         </h2>
         <p className="mt-3 max-w-xl text-white/70">
-          The longest members of this team are the players who stay. Start
-          with a log, or take a fleet out.
+          The longest members of this team are the players who stay. Take a
+          fleet out, or revisit the worlds that came before.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
-            href="/journal"
+            href="/#about"
             className="btn-bounce rounded-full bg-[var(--lime)] px-5 py-3 text-sm font-bold text-[var(--ink)] shadow-[3px_3px_0_var(--cyan)]"
           >
-            Read the journal
+            Past projects
           </Link>
           <Link
             href="/studio"
