@@ -21,7 +21,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-[#070d16] px-4 pt-10 pb-8 md:px-6 md:pt-[124px] md:pb-10">
+      <div className="relative overflow-hidden bg-[#070d16]">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <Image
             src={structs.artwork}
@@ -35,83 +35,87 @@ export default async function HomePage() {
             className="absolute inset-0"
             style={{
               background: `
-                radial-gradient(ellipse 70% 55% at 72% 42%, color-mix(in oklab, ${structs.accent} 34%, transparent), transparent 70%),
-                radial-gradient(ellipse 45% 40% at 18% 80%, color-mix(in oklab, var(--cyan) 16%, transparent), transparent 65%),
-                linear-gradient(180deg, #070d1690 0%, #070d164d 46%, #070d16ee 100%)
+                radial-gradient(ellipse 70% 55% at 72% 28%, color-mix(in oklab, ${structs.accent} 34%, transparent), transparent 70%),
+                radial-gradient(ellipse 50% 45% at 18% 58%, color-mix(in oklab, var(--cyan) 16%, transparent), transparent 65%),
+                radial-gradient(ellipse 55% 40% at 78% 78%, color-mix(in oklab, ${structs.accent} 18%, transparent), transparent 70%),
+                linear-gradient(180deg, #070d1690 0%, #070d164d 36%, #070d16c8 72%, #070d16f2 100%)
               `,
             }}
           />
         </div>
-        <StructsLottieStage />
-        <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-12">
-          <div>
-            <p className="font-mono-label text-[8px] tracking-widest text-[var(--violet)] uppercase md:text-[9px]">
-              {structs.status}
-            </p>
-            <h1 className="font-display mt-3 text-5xl font-extrabold tracking-tight text-white md:text-7xl">
-              {structs.name}
-            </h1>
-            <p className="mt-4 max-w-xl text-lg text-white/75 md:text-xl">
-              {structs.tagline}
-            </p>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/55 md:text-base">
-              {structs.summary}
-            </p>
-          </div>
-          <div
-            data-fleet-anchor
-            className="pointer-events-none h-[400px] w-full md:h-[460px]"
-          />
-        </div>
-      </section>
 
-      {posts.length ? (
-        <section
-          id="blog"
-          className="scroll-mt-28 border-t border-white/5 bg-[#070d16] px-4 py-10 md:px-6 md:py-12"
-        >
-          <div className="mx-auto max-w-6xl">
-            <p className="font-mono-label text-[8px] tracking-widest text-[var(--lime)] uppercase md:text-[9px]">
-              Latest from Structs
-            </p>
-            <h2 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
-              Blog
-            </h2>
-            <div className="mt-8 flex flex-wrap gap-3 md:mt-10">
-              {posts.map((post) => (
-                <a
-                  key={post.href}
-                  href={post.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group relative block w-36 shrink-0 overflow-hidden rounded-lg border border-white/15 bg-[#0a1220]/85 transition-transform duration-300 ease-out hover:z-10 hover:scale-105 hover:border-white/35"
-                >
-                  <span className="relative block h-[4.5rem]">
-                    {post.image ? (
-                      <Image
-                        src={post.image}
-                        alt=""
-                        fill
-                        sizes="144px"
-                        className="object-cover [image-rendering:pixelated]"
-                      />
-                    ) : null}
-                    <span className="absolute inset-0 bg-gradient-to-t from-[#070d16] via-[#070d16]/55 to-transparent" />
-                  </span>
-                  <span className="flex h-[3.6rem] flex-col justify-between gap-0.5 px-1.5 pt-1 pb-1.5">
-                    <span className="font-mono-label block truncate text-[8px] tracking-[0.14em] text-[var(--lime)] uppercase">
-                      {post.date || "Latest"}
-                    </span>
-                    <span className="line-clamp-2 min-h-[2em] font-display text-[11px] font-bold leading-tight text-white group-hover:text-[var(--lime)]">
-                      {post.title}
-                    </span>
-                  </span>
-                </a>
-              ))}
+        <section className="relative px-4 pt-10 pb-8 md:px-6 md:pt-[124px] md:pb-10">
+          <StructsLottieStage />
+          <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-12">
+            <div>
+              <p className="font-mono-label text-[8px] tracking-widest text-[var(--violet)] uppercase md:text-[9px]">
+                {structs.status}
+              </p>
+              <h1 className="font-display mt-3 text-5xl font-extrabold tracking-tight text-white md:text-7xl">
+                {structs.name}
+              </h1>
+              <p className="mt-4 max-w-xl text-lg text-white/75 md:text-xl">
+                {structs.tagline}
+              </p>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/55 md:text-base">
+                {structs.summary}
+              </p>
             </div>
+            <div
+              data-fleet-anchor
+              className="pointer-events-none h-[400px] w-full md:h-[460px]"
+            />
           </div>
         </section>
-      ) : null}
+
+        {posts.length ? (
+          <section
+            id="blog"
+            className="relative scroll-mt-28 px-4 py-10 md:px-6 md:py-12"
+          >
+            <div className="mx-auto max-w-6xl">
+              <p className="font-mono-label text-[8px] tracking-widest text-[var(--lime)] uppercase md:text-[9px]">
+                Latest from Structs
+              </p>
+              <h2 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
+                Blog
+              </h2>
+              <div className="mt-8 flex flex-wrap gap-3 md:mt-10">
+                {posts.map((post) => (
+                  <a
+                    key={post.href}
+                    href={post.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group relative block w-36 shrink-0 overflow-hidden rounded-lg border border-white/15 bg-[#0a1220]/85 transition-transform duration-300 ease-out hover:z-10 hover:scale-105 hover:border-white/35"
+                  >
+                    <span className="relative block h-[4.5rem]">
+                      {post.image ? (
+                        <Image
+                          src={post.image}
+                          alt=""
+                          fill
+                          sizes="144px"
+                          className="object-cover [image-rendering:pixelated]"
+                        />
+                      ) : null}
+                      <span className="absolute inset-0 bg-gradient-to-t from-[#070d16] via-[#070d16]/55 to-transparent" />
+                    </span>
+                    <span className="flex h-[3.6rem] flex-col justify-between gap-0.5 px-1.5 pt-1 pb-1.5">
+                      <span className="font-mono-label block truncate text-[8px] tracking-[0.14em] text-[var(--lime)] uppercase">
+                        {post.date || "Latest"}
+                      </span>
+                      <span className="line-clamp-2 min-h-[2em] font-display text-[11px] font-bold leading-tight text-white group-hover:text-[var(--lime)]">
+                        {post.title}
+                      </span>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+      </div>
 
       <section id="about" className="scroll-mt-28 px-4 py-16 md:px-6 md:py-24">
         <div className="mx-auto max-w-6xl">
