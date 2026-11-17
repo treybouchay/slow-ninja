@@ -21,7 +21,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-[#070d16] px-4 pt-10 pb-16 md:flex md:min-h-[calc(100svh-4.5rem)] md:flex-col md:justify-start md:px-6 md:pt-[124px] md:pb-20">
+      <section className="relative overflow-hidden bg-[#070d16] px-4 pt-10 pb-8 md:px-6 md:pt-[124px] md:pb-10">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <Image
             src={structs.artwork}
@@ -68,7 +68,7 @@ export default async function HomePage() {
       {posts.length ? (
         <section
           id="blog"
-          className="scroll-mt-28 border-t border-white/5 bg-[#070d16] px-4 py-14 md:px-6 md:py-20"
+          className="scroll-mt-28 border-t border-white/5 bg-[#070d16] px-4 py-10 md:px-6 md:py-12"
         >
           <div className="mx-auto max-w-6xl">
             <p className="font-mono-label text-[8px] tracking-widest text-[var(--lime)] uppercase md:text-[9px]">
