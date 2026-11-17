@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
-import { PaletteMenu, PaletteSwitch } from "@/components/palette-switch";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -57,7 +56,6 @@ export function SiteHeader() {
               </Link>
             );
           })}
-          <PaletteMenu />
           <a
             href="https://www.playstructs.com/"
             target="_blank"
@@ -98,7 +96,6 @@ export function SiteHeader() {
           >
             Launch Structs
           </a>
-          <PaletteSwitch />
         </nav>
       ) : null}
     </header>
