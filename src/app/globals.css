@@ -173,6 +173,77 @@ html[data-palette="ember"] {
   -webkit-font-smoothing: none;
 }
 
+/*
+ * Structs Design System — Screen Button / Primary
+ * Figma file zCYgKFmyToGXCrunrH8tGY · node 2300:416294
+ */
+.structs-screen-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  width: 256px;
+  max-width: calc(100vw - 2rem);
+  flex-direction: column;
+  align-items: stretch;
+  padding: 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.structs-screen-btn__face {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  min-height: 36px;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  padding: 4px 12px;
+  border-radius: 0;
+  background: #222034;
+  box-shadow:
+    -2px 0 0 0 #43cdb6,
+    2px 0 0 0 #43cdb6,
+    0 -2px 0 0 #43cdb6,
+    0 2px 0 0 #43cdb6;
+}
+
+.structs-screen-btn__label {
+  flex: 1 0 0;
+  min-width: 1px;
+  color: #43cdb6;
+  font-family: "DirectiveZeroWid", var(--font-mono), monospace;
+  font-size: 8px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: 0;
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  font-synthesis: none;
+  -webkit-font-smoothing: none;
+}
+
+.structs-screen-btn:hover .structs-screen-btn__face {
+  box-shadow:
+    -2px 0 0 0 #c2efdd,
+    2px 0 0 0 #c2efdd,
+    0 -2px 0 0 #c2efdd,
+    0 2px 0 0 #c2efdd;
+}
+
+.structs-screen-btn:hover .structs-screen-btn__label {
+  color: #c2efdd;
+}
+
+.structs-screen-btn:active .structs-screen-btn__face {
+  background: #1c1b2c;
+}
+
 .command-dialog-rise {
   translate: -50% 0;
   /* 0.6s at the 1.3× fleet rate in structs-scene.tsx */
