@@ -70,6 +70,7 @@ export function StructsLottieStage() {
       {ready ? (
         <StructsPrimaryButton
           href={structsHref}
+          flash
           data-fleet-launch
           className="structs-fade-in pointer-events-auto absolute z-40 -translate-x-1/2 -translate-y-full"
           style={{ left: "var(--fleet-launch-x)", top: "var(--fleet-launch-y)" }}

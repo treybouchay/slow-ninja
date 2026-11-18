@@ -1,17 +1,40 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { structsTokens } from "@/components/structs/tokens";
 
 type StructsPrimaryButtonProps = React.ComponentPropsWithoutRef<"a"> & {
   href: string;
   children: React.ReactNode;
+  /** Slow pulse between primary and active accent after the button appears. */
+  flash?: boolean;
 };
 
 const { accentPrimary, accentPrimaryActive, surfaceDefault } = structsTokens;
 
 const outline = (color: string) =>
   `-2px 0 0 0 ${color}, 2px 0 0 0 ${color}, 0 -2px 0 0 ${color}, 0 2px 0 0 ${color}`;
+
+const FLASH_MS = 2800;
+
+function mixHex(a: string, b: string, t: number) {
+  const parse = (hex: string) => {
+    const n = hex.replace("#", "");
+    return [
+      Number.parseInt(n.slice(0, 2), 16),
+      Number.parseInt(n.slice(2, 4), 16),
+      Number.parseInt(n.slice(4, 6), 16),
+    ] as const;
+  };
+  const [ar, ag, ab] = parse(a);
+  const [br, bg, bb] = parse(b);
+  const ch = (x: number, y: number) =>
+    Math.round(x + (y - x) * t)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${ch(ar, br)}${ch(ag, bg)}${ch(ab, bb)}`;
+}
 
 const btnStyle: React.CSSProperties = {
   boxSizing: "border-box",
@@ -74,36 +97,59 @@ export function StructsPrimaryButton({
   children,
   className,
   style,
+  flash = false,
   onMouseEnter,
   onMouseLeave,
   ...props
 }: StructsPrimaryButtonProps) {
+  const faceRef = useRef<HTMLSpanElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const hoveringRef = useRef(false);
+
+  const paint = (color: string) => {
+    if (faceRef.current) faceRef.current.style.boxShadow = outline(color);
+    if (labelRef.current) labelRef.current.style.color = color;
+  };
+
+  useEffect(() => {
+    if (!flash) return;
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      if (!hoveringRef.current) {
+        const phase = ((now - start) % FLASH_MS) / FLASH_MS;
+        const t = 0.5 - 0.5 * Math.cos(phase * Math.PI * 2);
+        paint(mixHex(accentPrimary, accentPrimaryActive, t));
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [flash]);
+
   return (
     <a
       href={href}
       target="_blank"
       rel="noreferrer"
       data-structs-button="primary"
+      data-flash={flash ? "" : undefined}
       className={cn(className)}
       {...props}
       style={{ ...btnStyle, ...style }}
       onMouseEnter={(event) => {
-        const face = event.currentTarget.querySelector<HTMLElement>("[data-face]");
-        const label = event.currentTarget.querySelector<HTMLElement>("[data-label]");
-        if (face) face.style.boxShadow = outline(accentPrimaryActive);
-        if (label) label.style.color = accentPrimaryActive;
+        hoveringRef.current = true;
+        paint(accentPrimaryActive);
         onMouseEnter?.(event);
       }}
       onMouseLeave={(event) => {
-        const face = event.currentTarget.querySelector<HTMLElement>("[data-face]");
-        const label = event.currentTarget.querySelector<HTMLElement>("[data-label]");
-        if (face) face.style.boxShadow = outline(accentPrimary);
-        if (label) label.style.color = accentPrimary;
+        hoveringRef.current = false;
+        paint(accentPrimary);
         onMouseLeave?.(event);
       }}
     >
-      <span data-face style={faceStyle}>
-        <span data-label style={labelStyle}>
+      <span data-face ref={faceRef} style={faceStyle}>
+        <span data-label ref={labelRef} style={labelStyle}>
           {children}
         </span>
       </span>
