@@ -72,7 +72,7 @@ export function StructsLottieStage() {
           target="_blank"
           rel="noreferrer"
           data-fleet-launch
-          className="btn-bounce structs-fade-in pointer-events-auto absolute z-40 inline-flex -translate-x-1/2 -translate-y-full rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]"
+          className="structs-command-btn structs-fade-in pointer-events-auto absolute z-40 -translate-x-1/2 -translate-y-full"
           style={{ left: "var(--fleet-launch-x)", top: "var(--fleet-launch-y)" }}
         >
           Play Structs
