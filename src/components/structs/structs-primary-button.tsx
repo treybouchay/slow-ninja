@@ -7,7 +7,7 @@ import { structsTokens } from "@/components/structs/tokens";
 type StructsPrimaryButtonProps = React.ComponentPropsWithoutRef<"a"> & {
   href: string;
   children: React.ReactNode;
-  /** Slow pulse between primary and active accent after the button appears. */
+  /** Soft opacity flash after the button appears. */
   flash?: boolean;
 };
 
@@ -16,25 +16,9 @@ const { accentPrimary, accentPrimaryActive, surfaceDefault } = structsTokens;
 const outline = (color: string) =>
   `-2px 0 0 0 ${color}, 2px 0 0 0 ${color}, 0 -2px 0 0 ${color}, 0 2px 0 0 ${color}`;
 
-const FLASH_MS = 2800;
-
-function mixHex(a: string, b: string, t: number) {
-  const parse = (hex: string) => {
-    const n = hex.replace("#", "");
-    return [
-      Number.parseInt(n.slice(0, 2), 16),
-      Number.parseInt(n.slice(2, 4), 16),
-      Number.parseInt(n.slice(4, 6), 16),
-    ] as const;
-  };
-  const [ar, ag, ab] = parse(a);
-  const [br, bg, bb] = parse(b);
-  const ch = (x: number, y: number) =>
-    Math.round(x + (y - x) * t)
-      .toString(16)
-      .padStart(2, "0");
-  return `#${ch(ar, br)}${ch(ag, bg)}${ch(ab, bb)}`;
-}
+const FLASH_MS = 1600;
+const FLASH_OPACITY_MIN = 0.35;
+const FLASH_OPACITY_MAX = 1;
 
 const btnStyle: React.CSSProperties = {
   boxSizing: "border-box",
@@ -102,33 +86,41 @@ export function StructsPrimaryButton({
   onMouseLeave,
   ...props
 }: StructsPrimaryButtonProps) {
+  const rootRef = useRef<HTMLAnchorElement>(null);
   const faceRef = useRef<HTMLSpanElement>(null);
   const labelRef = useRef<HTMLSpanElement>(null);
   const hoveringRef = useRef(false);
 
-  const paint = (color: string) => {
+  const paintAccent = (color: string) => {
     if (faceRef.current) faceRef.current.style.boxShadow = outline(color);
     if (labelRef.current) labelRef.current.style.color = color;
   };
 
   useEffect(() => {
     if (!flash) return;
+    const root = rootRef.current;
+    if (!root) return;
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
       if (!hoveringRef.current) {
         const phase = ((now - start) % FLASH_MS) / FLASH_MS;
         const t = 0.5 - 0.5 * Math.cos(phase * Math.PI * 2);
-        paint(mixHex(accentPrimary, accentPrimaryActive, t));
+        root.style.opacity =
+          String(FLASH_OPACITY_MIN + (FLASH_OPACITY_MAX - FLASH_OPACITY_MIN) * t);
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      root.style.opacity = "1";
+    };
   }, [flash]);
 
   return (
     <a
+      ref={rootRef}
       href={href}
       target="_blank"
       rel="noreferrer"
@@ -139,12 +131,13 @@ export function StructsPrimaryButton({
       style={{ ...btnStyle, ...style }}
       onMouseEnter={(event) => {
         hoveringRef.current = true;
-        paint(accentPrimaryActive);
+        if (rootRef.current) rootRef.current.style.opacity = "1";
+        paintAccent(accentPrimaryActive);
         onMouseEnter?.(event);
       }}
       onMouseLeave={(event) => {
         hoveringRef.current = false;
-        paint(accentPrimary);
+        paintAccent(accentPrimary);
         onMouseLeave?.(event);
       }}
     >
