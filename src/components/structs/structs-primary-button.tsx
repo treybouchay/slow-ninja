@@ -7,7 +7,7 @@ import { structsTokens } from "@/components/structs/tokens";
 type StructsPrimaryButtonProps = React.ComponentPropsWithoutRef<"a"> & {
   href: string;
   children: React.ReactNode;
-  /** Soft opacity flash after the button appears. */
+  /** Soft opacity flash (25% ↔ 100%) after the button appears. */
   flash?: boolean;
 };
 
@@ -34,6 +34,13 @@ const btnStyle: React.CSSProperties = {
   color: accentPrimary,
   textDecoration: "none",
   cursor: "pointer",
+};
+
+const pulseStyle: React.CSSProperties = {
+  display: "flex",
+  width: "100%",
+  flexDirection: "column",
+  alignItems: "stretch",
 };
 
 const faceStyle: React.CSSProperties = {
@@ -86,7 +93,7 @@ export function StructsPrimaryButton({
   onMouseLeave,
   ...props
 }: StructsPrimaryButtonProps) {
-  const rootRef = useRef<HTMLAnchorElement>(null);
+  const pulseRef = useRef<HTMLSpanElement>(null);
   const faceRef = useRef<HTMLSpanElement>(null);
   const labelRef = useRef<HTMLSpanElement>(null);
   const hoveringRef = useRef(false);
@@ -98,29 +105,29 @@ export function StructsPrimaryButton({
 
   useEffect(() => {
     if (!flash) return;
-    const root = rootRef.current;
-    if (!root) return;
+    const pulse = pulseRef.current;
+    if (!pulse) return;
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
       if (!hoveringRef.current) {
         const phase = ((now - start) % FLASH_MS) / FLASH_MS;
         const t = 0.5 - 0.5 * Math.cos(phase * Math.PI * 2);
-        root.style.opacity =
-          String(FLASH_OPACITY_MIN + (FLASH_OPACITY_MAX - FLASH_OPACITY_MIN) * t);
+        pulse.style.opacity = String(
+          FLASH_OPACITY_MIN + (FLASH_OPACITY_MAX - FLASH_OPACITY_MIN) * t,
+        );
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(raf);
-      root.style.opacity = "1";
+      pulse.style.opacity = "1";
     };
   }, [flash]);
 
   return (
     <a
-      ref={rootRef}
       href={href}
       target="_blank"
       rel="noreferrer"
@@ -131,7 +138,7 @@ export function StructsPrimaryButton({
       style={{ ...btnStyle, ...style }}
       onMouseEnter={(event) => {
         hoveringRef.current = true;
-        if (rootRef.current) rootRef.current.style.opacity = "1";
+        if (pulseRef.current) pulseRef.current.style.opacity = "1";
         paintAccent(accentPrimaryActive);
         onMouseEnter?.(event);
       }}
@@ -141,9 +148,12 @@ export function StructsPrimaryButton({
         onMouseLeave?.(event);
       }}
     >
-      <span data-face ref={faceRef} style={faceStyle}>
-        <span data-label ref={labelRef} style={labelStyle}>
-          {children}
+      {/* Inner pulse layer — keeps flash free of the outer fade-in opacity lock. */}
+      <span data-pulse ref={pulseRef} style={pulseStyle}>
+        <span data-face ref={faceRef} style={faceStyle}>
+          <span data-label ref={labelRef} style={labelStyle}>
+            {children}
+          </span>
         </span>
       </span>
     </a>
