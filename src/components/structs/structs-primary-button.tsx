@@ -17,7 +17,7 @@ const outline = (color: string) =>
   `-2px 0 0 0 ${color}, 2px 0 0 0 ${color}, 0 -2px 0 0 ${color}, 0 2px 0 0 ${color}`;
 
 const FLASH_MS = 1600;
-const FLASH_OPACITY_MIN = 0.35;
+const FLASH_OPACITY_MIN = 0.25;
 const FLASH_OPACITY_MAX = 1;
 
 const btnStyle: React.CSSProperties = {
