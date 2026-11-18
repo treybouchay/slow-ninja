@@ -132,32 +132,32 @@ export default async function HomePage() {
             Before Structs, we built two games that put the rules in plain
             sight.
           </p>
-          <div className="mt-6 grid gap-3 md:grid-cols-2">
+          <div className="mt-8 flex flex-wrap gap-8 md:gap-12">
             {pastProjects.map((game) => (
               <a
                 key={game.slug}
                 href={game.href}
                 target="_blank"
                 rel="noreferrer"
-                className="group flex overflow-hidden rounded-xl border border-white/10 bg-[#0a1220]/80 transition hover:border-white/25"
+                className="group flex max-w-[14rem] flex-col items-start gap-3"
               >
-                <span className="relative block h-24 w-24 shrink-0 sm:h-28 sm:w-28">
+                <span className="relative block h-20 w-20 overflow-hidden rounded-full ring-1 ring-white/15 transition group-hover:ring-[var(--lime)]/50 sm:h-24 sm:w-24">
                   <Image
                     src={game.artwork}
                     alt=""
                     fill
-                    sizes="112px"
-                    className="object-cover"
+                    sizes="96px"
+                    className="object-cover transition duration-300 group-hover:scale-105"
                   />
                 </span>
-                <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 px-3.5 py-3">
+                <span className="min-w-0">
                   <span className="font-mono-label text-[7px] tracking-widest text-white/45 uppercase md:text-[8px]">
                     {game.years}
                   </span>
-                  <span className="font-display text-lg font-bold text-white group-hover:text-[var(--lime)]">
+                  <span className="font-display mt-1 block text-lg font-bold text-white group-hover:text-[var(--lime)]">
                     {game.name}
                   </span>
-                  <span className="line-clamp-2 text-xs leading-relaxed text-white/55">
+                  <span className="mt-1 block text-xs leading-relaxed text-white/55">
                     {pastBrief[game.slug]}
                   </span>
                 </span>
