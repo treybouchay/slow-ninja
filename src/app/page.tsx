@@ -129,8 +129,7 @@ export default async function HomePage() {
             Past projects
           </h2>
           <p className="mt-3 max-w-xl text-sm text-white/65 md:text-base">
-            Before Structs, we built two games that put the rules in plain
-            sight.
+            Before Structs.
           </p>
           <div className="mt-8 flex flex-wrap gap-8 md:gap-12">
             {pastProjects.map((game) => (
@@ -176,7 +175,7 @@ export default async function HomePage() {
             Get in touch
           </h2>
           <p className="mt-4 max-w-xl text-white/65">
-            Playtest notes, press, or just hello.
+            Playtest or just say hello.
           </p>
           <a
             href="mailto:info@slow.ninja"

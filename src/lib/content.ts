@@ -44,7 +44,7 @@ export const games: Game[] = [
     era: "2026",
     tagline: "Space strategy on a living chain",
     summary:
-      "Lead a guild of machines racing for Alpha Matter. Explore, build, fight, and trade—then keep the galaxy running as long as players stay.",
+      "Lead a guild of machines racing for Alpha Matter. Explore, build, fight, trade and conquer.",
     status: "Playtest live",
     href: "https://www.playstructs.com/",
     mechanic: "On-chain guild strategy",
