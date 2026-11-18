@@ -5,10 +5,7 @@ type StructsScreenButtonProps = React.ComponentPropsWithoutRef<"a"> & {
   children: React.ReactNode;
 };
 
-/**
- * Structs Design System — Screen Button / Primary
- * Figma: zCYgKFmyToGXCrunrH8tGY · node 2300:416294
- */
+/** Compact Structs DS command button (pre–Screen Button width). */
 export function StructsScreenButton({
   href,
   children,
@@ -20,12 +17,10 @@ export function StructsScreenButton({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={cn("structs-screen-btn", className)}
+      className={cn("structs-command-btn", className)}
       {...props}
     >
-      <span className="structs-screen-btn__face">
-        <span className="structs-screen-btn__label">{children}</span>
-      </span>
+      {children}
     </a>
   );
 }
