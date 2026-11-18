@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { PALETTES, type PaletteId } from "@/lib/palettes";
+import { DEFAULT_PALETTE, PALETTES, type PaletteId } from "@/lib/palettes";
 import { cn } from "@/lib/utils";
 
-export { PALETTES, type PaletteId };
+export { DEFAULT_PALETTE, PALETTES, type PaletteId };
 
 const STORAGE_KEY = "slow-ninja-palette";
 
@@ -16,19 +16,13 @@ function isPalette(value: string | null): value is PaletteId {
 export function applyPalette(id: PaletteId) {
   const root = document.documentElement;
   const palette = PALETTES.find((item) => item.id === id) ?? PALETTES[0];
-  if (palette.id === "signal") {
-    delete root.dataset.palette;
-    root.style.removeProperty("--lime");
-    root.style.removeProperty("--cyan");
-    return;
-  }
   root.dataset.palette = palette.id;
   root.style.setProperty("--lime", palette.primary);
   root.style.setProperty("--cyan", palette.secondary);
 }
 
 export function PaletteSwitch({ onChange }: { onChange?: (id: PaletteId) => void }) {
-  const [palette, setPalette] = useState<PaletteId>("signal");
+  const [palette, setPalette] = useState<PaletteId>(DEFAULT_PALETTE);
 
   useEffect(() => {
     const current = document.documentElement.dataset.palette ?? null;
@@ -89,7 +83,7 @@ export function PaletteSwitch({ onChange }: { onChange?: (id: PaletteId) => void
 /** A closed swatch that opens the scheme list. */
 export function PaletteMenu() {
   const [open, setOpen] = useState(false);
-  const [palette, setPalette] = useState<PaletteId>("signal");
+  const [palette, setPalette] = useState<PaletteId>(DEFAULT_PALETTE);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

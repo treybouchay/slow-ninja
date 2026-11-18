@@ -3,7 +3,7 @@ import { Inter, Inter_Tight, Press_Start_2P } from "next/font/google";
 import localFont from "next/font/local";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { paletteBootScript } from "@/lib/palettes";
+import { DEFAULT_PALETTE, paletteBootScript } from "@/lib/palettes";
 import "./globals.css";
 
 /* Match playstructs.com font stack: Inter, Inter Tight, Press Start 2P */
@@ -47,6 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      data-palette={DEFAULT_PALETTE}
       className={`${display.variable} ${body.variable} ${pixel.variable} ${extremeHazard.variable} h-full`}
     >
       <body className="font-body flex min-h-full flex-col">
