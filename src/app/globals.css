@@ -163,6 +163,14 @@ html[data-palette="ember"] {
   font-display: block;
 }
 
+@font-face {
+  font-family: "ExtremeHazard";
+  src: url("/fonts/ExtremeHazard.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+
 .command-dialog-copy {
   font-family: "DirectiveZeroWid", sans-serif;
   font-size: 16px;
@@ -175,74 +183,56 @@ html[data-palette="ember"] {
 
 /*
  * Structs Design System — Screen Button / Primary
- * Figma file zCYgKFmyToGXCrunrH8tGY · node 2300:416294
- * Tokens: surface/surface-default #222034, accent/accent-primary #43cdb6
- * Type: ExtremeHazard Medium 8/16 (local stand-in: DirectiveZeroWid)
+ * Figma: zCYgKFmyToGXCrunrH8tGY · 2300:416294 (label 2300:416297)
+ * Mirrors structs-webapp `.sui-screen-btn.sui-mod-primary`
  */
-.structs-screen-btn {
+.structs-screen-btn,
+.structs-screen-btn:link,
+.structs-screen-btn:visited {
   box-sizing: border-box;
   display: inline-flex;
-  width: 256px;
+  height: 36px;
+  min-width: 256px;
   max-width: calc(100vw - 2rem);
-  flex-direction: column;
-  align-items: stretch;
-  padding: 2px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.structs-screen-btn__face {
-  box-sizing: border-box;
-  display: flex;
-  width: 100%;
-  min-height: 36px;
-  flex-shrink: 0;
+  margin: 2px;
+  padding: 0 12px;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  overflow: hidden;
-  padding: 4px 12px;
+  border: 0 none;
   border-radius: 0;
   background: #222034;
-  box-shadow:
-    -2px 0 0 0 #43cdb6,
-    2px 0 0 0 #43cdb6,
-    0 -2px 0 0 #43cdb6,
-    0 2px 0 0 #43cdb6;
-}
-
-.structs-screen-btn__label {
-  flex: 1 0 0;
-  min-width: 1px;
+  background-clip: padding-box;
   color: #43cdb6;
-  font-family: "DirectiveZeroWid", var(--font-mono), monospace;
+  font-family: "ExtremeHazard", sans-serif;
   font-size: 8px;
   font-weight: 500;
   font-style: normal;
   line-height: 16px;
   letter-spacing: 0;
   text-align: center;
+  text-decoration: none;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
   font-synthesis: none;
   -webkit-font-smoothing: none;
-}
-
-.structs-screen-btn:hover .structs-screen-btn__face {
   box-shadow:
-    -2px 0 0 0 #c2efdd,
-    2px 0 0 0 #c2efdd,
-    0 -2px 0 0 #c2efdd,
-    0 2px 0 0 #c2efdd;
+    0 2px 0 0 #43cdb6,
+    0 -2px 0 0 #43cdb6,
+    2px 0 0 0 #43cdb6,
+    -2px 0 0 0 #43cdb6;
+  cursor: pointer;
 }
 
-.structs-screen-btn:hover .structs-screen-btn__label {
+.structs-screen-btn:hover {
   color: #c2efdd;
+  box-shadow:
+    0 2px 0 0 #c2efdd,
+    0 -2px 0 0 #c2efdd,
+    2px 0 0 0 #c2efdd,
+    -2px 0 0 0 #c2efdd;
 }
 
-.structs-screen-btn:active .structs-screen-btn__face {
+.structs-screen-btn:active {
   background: #1c1b2c;
 }
 

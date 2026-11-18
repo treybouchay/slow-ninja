@@ -7,7 +7,8 @@ type StructsScreenButtonProps = React.ComponentPropsWithoutRef<"a"> & {
 
 /**
  * Structs Design System — Screen Button / Primary
- * Figma: zCYgKFmyToGXCrunrH8tGY · node 2300:416294
+ * Figma: zCYgKFmyToGXCrunrH8tGY · 2300:416294 (label 2300:416297)
+ * Matches structs-webapp `.sui-screen-btn.sui-mod-primary` + ExtremeHazard.
  */
 export function StructsScreenButton({
   href,
@@ -23,9 +24,7 @@ export function StructsScreenButton({
       className={cn("structs-screen-btn", className)}
       {...props}
     >
-      <span className="structs-screen-btn__face">
-        <span className="structs-screen-btn__label">{children}</span>
-      </span>
+      {children}
     </a>
   );
 }
