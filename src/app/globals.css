@@ -175,17 +175,21 @@ html[data-palette="ember"] {
 
 /*
  * Structs Design System — Screen Button / Primary
- * Figma: zCYgKFmyToGXCrunrH8tGY node 2295:496790 → btn-state=Primary (2300:416294)
+ * Figma file zCYgKFmyToGXCrunrH8tGY · node 2300:416294
+ * Tokens: surface/surface-default #222034, accent/accent-primary #43cdb6
+ * Type: ExtremeHazard Medium 8/16 (local stand-in: DirectiveZeroWid)
  */
 .structs-screen-btn {
   box-sizing: border-box;
   display: inline-flex;
-  flex-direction: column;
-  align-items: stretch;
   width: 256px;
   max-width: calc(100vw - 2rem);
+  flex-direction: column;
+  align-items: stretch;
   padding: 2px;
+  border: 0;
   border-radius: 0;
+  background: transparent;
   text-decoration: none;
   cursor: pointer;
 }
@@ -193,39 +197,40 @@ html[data-palette="ember"] {
 .structs-screen-btn__face {
   box-sizing: border-box;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
   width: 100%;
   min-height: 36px;
-  padding: 4px 12px;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
   overflow: hidden;
+  padding: 4px 12px;
   border-radius: 0;
   background: #222034;
-  color: #43cdb6;
-  font-family: "DirectiveZeroWid", sans-serif;
-  font-size: 8px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: 0;
-  text-align: center;
-  text-transform: uppercase;
-  font-synthesis: none;
-  -webkit-font-smoothing: none;
   box-shadow:
     -2px 0 0 0 #43cdb6,
     2px 0 0 0 #43cdb6,
     0 -2px 0 0 #43cdb6,
     0 2px 0 0 #43cdb6;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease,
-    box-shadow 0.15s ease;
+}
+
+.structs-screen-btn__label {
+  flex: 1 0 0;
+  min-width: 1px;
+  color: #43cdb6;
+  font-family: "DirectiveZeroWid", var(--font-mono), monospace;
+  font-size: 8px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: 0;
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  font-synthesis: none;
+  -webkit-font-smoothing: none;
 }
 
 .structs-screen-btn:hover .structs-screen-btn__face {
-  /* Primary Active — Figma 2300:416298 */
-  color: #c2efdd;
   box-shadow:
     -2px 0 0 0 #c2efdd,
     2px 0 0 0 #c2efdd,
@@ -233,8 +238,12 @@ html[data-palette="ember"] {
     0 2px 0 0 #c2efdd;
 }
 
+.structs-screen-btn:hover .structs-screen-btn__label {
+  color: #c2efdd;
+}
+
 .structs-screen-btn:active .structs-screen-btn__face {
-  background: #1a1828;
+  background: #1c1b2c;
 }
 
 .command-dialog-rise {

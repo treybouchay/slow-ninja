@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { StructsScene } from "@/components/catalog/structs-scene";
+import { StructsScreenButton } from "@/components/structs-screen-button";
 import { games } from "@/lib/content";
 
 const structsHref = games.find((game) => game.slug === "structs")?.href ?? "https://www.playstructs.com/";
@@ -67,16 +68,14 @@ export function StructsLottieStage() {
     >
       <StructsScene active onSettled={() => setReady(true)} />
       {ready ? (
-        <a
+        <StructsScreenButton
           href={structsHref}
-          target="_blank"
-          rel="noreferrer"
           data-fleet-launch
-          className="structs-screen-btn structs-fade-in pointer-events-auto absolute z-40 -translate-x-1/2 -translate-y-full"
+          className="structs-fade-in pointer-events-auto absolute z-40 -translate-x-1/2 -translate-y-full"
           style={{ left: "var(--fleet-launch-x)", top: "var(--fleet-launch-y)" }}
         >
-          <span className="structs-screen-btn__face">Play Structs</span>
-        </a>
+          Play Structs
+        </StructsScreenButton>
       ) : null}
     </div>
   );
