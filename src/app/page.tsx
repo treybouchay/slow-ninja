@@ -120,44 +120,44 @@ export default async function HomePage() {
         ) : null}
       </div>
 
-      <section id="about" className="scroll-mt-28 px-4 py-16 md:px-6 md:py-24">
+      <section id="about" className="scroll-mt-28 px-4 py-12 md:px-6 md:py-16">
         <div className="mx-auto max-w-6xl">
           <p className="font-mono-label text-[8px] tracking-widest text-[var(--cyan)] uppercase md:text-[9px]">
             About
           </p>
-          <h2 className="font-display mt-3 text-3xl font-bold text-white md:text-5xl">
+          <h2 className="font-display mt-2 text-2xl font-bold text-white md:text-4xl">
             Past projects
           </h2>
-          <p className="mt-4 max-w-2xl text-white/65">
+          <p className="mt-3 max-w-xl text-sm text-white/65 md:text-base">
             Before Structs, we built two games that put the rules in plain
             sight.
           </p>
-          <div className="mt-10 grid gap-5 md:grid-cols-2">
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
             {pastProjects.map((game) => (
               <a
                 key={game.slug}
                 href={game.href}
                 target="_blank"
                 rel="noreferrer"
-                className="group overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0a1220]/80 transition hover:border-white/25"
+                className="group flex overflow-hidden rounded-xl border border-white/10 bg-[#0a1220]/80 transition hover:border-white/25"
               >
-                <span className="relative block h-40">
+                <span className="relative block h-24 w-24 shrink-0 sm:h-28 sm:w-28">
                   <Image
                     src={game.artwork}
                     alt=""
                     fill
-                    sizes="(min-width: 768px) 50vw, 100vw"
+                    sizes="112px"
                     className="object-cover"
                   />
                 </span>
-                <span className="block p-6">
-                  <span className="font-mono-label text-[8px] tracking-widest text-white/45 uppercase">
+                <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 px-3.5 py-3">
+                  <span className="font-mono-label text-[7px] tracking-widest text-white/45 uppercase md:text-[8px]">
                     {game.years}
                   </span>
-                  <span className="font-display mt-2 block text-2xl font-bold text-white group-hover:text-[var(--lime)]">
+                  <span className="font-display text-lg font-bold text-white group-hover:text-[var(--lime)]">
                     {game.name}
                   </span>
-                  <span className="mt-2 block text-sm leading-relaxed text-white/60">
+                  <span className="line-clamp-2 text-xs leading-relaxed text-white/55">
                     {pastBrief[game.slug]}
                   </span>
                 </span>
