@@ -56,14 +56,6 @@ export function SiteHeader() {
               </Link>
             );
           })}
-          <a
-            href="https://www.playstructs.com/"
-            target="_blank"
-            rel="noreferrer"
-            className="btn-bounce ml-1 rounded-full bg-[var(--lime)] px-4 py-2 text-sm font-bold text-[var(--ink)] shadow-[3px_3px_0_var(--cyan)]"
-          >
-            Launch Structs
-          </a>
         </nav>
 
         <button
@@ -88,14 +80,6 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
-          <a
-            href="https://www.playstructs.com/"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-xl bg-[var(--lime)] px-4 py-3 text-center font-bold text-[var(--ink)]"
-          >
-            Launch Structs
-          </a>
         </nav>
       ) : null}
     </header>
