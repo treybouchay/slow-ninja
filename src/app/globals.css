@@ -163,14 +163,6 @@ html[data-palette="ember"] {
   font-display: block;
 }
 
-@font-face {
-  font-family: "ExtremeHazard";
-  src: url("/fonts/ExtremeHazard.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: block;
-}
-
 .command-dialog-copy {
   font-family: "DirectiveZeroWid", sans-serif;
   font-size: 16px;
@@ -179,61 +171,6 @@ html[data-palette="ember"] {
   letter-spacing: 0;
   font-synthesis: none;
   -webkit-font-smoothing: none;
-}
-
-/*
- * Structs Design System — Screen Button / Primary
- * Figma: zCYgKFmyToGXCrunrH8tGY · 2300:416294 (label 2300:416297)
- * Mirrors structs-webapp `.sui-screen-btn.sui-mod-primary`
- */
-.structs-screen-btn,
-.structs-screen-btn:link,
-.structs-screen-btn:visited {
-  box-sizing: border-box;
-  display: inline-flex;
-  height: 36px;
-  min-width: 256px;
-  max-width: calc(100vw - 2rem);
-  margin: 2px;
-  padding: 0 12px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 0 none;
-  border-radius: 0;
-  background: #222034;
-  background-clip: padding-box;
-  color: #43cdb6;
-  font-family: "ExtremeHazard", sans-serif;
-  font-size: 8px;
-  font-weight: 500;
-  font-style: normal;
-  line-height: 16px;
-  letter-spacing: 0;
-  text-align: center;
-  text-decoration: none;
-  text-transform: uppercase;
-  font-synthesis: none;
-  -webkit-font-smoothing: none;
-  box-shadow:
-    0 2px 0 0 #43cdb6,
-    0 -2px 0 0 #43cdb6,
-    2px 0 0 0 #43cdb6,
-    -2px 0 0 0 #43cdb6;
-  cursor: pointer;
-}
-
-.structs-screen-btn:hover {
-  color: #c2efdd;
-  box-shadow:
-    0 2px 0 0 #c2efdd,
-    0 -2px 0 0 #c2efdd,
-    2px 0 0 0 #c2efdd,
-    -2px 0 0 0 #c2efdd;
-}
-
-.structs-screen-btn:active {
-  background: #1c1b2c;
 }
 
 .command-dialog-rise {

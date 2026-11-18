@@ -5,11 +5,7 @@ type StructsScreenButtonProps = React.ComponentPropsWithoutRef<"a"> & {
   children: React.ReactNode;
 };
 
-/**
- * Structs Design System — Screen Button / Primary
- * Figma: zCYgKFmyToGXCrunrH8tGY · 2300:416294 (label 2300:416297)
- * Matches structs-webapp `.sui-screen-btn.sui-mod-primary` + ExtremeHazard.
- */
+/** Visible Play Structs CTA — original lime pill style. */
 export function StructsScreenButton({
   href,
   children,
@@ -21,7 +17,10 @@ export function StructsScreenButton({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={cn("structs-screen-btn", className)}
+      className={cn(
+        "btn-bounce inline-flex rounded-full bg-[var(--lime)] px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-[4px_4px_0_var(--cyan)]",
+        className,
+      )}
       {...props}
     >
       {children}
