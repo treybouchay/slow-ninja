@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Inter_Tight, Press_Start_2P } from "next/font/google";
+import localFont from "next/font/local";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { paletteBootScript } from "@/lib/palettes";
@@ -24,6 +25,14 @@ const pixel = Press_Start_2P({
   weight: ["400"],
 });
 
+/** Structs Design System chrome font (SUI ExtremeHazard Medium). */
+const extremeHazard = localFont({
+  src: "../../public/fonts/ExtremeHazard.ttf",
+  variable: "--font-extreme-hazard",
+  weight: "500",
+  display: "block",
+});
+
 export const metadata: Metadata = {
   title: {
     default: "Structs — A 5X space strategy game",
@@ -38,7 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${pixel.variable} h-full`}
+      className={`${display.variable} ${body.variable} ${pixel.variable} ${extremeHazard.variable} h-full`}
     >
       <body className="font-body flex min-h-full flex-col">
         <script
