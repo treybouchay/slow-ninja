@@ -173,13 +173,33 @@ html[data-palette="ember"] {
   -webkit-font-smoothing: none;
 }
 
-/* Structs Design System button (Figma 2300:416295) */
-.structs-command-btn {
+/*
+ * Structs Design System — Screen Button / Primary
+ * Figma: zCYgKFmyToGXCrunrH8tGY node 2295:496790 → btn-state=Primary (2300:416294)
+ */
+.structs-screen-btn {
+  box-sizing: border-box;
   display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 256px;
+  max-width: calc(100vw - 2rem);
+  padding: 2px;
+  border-radius: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.structs-screen-btn__face {
+  box-sizing: border-box;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  width: 100%;
+  min-height: 36px;
   padding: 4px 12px;
+  overflow: hidden;
   border-radius: 0;
   background: #222034;
   color: #43cdb6;
@@ -197,20 +217,23 @@ html[data-palette="ember"] {
     2px 0 0 0 #43cdb6,
     0 -2px 0 0 #43cdb6,
     0 2px 0 0 #43cdb6;
-  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.structs-command-btn:hover {
-  background: #2b2942;
-  color: #5ae0c8;
+.structs-screen-btn:hover .structs-screen-btn__face {
+  /* Primary Active — Figma 2300:416298 */
+  color: #c2efdd;
   box-shadow:
-    -2px 0 0 0 #5ae0c8,
-    2px 0 0 0 #5ae0c8,
-    0 -2px 0 0 #5ae0c8,
-    0 2px 0 0 #5ae0c8;
+    -2px 0 0 0 #c2efdd,
+    2px 0 0 0 #c2efdd,
+    0 -2px 0 0 #c2efdd,
+    0 2px 0 0 #c2efdd;
 }
 
-.structs-command-btn:active {
+.structs-screen-btn:active .structs-screen-btn__face {
   background: #1a1828;
 }
 

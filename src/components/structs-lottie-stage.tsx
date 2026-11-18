@@ -72,10 +72,10 @@ export function StructsLottieStage() {
           target="_blank"
           rel="noreferrer"
           data-fleet-launch
-          className="structs-command-btn structs-fade-in pointer-events-auto absolute z-40 -translate-x-1/2 -translate-y-full"
+          className="structs-screen-btn structs-fade-in pointer-events-auto absolute z-40 -translate-x-1/2 -translate-y-full"
           style={{ left: "var(--fleet-launch-x)", top: "var(--fleet-launch-y)" }}
         >
-          Play Structs
+          <span className="structs-screen-btn__face">Play Structs</span>
         </a>
       ) : null}
     </div>
