@@ -329,7 +329,7 @@ const BATTLESHIP_STILL = "/lottie/structs/canon_downwards/images/img_0.png";
 /** Scrambled placements: larger scale + higher z reads as closer. */
 const PLACES = {
   firing: { left: "4%", top: "-2%", scale: 1.85, z: 4 },
-  command: { left: "28%", top: "52%", scale: 1.32, z: 1 },
+  command: { left: "28%", top: "-2%", scale: 1.32, z: 1 },
   struck: { left: "8%", top: "58%", scale: 1.78, z: 5 },
   held: { left: "10%", top: "62%", scale: 1.72, z: 4 },
   // Top-right bomber — dropped lower into the scramble
