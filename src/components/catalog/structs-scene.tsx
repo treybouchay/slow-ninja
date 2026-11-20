@@ -328,11 +328,11 @@ const BATTLESHIP_STILL = "/lottie/structs/canon_downwards/images/img_0.png";
 
 /** Scrambled placements: larger scale + higher z reads as closer. */
 const PLACES = {
-  firing: { left: "4%", top: "-2%", scale: 1.28, z: 4 },
-  command: { left: "28%", top: "52%", scale: 0.78, z: 1 },
-  struck: { left: "8%", top: "38%", scale: 1.22, z: 5 },
-  held: { left: "10%", top: "42%", scale: 1.18, z: 4 },
-  far: { left: "42%", top: "-6%", scale: 0.68, z: 1 },
+  firing: { left: "4%", top: "-2%", scale: 1.55, z: 4 },
+  command: { left: "28%", top: "52%", scale: 1.05, z: 1 },
+  struck: { left: "8%", top: "58%", scale: 1.48, z: 5 },
+  held: { left: "10%", top: "62%", scale: 1.42, z: 4 },
+  far: { left: "42%", top: "-6%", scale: 0.95, z: 1 },
 } as const;
 
 function FiringBattleship({ firing }: { firing: boolean }) {
