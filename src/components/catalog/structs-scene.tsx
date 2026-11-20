@@ -27,9 +27,8 @@ const STEP = {
 } as const;
 
 /**
- * One column on each side: battleship, battleship, command — and bomber,
- * bomber, the ship taking the hit. A small pad sits between the column and
- * the circle, the same on both sides.
+ * v2 fleet: no middle row. Units sit in a free field with depth (scale + z).
+ * v1 (3-row grid) is archived as `structs-scene-v1.tsx`.
  */
 const UNIT = "relative h-full w-full";
 
@@ -40,15 +39,13 @@ const UNIT = "relative h-full w-full";
  */
 const SHIP = "var(--structs-ship, calc(var(--structs-r, 74px) * 0.81))";
 
+/** Two-slot field (middle row removed). Tall enough for scrambled depth. */
 function flankStyle(side: "left" | "right"): CSSProperties {
   return {
     position: "absolute",
     top: "var(--structs-col-top, calc(var(--structs-cy, 596px) - var(--structs-r, 74px) * 1.215))",
-    width: SHIP,
-    height: `calc(${SHIP} * 3)`,
-    display: "grid",
-    gridTemplateColumns: SHIP,
-    gridTemplateRows: `repeat(3, ${SHIP})`,
+    width: `calc(${SHIP} * 1.55)`,
+    height: `calc(${SHIP} * 2.35)`,
     pointerEvents: "none",
     ...(side === "left"
       ? {
@@ -108,13 +105,12 @@ function makeStars(count: number, start: number) {
 }
 
 /**
- * Structs atmosphere.
+ * Structs atmosphere (fleet v2).
  * The firing battleship appears, then the bomber plays stealth. The cannon
  * fires and the impact lands. When that impact clip finishes, the command
  * dialog pops up and plays out. After that dialog has left, the struck bomber
- * leaves and the rest of the fleet arrives together: the second battleship, the command
- * ship, and the two spare bombers. The bottom slot keeps the revealed bomber
- * and does not play stealth again.
+ * holds and the remaining ships arrive: command ship + one spare bomber.
+ * Middle row is gone; units are scrambled with depth (some larger / closer).
  */
 export function StructsScene({
   active,
@@ -171,7 +167,7 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
   const [step, setStep] = useState<number>(STEP.battleship);
   const [impactDone, setImpactDone] = useState(false);
   const [wave, setWave] = useState(false);
-  const settledRows = useRef(new Set<number>());
+  const settledSlots = useRef(new Set<string>());
   const reported = useRef(false);
 
   useEffect(() => {
@@ -179,26 +175,26 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const markBomber = (row: number) => {
-    settledRows.current.add(row);
-    if (settledRows.current.size < 3 || reported.current) return;
+  /** Wave brings command + one spare bomber; held bomber also reports. Settle at 2. */
+  const markBomber = (slot: string) => {
+    settledSlots.current.add(slot);
+    if (settledSlots.current.size < 2 || reported.current) return;
     reported.current = true;
     onSettled();
   };
 
   return (
-    <div className="absolute inset-0" data-fleet-step={step} data-fleet-wave={wave ? "in" : "wait"}>
+    <div className="absolute inset-0" data-fleet-step={step} data-fleet-wave={wave ? "in" : "wait"} data-fleet-ver="2">
       <ReinforcementsDialog play={impactDone} onShown={() => setWave(true)} />
 
       <div style={flankStyle("left")}>
         <FiringBattleship firing={step >= STEP.cannon} />
-        {wave ? <RestingBattleship /> : null}
         {wave ? <CommandShip /> : null}
       </div>
 
       <div style={flankStyle("right")}>
         {wave ? (
-          <HoverBomber row={3} stealth={false} onDone={() => markBomber(3)} />
+          <HoverBomber slot="held" stealth={false} onDone={() => markBomber("held")} />
         ) : step >= STEP.bomber ? (
           <StruckBomber
             cannon={step >= STEP.cannon}
@@ -206,12 +202,7 @@ function StructsFleet({ onSettled }: { onSettled: () => void }) {
             onImpactDone={() => setImpactDone(true)}
           />
         ) : null}
-        {wave ? (
-          <>
-            <HoverBomber row={1} onDone={() => markBomber(1)} />
-            <HoverBomber row={2} onDone={() => markBomber(2)} />
-          </>
-        ) : null}
+        {wave ? <HoverBomber slot="far" onDone={() => markBomber("far")} /> : null}
       </div>
     </div>
   );
@@ -335,11 +326,20 @@ function StructsSky({ meteors }: { meteors: boolean }) {
 
 const BATTLESHIP_STILL = "/lottie/structs/canon_downwards/images/img_0.png";
 
+/** Scrambled placements: larger scale + higher z reads as closer. */
+const PLACES = {
+  firing: { left: "4%", top: "-2%", scale: 1.28, z: 4 },
+  command: { left: "28%", top: "52%", scale: 0.78, z: 1 },
+  struck: { left: "8%", top: "38%", scale: 1.22, z: 5 },
+  held: { left: "10%", top: "42%", scale: 1.18, z: 4 },
+  far: { left: "42%", top: "-6%", scale: 0.68, z: 1 },
+} as const;
+
 function FiringBattleship({ firing }: { firing: boolean }) {
   const [hover, setHover] = useState(false);
 
   return (
-    <FleetPiece column={1} row={1} delayMs={BATTLESHIP_LEAD_MS}>
+    <FleetPiece place={PLACES.firing} delayMs={BATTLESHIP_LEAD_MS}>
       <div className={cn(UNIT, hover && "structs-ship-hover")}>
         {firing ? (
           <LottieClip
@@ -367,30 +367,11 @@ function FiringBattleship({ firing }: { firing: boolean }) {
   );
 }
 
-function RestingBattleship() {
-  return (
-    <FleetPiece column={1} row={2} delayMs={0} data-ship="second">
-      <div className={cn(UNIT, "structs-ship-hover")}>
-        <Image
-          src={BATTLESHIP_STILL}
-          alt=""
-          width={128}
-          height={128}
-          unoptimized
-          draggable={false}
-          className="h-full w-full object-contain"
-          style={{ opacity: 0.95 }}
-        />
-      </div>
-    </FleetPiece>
-  );
-}
-
 function CommandShip() {
   const [hover, setHover] = useState(false);
 
   return (
-    <FleetPiece column={1} row={3} delayMs={0} data-ship="command">
+    <FleetPiece place={PLACES.command} delayMs={0} data-ship="command">
       <div className={cn(UNIT, "flex items-center justify-center", hover && "structs-ship-hover")}>
         <LottieClip
           src="/lottie/structs/move_arrive"
@@ -417,7 +398,7 @@ function StruckBomber({
   const impactReported = useRef(false);
 
   return (
-    <FleetPiece column={1} row={3} delayMs={0} className="z-10" data-bomber="live">
+    <FleetPiece place={PLACES.struck} delayMs={0} data-bomber="live">
       <div className={UNIT}>
         <div className="h-full w-full" style={{ transform: "scaleX(-1)", opacity: 0.95 }}>
           <StealthCycle
@@ -453,13 +434,13 @@ function StruckBomber({
 const REVEALED_BOMBER = "/lottie/structs/stealth_deactivate/images/img_9.png";
 
 function HoverBomber({
-  row,
+  slot,
   onDone,
   stealth = true,
 }: {
-  row: number;
+  slot: "held" | "far";
   onDone: () => void;
-  /** The refilled bottom slot is already revealed, so it skips the cloak. */
+  /** The refilled held slot is already revealed, so it skips the cloak. */
   stealth?: boolean;
 }) {
   const [hover, setHover] = useState(!stealth);
@@ -472,7 +453,11 @@ function HoverBomber({
   }, [stealth]);
 
   return (
-    <FleetPiece column={1} row={row} delayMs={0} data-bomber={stealth ? "back" : "held"}>
+    <FleetPiece
+      place={slot === "held" ? PLACES.held : PLACES.far}
+      delayMs={0}
+      data-bomber={stealth ? "back" : "held"}
+    >
       <div className={cn(UNIT, hover && "structs-ship-hover")}>
         <div className="h-full w-full" style={{ transform: "scaleX(-1)" }}>
           {stealth ? (
@@ -505,15 +490,13 @@ function HoverBomber({
 }
 
 function FleetPiece({
-  column,
-  row,
+  place,
   className,
   delayMs,
   children,
   ...data
 }: {
-  column: number;
-  row: number;
+  place: { left: string; top: string; scale: number; z: number };
   className?: string;
   delayMs: number;
   children: React.ReactNode;
@@ -522,8 +505,17 @@ function FleetPiece({
 }) {
   return (
     <div
-      className={cn("structs-fade-in pointer-events-none flex items-center justify-center", className)}
-      style={{ gridColumn: column, gridRow: row, animationDelay: `${delayMs}ms` }}
+      className={cn("structs-fade-in pointer-events-none absolute flex items-center justify-center", className)}
+      style={{
+        left: place.left,
+        top: place.top,
+        width: SHIP,
+        height: SHIP,
+        zIndex: place.z,
+        transform: `scale(${place.scale})`,
+        transformOrigin: "center center",
+        animationDelay: `${delayMs}ms`,
+      }}
       {...data}
     >
       {children}

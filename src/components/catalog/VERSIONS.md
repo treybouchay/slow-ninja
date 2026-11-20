@@ -10,4 +10,11 @@ Preference is stored in `localStorage` under `slow-ninja-catalog-view`.
 | `diagonal-case` | `views/diagonal-case.tsx` | `5c253c5` | Isometric top-down case; carts slide out toward you and expand. |
 | `file-case` | `views/file-case.tsx` | current | Icon-style three-quarter file box; stacks front-to-back; pull up to expand. |
 
+## Structs fleet scenes
+
+| Version | Component | Notes |
+| --- | --- | --- |
+| `v1` | `structs-scene-v1.tsx` (`StructsSceneV1`) | Original 3-row columns: battleship / battleship+command · bomber rows. Saved snapshot. |
+| `v2` (live) | `structs-scene.tsx` (`StructsScene`) | Middle row removed; units scrambled with depth (scale + z). |
+
 The homepage/games pages render `CatalogExplorer` (exported as `GamesTimeline`).
