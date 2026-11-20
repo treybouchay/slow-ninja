@@ -331,9 +331,9 @@ const PLACES = {
   firing: { left: "4%", top: "-2%", scale: 1.85, z: 4 },
   // Same column as the top battleship, lower row
   command: { left: "4%", top: "52%", scale: 1.32, z: 1 },
-  struck: { left: "8%", top: "58%", scale: 1.78, z: 5 },
-  held: { left: "10%", top: "62%", scale: 1.72, z: 4 },
-  // Top-right bomber — dropped lower into the scramble
+  // Line up with the far bomber on the same row
+  struck: { left: "8%", top: "28%", scale: 1.78, z: 5 },
+  held: { left: "10%", top: "28%", scale: 1.72, z: 4 },
   far: { left: "42%", top: "28%", scale: 1.2, z: 1 },
 } as const;
 
